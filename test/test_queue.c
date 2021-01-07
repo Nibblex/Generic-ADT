@@ -12,7 +12,7 @@ static char test_queue__empty_copy_enabled(char debug)
     char result;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
 
-    if (debug) queue__debug(q, (void (*)(elem_t))operator_debug);
+    if (debug) queue__debug(q, (void (*)(elem_t))operator_debug_i32);
 
     result = q ? TEST_SUCCESS : TEST_FAILURE;
 
@@ -27,7 +27,7 @@ static char test_queue__empty_copy_disabled(char debug)
     char result;
     Queue q = queue__empty_copy_disabled();
 
-    if (debug) queue__debug(q, (void (*)(elem_t))operator_debug);
+    if (debug) queue__debug(q, (void (*)(elem_t))operator_debug_i32);
 
     result = q ? TEST_SUCCESS : TEST_FAILURE;
 
@@ -113,8 +113,8 @@ static char test_queue__enqueue_on_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues before enqueue:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     result = (!queue__enqueue(q, NULL)
@@ -124,8 +124,8 @@ static char test_queue__enqueue_on_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues after enqueue:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     queue__free(q);
@@ -144,8 +144,8 @@ static char test_queue__enqueue_on_non_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues before enqueue:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     for (u32 i = 0; i < N; i++) {
@@ -155,8 +155,8 @@ static char test_queue__enqueue_on_non_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues after enqueue:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     result = (queue__size(q) == N && queue__size(w) == N) ? TEST_SUCCESS : TEST_FAILURE;
@@ -176,8 +176,8 @@ static char test_queue__dequeue_on_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues before dequeue:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     result = (queue__dequeue(q)
@@ -187,8 +187,8 @@ static char test_queue__dequeue_on_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues after dequeue:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     queue__free(q);
@@ -212,8 +212,8 @@ static char test_queue__dequeue_on_non_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues before dequeue:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     result = (!queue__dequeue(q)
@@ -223,8 +223,8 @@ static char test_queue__dequeue_on_non_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues after dequeue:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     queue__free(q);
@@ -249,8 +249,8 @@ static char test_queue__enqueue_and_dequeue_on_multiple_elements(char debug)
 
     if (debug) {
         printf("\nAdded 60 elements, expected capacity of 64 and size of 60\n");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     for (u32 i = 0; i < 40; i++) {
@@ -262,8 +262,8 @@ static char test_queue__enqueue_and_dequeue_on_multiple_elements(char debug)
 
     if (debug) {
         printf("\nRemoved 40 elements, expected capacity of 32 and size of 20\n");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     for (u32 i = 0; i < 20; i++) {
@@ -275,8 +275,8 @@ static char test_queue__enqueue_and_dequeue_on_multiple_elements(char debug)
 
     if (debug) {
         printf("\nAdded 20 elements, expected capacity of 64 and size of 40\n");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     queue__free(q);
@@ -294,8 +294,8 @@ static char test_queue__pop_on_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues before pop:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     result = (queue__pop(q, NULL)
@@ -305,8 +305,8 @@ static char test_queue__pop_on_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues after pop:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     queue__free(q);
@@ -332,8 +332,8 @@ static char test_queue__pop_on_non_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues before pop:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     result = TEST_SUCCESS;
@@ -349,8 +349,8 @@ static char test_queue__pop_on_non_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues after pop:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     queue__free(q);
@@ -363,25 +363,28 @@ static char test_queue__from_array(char debug)
     printf("%s ", __func__);
 
     char result;
-    int A[5] = {10, 11, 12, 13, 14};
+    int A[5] = {1, 2, 3, 4, 5};
+    int B[5] = {6, 7, 8, 9, 10};
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
     if (debug) {
         printf("\n\tQueues before to_array:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     result = (queue__from_array(q, A, 5, INT)
            && queue__from_array(w, A, 5, INT)
-           && !queue__is_empty(q)
-           && !queue__is_empty(w)) ? TEST_SUCCESS : TEST_FAILURE;
+           && queue__from_array(q, B, 5, INT)
+           && queue__from_array(w, B, 5, INT)
+           && queue__size(q) == 10
+           && queue__size(w) == 10) ? TEST_SUCCESS : TEST_FAILURE;
 
     if (debug) {
         printf("\n\tQueues after to_array:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     queue__free(q);
@@ -399,8 +402,8 @@ static char test_queue__to_array_on_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues before to_array:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     result = (!queue__to_array(q)
@@ -410,8 +413,8 @@ static char test_queue__to_array_on_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues after to_array:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     queue__free(q);
@@ -437,8 +440,8 @@ static char test_queue__to_array_on_non_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues before to_array:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     A = (int **)queue__to_array(q);
@@ -446,8 +449,8 @@ static char test_queue__to_array_on_non_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues after to_array:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     result = (queue__size(q) == N && queue__size(w) == N) ? TEST_SUCCESS : TEST_FAILURE;
@@ -477,8 +480,8 @@ static char test_queue__foreach_on_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues before foreach:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     queue__foreach(q, (applying_func_t) plus_op, &value);
@@ -486,8 +489,8 @@ static char test_queue__foreach_on_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues after foreach:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     result = (queue__is_empty(q) && queue__is_empty(w)) ? TEST_SUCCESS : TEST_FAILURE;
@@ -528,8 +531,8 @@ static char test_queue__foreach_on_non_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues before foreach:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     queue__foreach(q, (applying_func_t) plus_op, &value);
@@ -537,8 +540,8 @@ static char test_queue__foreach_on_non_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues after foreach:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     C = queue__to_array(q);
@@ -572,8 +575,8 @@ static char test_queue__sort_on_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues before sort:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     queue__sort(q, operator_compare);
@@ -581,8 +584,8 @@ static char test_queue__sort_on_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues after sort:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     result = (queue__is_empty(q) && queue__is_empty(w)) ? TEST_SUCCESS : TEST_FAILURE;
@@ -610,8 +613,8 @@ static char test_queue__sort_on_non_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues before sort:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     queue__sort(q, operator_compare);
@@ -619,8 +622,8 @@ static char test_queue__sort_on_non_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues after sort:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     A = (int **)queue__to_array(q);
@@ -651,8 +654,8 @@ static char test_queue__clear_on_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues before clear:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     queue__clear(q);
@@ -660,8 +663,8 @@ static char test_queue__clear_on_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues after clear:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     result = (queue__is_empty(q) && queue__is_empty(w)) ? TEST_SUCCESS : TEST_FAILURE;
@@ -687,8 +690,8 @@ static char test_queue__clear_on_non_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues before clear:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     queue__clear(q);
@@ -696,8 +699,8 @@ static char test_queue__clear_on_non_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues after clear:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     result = (queue__is_empty(q) && queue__is_empty(w)) ? TEST_SUCCESS : TEST_FAILURE;
@@ -717,8 +720,8 @@ static char test_queue__front_on_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues before front:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     result = (queue__front(q, NULL)
@@ -728,8 +731,8 @@ static char test_queue__front_on_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues after front:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     queue__free(q);
@@ -753,8 +756,8 @@ static char test_queue__front_on_non_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues before front:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     result = (!queue__front(q, &front_q)
@@ -766,8 +769,8 @@ static char test_queue__front_on_non_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues after front:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     free(front_q);
@@ -786,8 +789,8 @@ static char test_queue__back_on_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues before back:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     result = (queue__back(q, NULL)
@@ -797,8 +800,8 @@ static char test_queue__back_on_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues after back:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     queue__free(q);
@@ -825,8 +828,8 @@ static char test_queue__back_on_non_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues before back:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     result = (!queue__back(q, &back_q)
@@ -838,8 +841,8 @@ static char test_queue__back_on_non_empty_queue(char debug)
 
     if (debug) {
         printf("\n\tQueues after back:");
-        queue__debug(q, (void (*)(elem_t))operator_debug);
-        queue__debug(w, (void (*)(elem_t))operator_debug);
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
     free(back_q);

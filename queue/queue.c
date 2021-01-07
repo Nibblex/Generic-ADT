@@ -52,7 +52,7 @@ static char queue__shrink(size_t new_capacity, Queue q)
     return SUCCESS;
 }
 
-static Queue queue__init(copy_operator_t copy_op, delete_operator_t delete_op)
+static Queue queue__init(const copy_operator_t copy_op, const delete_operator_t delete_op)
 {
     Queue q = malloc(sizeof(struct QueueSt));
     if (!q) return NULL;

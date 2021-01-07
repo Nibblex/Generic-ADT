@@ -17,8 +17,8 @@ struct QueueSt
     size_t front;
     size_t back;
     size_t size;
-    elem_t (*operator_copy) (elem_t);
-    void (*operator_delete) (elem_t);
+    copy_operator_t operator_copy;
+    delete_operator_t operator_delete;
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -296,7 +296,7 @@ elem_t *queue__to_array(const Queue q)
     return res;
 }
 
-void queue__sort(const Queue q, const compare_func_t f)
+inline void queue__sort(const Queue q, const compare_func_t f)
 {
     if (!q || q->size < 2) return;
 

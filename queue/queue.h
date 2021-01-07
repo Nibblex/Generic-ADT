@@ -160,7 +160,7 @@ void queue__foreach(const Queue q, const applying_func_t f, void *user_data);
 
 
 /**
- * @brief If copy is enabled frees all allocated memory used by the elements in the queue, the queue is still usable afterwards
+ * @brief Empty the queue, if copy is enabled frees all allocated memory used by the elements in the queue, the queue is still usable afterwards
  * @note Complexity: O(n) with copy enabled, O(1) with copy disabled
  * @param q the queue to clear
  */

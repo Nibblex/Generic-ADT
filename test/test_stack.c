@@ -2,6 +2,9 @@
 #include "../stack/stack.h"
 #include "../common/defs.h"
 
+////////////////////////////////////////////////////////////////////
+///     TEST SUITE
+////////////////////////////////////////////////////////////////////
 
 static char test_stack__empty_copy_enabled(char debug)
 {
@@ -690,8 +693,8 @@ static char test_stack__sort_on_non_empty_stack(char debug)
     u32 N = 8;
     int unordered[8] = {5, -3, 2, 0, 1, 0, 7, 4};
     int ordered[8] = {-3, 0, 0, 1, 2, 4, 5, 7};
-    int **A = NULL;
-    int **B = NULL;
+    elem_t *A = NULL;
+    elem_t *B = NULL;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
@@ -713,12 +716,12 @@ static char test_stack__sort_on_non_empty_stack(char debug)
         stack__debug(t, (void (*)(elem_t))operator_debug_i32);
     }
 
-    A = (int **)stack__to_array(s);
-    B = (int **)stack__to_array(t);
+    A = stack__to_array(s);
+    B = stack__to_array(t);
 
     result = TEST_SUCCESS;
     for (u32 i = 0; i < 8; i++) {
-        result |= (char)(ordered[i] != *A[i] || ordered[i] != *B[i]);
+        result |= (char)(ordered[i] != *(int *)A[i] || ordered[i] != *(int *)B[i]);
     }
 
     for (u32 i = 0; i < 8; i++) {
@@ -762,8 +765,8 @@ static char test_stack__mix_on_non_empty_stack(char debug)
     char result;
     u32 N = 8;
     int src[8] = {5, -3, 2, 0, 1, 0, 7, 4};
-    int **A = NULL;
-    int **B = NULL;
+    elem_t *A = NULL;
+    elem_t *B = NULL;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
@@ -785,12 +788,12 @@ static char test_stack__mix_on_non_empty_stack(char debug)
         stack__debug(t, (void (*)(elem_t))operator_debug_i32);
     }
 
-    A = (int **)stack__to_array(s);
-    B = (int **)stack__to_array(t);
+    A = stack__to_array(s);
+    B = stack__to_array(t);
 
     result = TEST_SUCCESS;
 
-    for (u32 i = 0; i < 8; i++) {
+    for (u32 i = 0; i < N; i++) {
         free(A[i]);
     }
     free(A);

@@ -113,8 +113,8 @@ char queue__enqueue(const Queue q, const elem_t element)
     }
 
     q->elems[q->back] = q->operator_copy ? q->operator_copy(element) : element;
-    q->back = (q->back + 1 == q->capacity) ? 0 : q->back + 1;
     q->size++;
+    q->back = (q->size != q->capacity && q->back + 1 == q->capacity) ? 0 : q->back + 1;
 
     return SUCCESS;
 }
@@ -305,6 +305,22 @@ inline void queue__sort(const Queue q, const compare_func_t f)
     }
 
     qsort((q->back == q->front) ? q->elems : q->elems + q->front, q->size, sizeof(elem_t), f);
+}
+
+void queue__mix(const Queue q)
+{
+    size_t a, b;
+    if (!q || q->size < 2) return;
+
+    if (q->back < q->front) {
+        queue__shrink(q->capacity, q);
+    }
+
+    for (size_t i = q->front; i < q->back; i++){
+        a = (q->front + (size_t)(rand() % (int)(q->front + q->back)));
+        b = (q->front + (size_t)(rand() % (int)(q->front + q->back)));
+        SWAP(q->elems[a], q->elems[b]);
+    }
 }
 
 void queue__foreach(const Queue q, const applying_func_t f, void *user_data)

@@ -40,7 +40,7 @@ Queue queue__empty_copy_disabled(void);
 
 
 /**
- * @brief Push an element in the queue
+ * @brief Adds an element in the queue
  * @note Complexity: O(1)
  * @param q the queue
  * @param element the element to add
@@ -50,7 +50,7 @@ char queue__enqueue(const Queue q, const elem_t element);
 
 
 /**
- * @brief Pop the front element out of the queue
+ * @brief Removes the front element of the queue
  * @note Complexity: O(1)
  * @param q the queue
  * @return 0 on success, 1 otherwise
@@ -59,7 +59,7 @@ char queue__dequeue(const Queue q);
 
 
 /**
- * @brief Retrieve a copy of the front element (similar to 'queue__front' but the element is dequeued)
+ * @brief Retrieve a copy of the front element (similar to 'queue__front' but the element is removed of the queue)
  * @details The element must be manually freed by user afterward
  * @note Complexity: O(1)
  * @param q the queue
@@ -148,6 +148,14 @@ elem_t *queue__to_array(const Queue q);
  * @param f the compare function
  */
 void queue__sort(const Queue q, const compare_func_t f);
+
+
+/**
+ * @brief Randomly mixes the queue's content
+ * @note Complexity: O(n)
+ * @param q the queue
+ * */
+void queue__mix(const Queue q);
 
 
 /**

@@ -40,8 +40,8 @@ Stack stack__empty_copy_disabled(void);
 
   
 /**
- * @brief Push an element in the stack
- * @note Complexity: O(1) (O(n) is stack's length is a power of 2)
+ * @brief Adds an element in the stack
+ * @note Complexity: O(1)
  * @param s the stack
  * @param element the element to add
  * @return 0 on success, 1 otherwise
@@ -50,17 +50,17 @@ char stack__push(const Stack s, const elem_t element);
 
 
 /**
- * @brief Pop an element out of the stack
+ * @brief Retrieve a copy of the top element (similar to 'stack__peek' but the element is removed of the stack)
  * @note Complexity: O(1) (O(n) is stack's length is a power of 2)
  * @param s the stack
- * @return an enumeration representing the popped element
+ * @param top pointer to storage variable
+ * @return 0 on success, 1 otherwise
  */
 char stack__pop(const Stack s, elem_t *top);
 
 
 /**
  * @brief Retrieve the element on the top of the stack without removing it
-
  * @note Complexity: O(1)
  * @param s the stack
  * @return an enumeration representing the element on top

@@ -5,7 +5,7 @@
 #define SUCCESS 0
 #endif
 #ifndef FAILURE
-#define FAILURE 1
+#define FAILURE -1
 #endif
 #ifndef true
 #define true 1
@@ -19,7 +19,7 @@
      memcpy(swap_temp,&y,sizeof(x)); \
      memcpy(&y,&x,       sizeof(x)); \
      memcpy(&x,swap_temp,sizeof(x)); \
-   } while(0)
+   } while(false)
 
 /**
  * generical element type

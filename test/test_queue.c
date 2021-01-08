@@ -5,6 +5,7 @@
 ////////////////////////////////////////////////////////////////////
 ///     TEST SUITE
 ////////////////////////////////////////////////////////////////////
+
 static char test_queue__empty_copy_enabled(char debug)
 {
     printf("%s... ", __func__);
@@ -664,7 +665,6 @@ static char test_queue__foreach_on_non_empty_queue(char debug)
 
     char result;
     u32 N = 8;
-    u32 M = 2;
     int value = 1;
     int array[8] = {-5, 0, 2, 7, 11, 1, 3, 10};
     elem_t *A = NULL, *B = NULL, *C = NULL, *D = NULL;
@@ -673,16 +673,6 @@ static char test_queue__foreach_on_non_empty_queue(char debug)
 
     queue__from_array(q, array, N, INT);
     queue__from_array(w, array, N, INT);
-
-    for (u32 i = 0; i < N>>1; i++) {
-        queue__dequeue(q);
-        queue__dequeue(w);
-    }
-
-    for (u32 i = N>>1; i < ((N>>1) + M); i++) {
-        queue__enqueue(q, &array[i]);
-        queue__enqueue(w, &array[i]);
-    }
 
     A = queue__to_array(q);
     B = queue__to_array(w);
@@ -706,11 +696,11 @@ static char test_queue__foreach_on_non_empty_queue(char debug)
     D = queue__to_array(w);
 
     result = TEST_SUCCESS;
-    for (u32 i = 0; i < N-M; i++) {
+    for (u32 i = 0; i < N; i++) {
         result |= (char)(*(int *)A[i] + value != *(int *)C[i] || *(int *)B[i] != *(int *)D[i]);
     }
 
-    for (u32 i = 0; i < N-M; i++) {
+    for (u32 i = 0; i < N; i++) {
         free(A[i]);
         free(C[i]);
     }
@@ -755,8 +745,8 @@ static char test_queue__sort_on_non_empty_queue(char debug)
     u32 N = 8;
     int unordered[8] = {5, -3, 2, 0, 1, 0, 7, 4};
     int ordered[8] = {-3, 0, 0, 1, 2, 4, 5, 7};
-    int **A = NULL;
-    int **B = NULL;
+    elem_t *A = NULL;
+    elem_t *B = NULL;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
@@ -778,15 +768,84 @@ static char test_queue__sort_on_non_empty_queue(char debug)
         queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
-    A = (int **)queue__to_array(q);
-    B = (int **)queue__to_array(w);
+    A = queue__to_array(q);
+    B = queue__to_array(w);
 
     result = TEST_SUCCESS;
     for (u32 i = 0; i < 8; i++) {
-        result |= (char)(ordered[i] != *A[i] || ordered[i] != *B[i]);
+        result |= (char)(ordered[i] != *(int *)A[i] || ordered[i] != *(int *)B[i]);
     }
 
     for (u32 i = 0; i < 8; i++) {
+        free(A[i]);
+    }
+    free(A);
+    free(B);
+    queue__free(q);
+    queue__free(w);
+    return result;
+}
+
+static char test_queue__mix_on_empty_queue(char debug)
+{
+    printf("%s ", __func__);
+
+    char result;
+    Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+    Queue w = queue__empty_copy_disabled();
+
+    queue__mix(q);
+    queue__mix(w);
+
+    if (debug) {
+        printf("\n\tQueues after mix:");
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
+    }
+
+    result = (queue__is_empty(q) && queue__is_empty(w)) ? TEST_SUCCESS : TEST_FAILURE;
+
+    queue__free(q);
+    queue__free(w);
+    return result;
+}
+
+static char test_queue__mix_on_non_empty_queue(char debug)
+{
+    printf("%s ", __func__);
+
+    char result;
+    u32 N = 8;
+    int src[8] = {5, -3, 2, 0, 1, 0, 7, 4};
+    elem_t *A = NULL;
+    elem_t *B = NULL;
+    Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+    Queue w = queue__empty_copy_disabled();
+
+    queue__from_array(q, src, N, INT);
+    queue__from_array(w, src, N, INT);
+
+    if (debug) {
+        printf("\n\tQueues before mix:");
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
+    }
+
+    queue__mix(q);
+    queue__mix(w);
+
+    if (debug) {
+        printf("\n\tQueues after mix:");
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
+    }
+
+    A = queue__to_array(q);
+    B = queue__to_array(w);
+
+    result = TEST_SUCCESS;
+
+    for (u32 i = 0; i < N; i++) {
         free(A[i]);
     }
     free(A);
@@ -832,6 +891,8 @@ int main(void)
     print_test_result(test_queue__foreach_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__sort_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__sort_on_non_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__mix_on_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__mix_on_non_empty_queue(false), &nb_success, &nb_tests);
 
     print_test_summary(nb_success, nb_tests);
 

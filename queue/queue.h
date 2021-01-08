@@ -3,6 +3,7 @@
 
 #include "../common/defs.h"
 
+
 /**
  * Implementation of a FIFO Abstract Data Type
  *
@@ -166,6 +167,15 @@ void queue__mix(const Queue q);
  * @param user_data optional data to be used as an additional argument of the application function
  */
 void queue__foreach(const Queue q, const applying_func_t f, void *user_data);
+
+
+/**
+ * @brief Remove all NULL from the queue
+ * @note Complexity: O(n)
+ * @param q is the queue you want to clean
+ * @return 1 if the queue has been cleaned up, 0 else
+ */
+void queue__clean_NULL(const Queue q);
 
 
 /**

@@ -391,6 +391,27 @@ void queue__foreach(const Queue q, const applying_func_t f, void *user_data)
     }
 }
 
+void queue__clean_NULL(const Queue q)
+{
+    size_t k;
+    if (!q) return;
+
+    if (q->back < q->front) {
+        queue__shrink(q->capacity, q);
+    }
+
+    k = 0;
+    for (size_t i = q->front; i < q->back; i++) {
+        if (q->elems[i]) {
+            q->elems[k] = q->elems[i];
+            k++;
+        }
+    }
+
+    q->size = k;
+    q->back = q->front + q->size;
+}
+
 void queue__clear(const Queue q)
 {
     if (!q) return;

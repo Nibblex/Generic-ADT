@@ -335,6 +335,66 @@ static char test_queue__pop_on_non_empty_queue(char debug)
     return result;
 }
 
+static char test_queue__clean_NULL_on_empty_queue(char debug)
+{
+    printf("%s... ", __func__);
+
+    char result;
+    Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+    Queue w = queue__empty_copy_disabled();
+
+    queue__clean_NULL(q);
+    queue__clean_NULL(w);
+
+    if (debug) {
+        printf("\n\tQueues after clean_NULL:");
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
+    }
+
+    result = (queue__is_empty(q) && queue__is_empty(w)) ? TEST_SUCCESS : TEST_FAILURE;
+
+    queue__free(q);
+    queue__free(w);
+    return result;
+}
+
+static char test_queue__clean_NULL_on_non_empty_queue(char debug)
+{
+    printf("%s... ", __func__);
+
+    char result;
+    u32 N = 8;
+    Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+    Queue w = queue__empty_copy_disabled();
+
+    for (u32 i = 0; i < N; i++) {
+        queue__enqueue(q, !(i%2) ? &i : NULL);
+        queue__enqueue(w, !(i%2) ? &i : NULL);
+    }
+
+    if (debug) {
+        printf("\n\tQueues before clean_NULL:");
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
+    }
+
+    queue__clean_NULL(q);
+    queue__clean_NULL(w);
+
+    if (debug) {
+        printf("\n\tQueues after clean_NULL:");
+        queue__debug(q, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w, (void (*)(elem_t))operator_debug_i32);
+    }
+
+    result = (queue__size(q) == N>>1 && queue__size(w) == N>>1) ? TEST_SUCCESS : TEST_FAILURE;
+
+    queue__free(q);
+    queue__free(w);
+    return result;
+}
+
 static char test_queue__clear_on_empty_queue(char debug)
 {
     printf("%s... ", __func__);
@@ -877,6 +937,8 @@ int main(void)
     print_test_result(test_queue__pop_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__pop_on_non_empty_queue(false), &nb_success, &nb_tests);
 
+    print_test_result(test_queue__clean_NULL_on_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__clean_NULL_on_non_empty_queue(true), &nb_success, &nb_tests);
     print_test_result(test_queue__clear_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__clear_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__front_on_empty_queue(false), &nb_success, &nb_tests);

@@ -3,6 +3,7 @@
 
 #include "../common/defs.h"
 
+
 /**
  * Implementation of a FILO Abstract Data Type
  *
@@ -147,7 +148,7 @@ void stack__foreach(const Stack s, const applying_func_t f, void *user_data);
 
 /**
  * @brief Remove all NULL from the stack
- * @note Complexity: O(n²)
+ * @note Complexity: O(n)
  * @param s is the stack you want to clean
  * @return 1 if the stack has been cleaned up, 0 else
  */
@@ -177,5 +178,6 @@ void stack__free(const Stack s);
  * @param is_compact to display a compact debug (only values)
  */
 void stack__debug(const Stack s, void (*debug_op) (elem_t));
+
 
 #endif

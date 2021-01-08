@@ -67,18 +67,20 @@ int operator_compare(const void *v1, const void *v2)
 
 void operator_debug_i32(const int *p_value)
 {
-    if (!p_value) return;
-
-    //setvbuf (stdout, NULL, _IONBF, 0);
-    printf("%d ", *p_value);
+    if (!p_value) {
+        printf("NULL ");
+    } else {
+        printf("%d ", *p_value);
+    }
 }
 
 void operator_debug_char(const char *p_value)
 {
-    if (!p_value) return;
-
-    //setvbuf (stdout, NULL, _IONBF, 0);
-    printf("%c ", *p_value);
+    if (!p_value) {
+        printf("NULL ");
+    } else {
+        printf("%c ", *p_value);
+    }
 }
 
 void plus_op(int *v, void *user_data)

@@ -2,19 +2,20 @@
 ###				CONFIGURATION
 #######################################################
 
+STA_DIR = stack
 QUE_DIR = queue
 
 TST_DIR = test
 COM_DIR = common
 
-ADT_DIRS = $(QUE_DIR)
+ADT_DIRS = $(STA_DIR) $(QUE_DIR)
 
-CC			= gcc
+CC = gcc
 CFLAGS = -Wall -Werror -Wextra -std=c99 -Wstrict-prototypes -Wmissing-prototypes -fPIC\
 		 -Wunreachable-code -Wconversion -Wmissing-declarations -Wno-unused-parameter -Wshadow -Wbad-function-cast -O3 -g
 CPPFLAGS	= -I ${TST_DIR}
 
-TESTS_EXEC 	= test_queue
+TESTS_EXEC 	= test_stack test_queue
 
 #######################################################
 ###				MAKE DEFAULT COMMAND
@@ -100,6 +101,9 @@ clean:
 #######################################################
 ###				TEST EXECUTABLES
 #######################################################
+
+test_stack:	./$(TST_DIR)/test_stack.o ./$(TST_DIR)/common_tests_utils.o ./$(STA_DIR)/stack.o
+	${CC} $(CFLAGS) $^ -o $@
 
 test_queue:	./$(TST_DIR)/test_queue.o ./$(TST_DIR)/common_tests_utils.o ./$(QUE_DIR)/queue.o
 	${CC} $(CFLAGS) $^ -o $@

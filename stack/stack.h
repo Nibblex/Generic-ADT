@@ -1,8 +1,6 @@
 #ifndef __STACK_H__
 #define __STACK_H__
 
-#include <stddef.h>
-
 #include "../common/defs.h"
 
 /**
@@ -12,11 +10,11 @@
  * 1) You have to correctly implement copy, delete and debug operators
  * by handling NULL value, otherwise you can end up with an undefined behaviour.
  * The prototypes of these functions are :
- * void* (*copy_op)(void*)
- * void* (*delete_op)(void*)
- * void* (*debug_op)(void*)
+ * elem_t (*copy_op)(elem_t)
+ * void (*delete_op)(elem_t)
+ * void (*debug_op)(void *)
  *
- * 2) stack_peek() and stack_pop() return a dynamically allocated pointer to the head element of
+ * 2) 'stack_peek' and 'stack_pop' return a dynamically allocated pointer to the head element of
  * the stack in order to make it survive independently of the stack life cycle.
  * The user has to manually free the return pointer after usage.
  */
@@ -24,19 +22,50 @@ typedef struct StackSt * Stack;
 
 
 /**
- * @brief Create an empty stack
+ * @brief Create an empty stack with copy enabled
  * @note Complexity: O(1)
- * @return a newly created stack
+ * @param copy_op copy operator
+ * @param delete_op delete operator
+ * @return a newly created stack, NULL on error
  */
 Stack stack__empty_copy_enabled(const copy_operator_t copy_op, const delete_operator_t delete_op);
 
 
 /**
- * @brief Create an empty stack
+ * @brief Create an empty stack with copy disabled
  * @note Complexity: O(1)
- * @return a newly created stack
+ * @return a newly created stack, NULL on error
  */
 Stack stack__empty_copy_disabled(void);
+
+  
+/**
+ * @brief Push an element in the stack
+ * @note Complexity: O(1) (O(n) is stack's length is a power of 2)
+ * @param s the stack
+ * @param element the element to add
+ * @return 0 on success, 1 otherwise
+ */
+char stack__push(const Stack s, const elem_t element);
+
+
+/**
+ * @brief Pop an element out of the stack
+ * @note Complexity: O(1) (O(n) is stack's length is a power of 2)
+ * @param s the stack
+ * @return an enumeration representing the popped element
+ */
+char stack__pop(const Stack s, elem_t *top);
+
+
+/**
+ * @brief Retrieve the element on the top of the stack without removing it
+
+ * @note Complexity: O(1)
+ * @param s the stack
+ * @return an enumeration representing the element on top
+ */
+char stack__peek(const Stack s, elem_t *top);
 
 
 /**
@@ -56,35 +85,6 @@ char stack__is_copy_enabled(const Stack s);
  * @return 0 otherwise
  */
 char stack__is_empty(const Stack s);
-
-  
-/**
- * @brief Push an element in the stack
- * @note Complexity: O(1) (O(n) is stack's length is a power of 2)
- * @param s the stack
- * @param element the element to add
- * @return 0 on success, 1 otherwise
- */
-char stack__push(const Stack s, const elem_t element);
-
-
-/**
- * @brief Retrieve the element on the top of the stack without removing it
-
- * @note Complexity: O(1)
- * @param s the stack
- * @return an enumeration representing the element on top
- */
-char stack__peek(const Stack s, elem_t *top);
-
-
-/**
- * @brief Pop an element out of the stack
- * @note Complexity: O(1) (O(n) is stack's length is a power of 2)
- * @param s the stack
- * @return an enumeration representing the popped element
- */
-char stack__pop(const Stack s, elem_t *top);
 
 
 /**

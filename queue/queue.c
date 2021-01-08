@@ -182,6 +182,11 @@ char queue__back(const Queue q, elem_t *back)
     return SUCCESS;
 }
 
+inline char queue__is_copy_enabled(const Queue q)
+{
+    return q->operator_copy && q->operator_delete;
+}
+
 inline char queue__is_empty(const Queue q)
 {
     return q ? !q->size : true;
@@ -190,11 +195,6 @@ inline char queue__is_empty(const Queue q)
 inline size_t queue__size(const Queue q)
 {
     return q ? q->size : 0;
-}
-
-inline char queue__is_copy_enabled(const Queue q)
-{
-    return q->operator_copy && q->operator_delete;
 }
 
 Queue queue__from_array(Queue q, void *A, size_t n_elems, DataType type)

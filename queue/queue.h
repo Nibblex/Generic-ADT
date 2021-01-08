@@ -14,7 +14,7 @@
  * void (*delete_op)(elem_t)
  * void (*debug_op)(void *)
  *
- * 2) queue__front() and queue_back() return a dynamically allocated pointer to an element of
+ * 2) 'queue__front' and 'queue_back' return a dynamically allocated pointer to an element of
  * the queue in order to make it survive independently of the queue life cycle.
  * The user has to manually free the return pointer after usage.
  */
@@ -92,6 +92,15 @@ char queue__back(const Queue q, elem_t *back);
 
 
 /**
+ * @brief Verify if the element's copy is enabled for the given queue
+ * @note Complexity: O(1)
+ * @param q the queue
+ * @return 1 if copy is enabled, 0 otherwise
+ */
+char queue__is_copy_enabled(const Queue q);
+
+
+/**
  * @brief Verify if the queue is empty
  * @note Complexity: O(1)
  * @param q the queue
@@ -108,14 +117,6 @@ char queue__is_empty(const Queue q);
  */
 size_t queue__size(const Queue q);
 
-
-/**
- * @brief Verify if the element's copy is enabled for the given queue
- * @note Complexity: O(1)
- * @param q the queue
- * @return 1 if copy is enabled, 0 otherwise
- */
-char queue__is_copy_enabled(const Queue q);
 
 /**
  * @brief Enqueues the first 'n_elems' elements of the given array in the given queue

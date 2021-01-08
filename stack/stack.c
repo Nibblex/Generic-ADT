@@ -57,16 +57,6 @@ inline Stack stack__empty_copy_disabled(void)
     return stack__init(NULL, NULL);
 }
 
-inline char stack__is_copy_enabled(const Stack s)
-{
-    return s->operator_copy && s->operator_delete;
-}
-
-inline char stack__is_empty(const Stack s)
-{
-    return s ? !s->top : true;
-}
-
 char stack__push(const Stack s, const elem_t element)
 {
     size_t new_capacity;
@@ -90,15 +80,6 @@ char stack__push(const Stack s, const elem_t element)
 
     s->elems[s->top] = s->operator_copy ? s->operator_copy(element) : element;
     s->top++;
-
-    return SUCCESS;
-}
-
-char stack__peek(const Stack s, elem_t *top)
-{
-    if (!s || !s->top || !top) return FAILURE;
-
-    *top = s->operator_copy ? s->operator_copy(s->elems[s->top-1]) : s->elems[s->top-1];
 
     return SUCCESS;
 }
@@ -129,6 +110,25 @@ char stack__pop(const Stack s, elem_t *top)
     }
 
     return SUCCESS;
+}
+
+char stack__peek(const Stack s, elem_t *top)
+{
+    if (!s || !s->top || !top) return FAILURE;
+
+    *top = s->operator_copy ? s->operator_copy(s->elems[s->top-1]) : s->elems[s->top-1];
+
+    return SUCCESS;
+}
+
+inline char stack__is_copy_enabled(const Stack s)
+{
+    return s->operator_copy && s->operator_delete;
+}
+
+inline char stack__is_empty(const Stack s)
+{
+    return s ? !s->top : true;
 }
 
 size_t stack__size(const Stack s)

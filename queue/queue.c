@@ -197,7 +197,7 @@ inline size_t queue__size(const Queue q)
     return q ? q->size : 0;
 }
 
-Queue queue__from_array(Queue q, void *A, size_t n_elems, DataType type)
+Queue queue__from_array(Queue q, const void *A, const size_t n_elems, const DataType type)
 {
     if (!A) return q;
 
@@ -221,6 +221,18 @@ Queue queue__from_array(Queue q, void *A, size_t n_elems, DataType type)
                     if (!q) return NULL;
                 }
                 int *B = (int *)A;
+                for (size_t i = 0; i < n_elems; i++) {
+                    queue__enqueue(q, &B[i]);
+                }
+            }
+            break;
+        case UINT:
+            {
+                if (!q) {
+                    q = queue__init(NULL, NULL);
+                    if (!q) return NULL;
+                }
+                unsigned int *B = (unsigned int *)A;
                 for (size_t i = 0; i < n_elems; i++) {
                     queue__enqueue(q, &B[i]);
                 }
@@ -250,7 +262,7 @@ Queue queue__from_array(Queue q, void *A, size_t n_elems, DataType type)
                 }
             }
             break;
-        case GENERAL:
+        case GENERIC:
             {
                 if (!q) {
                     q = queue__init(NULL, NULL);

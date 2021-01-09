@@ -13,9 +13,9 @@
  * The prototypes of these functions are :
  * elem_t (*copy_op)(elem_t)
  * void (*delete_op)(elem_t)
- * void (*debug_op)(void *)
+ * void (*debug_op)(elem_t)
  *
- * 2) 'stack_peek' and 'stack_pop' return a dynamically allocated pointer to the head element of
+ * 2) 'stack__peek' and 'stack__pop' return a dynamically allocated pointer to an element in the
  * the stack in order to make it survive independently of the stack life cycle.
  * The user has to manually free the return pointer after usage.
  */
@@ -52,7 +52,8 @@ char stack__push(const Stack s, const elem_t element);
 
 /**
  * @brief Retrieve a copy of the top element (similar to 'stack__peek' but the element is removed of the stack)
- * @note Complexity: O(1) (O(n) is stack's length is a power of 2)
+ * @details The element is stored in 'top' variable and must be manually freed by user afterward
+ * @note Complexity: O(1)
  * @param s the stack
  * @param top pointer to storage variable
  * @return 0 on success, 1 otherwise
@@ -62,9 +63,11 @@ char stack__pop(const Stack s, elem_t *top);
 
 /**
  * @brief Retrieve the element on the top of the stack without removing it
+ * @details The element is stored in 'top' variable and must be manually freed by user afterward
  * @note Complexity: O(1)
  * @param s the stack
- * @return an enumeration representing the element on top
+ * @param top pointer to storage variable
+ * @return 0 on success, 1 otherwise
  */
 char stack__peek(const Stack s, elem_t *top);
 
@@ -72,8 +75,8 @@ char stack__peek(const Stack s, elem_t *top);
 /**
  * @brief Verify if the element's copy is enabled for the given stack
  * @note Complexity: O(1)
- * @param s is the stack you want to check
- * @return 1 if copy is enabled, 0 if not
+ * @param s the stack
+ * @return 1 if the stack has copy enabled, 0 otherwise
  */
 char stack__is_copy_enabled(const Stack s);
 
@@ -82,32 +85,31 @@ char stack__is_copy_enabled(const Stack s);
  * @brief Verify if the stack is empty
  * @note Complexity: O(1)
  * @param s the stack
- * @return 1 if empty
- * @return 0 otherwise
+ * @return 1 if the stack is empty, 0 otherwise
  */
 char stack__is_empty(const Stack s);
 
 
 /**
- * @brief Count the number of elements in the stack
+ * @brief Number of elements in the stack
  * @note Complexity: O(1)
  * @param s the stack
- * @return an integer corresponding to the number of elements in the stack
+ * @return an unsigned integer corresponding to the number of elements in the stack
  */
 size_t stack__size(const Stack s);
 
 
 /**
- * @brief Pushes the first 'n_elems' elements of the given array in the given stack
+ * @brief Adds the first 'n_elems' elements of the given array in the stack
  * @details If the stack already has elements they are kept in that stack
  * @note Complexity: O(n)
  * @param s the stack, if q == NULL creates a new one with copy disabled by default
- * @param A the array, if A == NULL returns the stack received unaltered
+ * @param A the array, if A == NULL returns the stack unaltered
  * @param n_elems number of elements to push, must be less than the array length
- * @param type type of array elements, available types: 'CHAR', 'INT', 'FLOAT', 'STRING', 'GENERAL'
+ * @param type type of array elements, available types: 'CHAR', 'INT', 'UINT', 'FLOAT', 'STRING', 'GENERIC'
  * @return a stack containing all the elements of the array, NULL on error
  */
-Stack stack__from_array(Stack s, void *A, const size_t n_elems, const DataType type);
+Stack stack__from_array(Stack s, const void *A, const size_t n_elems, const DataType type);
 
 
 /**
@@ -130,7 +132,7 @@ void stack__sort(const Stack s, const compare_func_t f);
 
 
 /**
- * @brief Randomly mixes the stack's content
+ * @brief Randomly mixes the stack
  * @note Complexity: O(n)
  * @param s the stack
  * */
@@ -138,35 +140,37 @@ void stack__mix(const Stack s);
 
 
 /**
- * @brief Applies a function with only a stack object as parameter
- * @note Complexity: O(n) if copy enabled, O(n¹) if not 
+ * @brief Maps the given function to the stack
+ * @note Complexity: O(n) with copy enabled, O(n²) with copy disabled
  * @param s the stack
  * @param f the applying function
+ * @param user_data optional data to be used as an additional argument of the application function
  */
 void stack__foreach(const Stack s, const applying_func_t f, void *user_data);
 
 
 /**
- * @brief Remove all NULL from the stack
+ * @brief Removes all NULL pointers in the stack
  * @note Complexity: O(n)
- * @param s is the stack you want to clean
- * @return 1 if the stack has been cleaned up, 0 else
+ * @param s the stack
  */
 void stack__clean_NULL(const Stack s);
 
 
 /**
- * @brief Empty the stack, if copy is enabled frees all allocated memory used by the elements in the stack, the stack is still usable afterwards
+ * @brief Removes all elements in the stack
+ * @details If copy is enabled frees all allocated memory used by these elements, the stack is still usable afterwards
  * @note Complexity: O(n) with copy enabled, O(1) with copy disabled
- * @param s the stack to clear
+ * @param s the stack
  */
 void stack__clear(const Stack s);
 
 
 /**
- * @brief Free all allocated memory used by the stack
- * @note Complexity: O(n)
- * @param s the stack to free
+ * @brief Frees all allocated memory used by the stack
+ * @details If copy is enabled frees all memory used by the elements in the stack
+ * @note Complexity: O(n) with copy enabled, O(1) with copy disabled
+ * @param s the stack
  */
 void stack__free(const Stack s);
 
@@ -174,8 +178,8 @@ void stack__free(const Stack s);
 /**
  * @brief Prints the stack's content
  * @note Complexity: O(n)
- * @param s the stack to debug
- * @param is_compact to display a compact debug (only values)
+ * @param s the stack
+ * @param debug_op debug operator
  */
 void stack__debug(const Stack s, void (*debug_op) (elem_t));
 

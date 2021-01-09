@@ -29,7 +29,7 @@ typedef void * elem_t;
 /**
  * data types used in 'queue__from_array' function as a parameter
  */
-typedef enum  { CHAR = 0, INT, FLOAT, STRING, GENERAL} DataType;
+typedef enum  { CHAR = 0, INT, UINT, FLOAT, STRING, GENERIC} DataType;
 
 /**
  * function pointer for lambda applying

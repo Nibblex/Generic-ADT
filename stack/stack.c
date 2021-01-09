@@ -136,7 +136,7 @@ size_t stack__size(const Stack s)
     return s ? s->size : 0;
 }
 
-Stack stack__from_array(Stack s, void *A, const size_t n_elems, const DataType type)
+Stack stack__from_array(Stack s, const void *A, const size_t n_elems, const DataType type)
 {
     if (!A) return s;
 
@@ -160,6 +160,18 @@ Stack stack__from_array(Stack s, void *A, const size_t n_elems, const DataType t
                     if (!s) return NULL;
                 }
                 int *B = (int *)A;
+                for (size_t i = 0; i < n_elems; i++) {
+                    stack__push(s, &B[i]);
+                }
+            }
+            break;
+        case UINT:
+            {
+                if (!s) {
+                    s = stack__init(NULL, NULL);
+                    if (!s) return NULL;
+                }
+                unsigned int *B = (unsigned int *)A;
                 for (size_t i = 0; i < n_elems; i++) {
                     stack__push(s, &B[i]);
                 }
@@ -189,7 +201,7 @@ Stack stack__from_array(Stack s, void *A, const size_t n_elems, const DataType t
                 }
             }
             break;
-        case GENERAL:
+        case GENERIC:
             {
                 if (!s) {
                     s = stack__init(NULL, NULL);

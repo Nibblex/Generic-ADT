@@ -10,7 +10,7 @@
  * Notes :
  * 1) You have to correctly implement copy, delete and debug operators
  * by handling NULL value, otherwise you can end up with an undefined behaviour.
- * The prototypes of these functions are :
+ * The prototypes of these functions are:
  * elem_t (*copy_op)(elem_t)
  * void (*delete_op)(elem_t)
  * void (*debug_op)(elem_t)
@@ -39,7 +39,7 @@ Stack stack__empty_copy_enabled(const copy_operator_t copy_op, const delete_oper
  */
 Stack stack__empty_copy_disabled(void);
 
-  
+
 /**
  * @brief Adds an element in the stack
  * @note Complexity: O(1)

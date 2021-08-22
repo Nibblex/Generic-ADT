@@ -16,10 +16,10 @@
 
 #define SWAP(x,y) do \
     { unsigned char swap_temp[sizeof(x) == sizeof(y) ? (signed)sizeof(x) : -1]; \
-      memcpy(swap_temp,&y,sizeof(x)); \
-      memcpy(&y,&x,       sizeof(x)); \
-      memcpy(&x,swap_temp,sizeof(x)); \
-    } while(false)
+        memcpy(swap_temp, &y, sizeof(x)); \
+        memcpy(&y, &x, sizeof(x)); \
+        memcpy(&x, swap_temp, sizeof(x)); \
+    } while (false)
 
 /**
  * Generical element type
@@ -29,7 +29,7 @@ typedef void * elem_t;
 /**
  * Data types used in 'queue__from_array' function as a parameter
  */
-typedef enum { CHAR = 0, INT, UINT, FLOAT, STRING, GENERIC} DataType;
+typedef enum {CHAR = 0, INT, UINT, FLOAT, STRING, GENERIC} DataType;
 
 /**
  * Function pointer for lambda applying

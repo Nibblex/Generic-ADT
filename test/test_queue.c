@@ -938,7 +938,7 @@ int main(void)
     print_test_result(test_queue__pop_on_non_empty_queue(false), &nb_success, &nb_tests);
 
     print_test_result(test_queue__clean_NULL_on_empty_queue(false), &nb_success, &nb_tests);
-    print_test_result(test_queue__clean_NULL_on_non_empty_queue(true), &nb_success, &nb_tests);
+    print_test_result(test_queue__clean_NULL_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__clear_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__clear_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__front_on_empty_queue(false), &nb_success, &nb_tests);

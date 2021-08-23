@@ -299,6 +299,42 @@ static char test_stack__clear_on_empty_stack(char debug)
     return result;
 }
 
+static char test_stack__clear_on_non_empty_stack(char debug)
+{
+    printf("%s... ", __func__);
+
+    char result;
+    u32 N = 5;
+    Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+    Stack t = stack__empty_copy_disabled();
+
+    for (u32 i = 0; i < N; i++) {
+        stack__push(s, &i);
+        stack__push(t, &i);
+    }
+
+    if (debug) {
+        printf("\n\tStacks before clear:");
+        stack__debug(s, (void (*)(elem_t))operator_debug_i32);
+        stack__debug(t, (void (*)(elem_t))operator_debug_i32);
+    }
+
+    stack__clear(s);
+    stack__clear(t);
+
+    if (debug) {
+        printf("\n\tStacks after clear:");
+        stack__debug(s, (void (*)(elem_t))operator_debug_i32);
+        stack__debug(t, (void (*)(elem_t))operator_debug_i32);
+    }
+
+    result = (stack__is_empty(s) && stack__is_empty(t)) ? TEST_SUCCESS : TEST_FAILURE;
+
+    stack__free(s);
+    stack__free(t);
+    return result;
+}
+
 static char test_stack__clean_NULL_on_empty_stack(char debug)
 {
     printf("%s... ", __func__);
@@ -353,42 +389,6 @@ static char test_stack__clean_NULL_on_non_empty_stack(char debug)
     }
 
     result = (stack__size(s) == N>>1 && stack__size(t) == N>>1) ? TEST_SUCCESS : TEST_FAILURE;
-
-    stack__free(s);
-    stack__free(t);
-    return result;
-}
-
-static char test_stack__clear_on_non_empty_stack(char debug)
-{
-    printf("%s... ", __func__);
-
-    char result;
-    u32 N = 5;
-    Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
-    Stack t = stack__empty_copy_disabled();
-
-    for (u32 i = 0; i < N; i++) {
-        stack__push(s, &i);
-        stack__push(t, &i);
-    }
-
-    if (debug) {
-        printf("\n\tStacks before clear:");
-        stack__debug(s, (void (*)(elem_t))operator_debug_i32);
-        stack__debug(t, (void (*)(elem_t))operator_debug_i32);
-    }
-
-    stack__clear(s);
-    stack__clear(t);
-
-    if (debug) {
-        printf("\n\tStacks after clear:");
-        stack__debug(s, (void (*)(elem_t))operator_debug_i32);
-        stack__debug(t, (void (*)(elem_t))operator_debug_i32);
-    }
-
-    result = (stack__is_empty(s) && stack__is_empty(t)) ? TEST_SUCCESS : TEST_FAILURE;
 
     stack__free(s);
     stack__free(t);

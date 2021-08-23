@@ -783,7 +783,7 @@ static char test_stack__shuffle_on_non_empty_stack(char debug)
     stack__shuffle(t);
 
     if (debug) {
-        printf("\n\tStacks after mix:");
+        printf("\n\tStacks after shuffle:");
         stack__debug(s, (void (*)(elem_t))operator_debug_i32);
         stack__debug(t, (void (*)(elem_t))operator_debug_i32);
     }

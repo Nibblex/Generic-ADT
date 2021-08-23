@@ -858,7 +858,7 @@ static char test_queue__shuffle_on_empty_queue(char debug)
     queue__shuffle(w);
 
     if (debug) {
-        printf("\n\tQueues after mix:");
+        printf("\n\tQueues after shuffle:");
         queue__debug(q, (void (*)(elem_t))operator_debug_i32);
         queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }

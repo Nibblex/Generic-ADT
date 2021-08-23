@@ -242,7 +242,7 @@ inline void stack__sort(const Stack s, const compare_func_t f)
     qsort(s->elems, s->size, sizeof(elem_t), f);
 }
 
-void stack__mix(const Stack s)
+void stack__shuffle(const Stack s)
 {
     size_t a, b;
     if (!s) return;

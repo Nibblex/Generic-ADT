@@ -136,7 +136,7 @@ void stack__sort(const Stack s, const compare_func_t f);
  * @note Complexity: O(n)
  * @param s the stack
  */
-void stack__mix(const Stack s);
+void stack__shuffle(const Stack s);
 
 
 /**

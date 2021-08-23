@@ -734,7 +734,7 @@ static char test_stack__sort_on_non_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__mix_on_empty_stack(char debug)
+static char test_stack__shuffle_on_empty_stack(char debug)
 {
     printf("%s ", __func__);
 
@@ -742,11 +742,11 @@ static char test_stack__mix_on_empty_stack(char debug)
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
-    stack__mix(s);
-    stack__mix(t);
+    stack__shuffle(s);
+    stack__shuffle(t);
 
     if (debug) {
-        printf("\n\tStacks after mix:");
+        printf("\n\tStacks after shuffle:");
         stack__debug(s, (void (*)(elem_t))operator_debug_i32);
         stack__debug(t, (void (*)(elem_t))operator_debug_i32);
     }
@@ -758,7 +758,7 @@ static char test_stack__mix_on_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__mix_on_non_empty_stack(char debug)
+static char test_stack__shuffle_on_non_empty_stack(char debug)
 {
     printf("%s ", __func__);
 
@@ -774,13 +774,13 @@ static char test_stack__mix_on_non_empty_stack(char debug)
     stack__from_array(t, src, N, INT);
 
     if (debug) {
-        printf("\n\tStacks before mix:");
+        printf("\n\tStacks before shuffle:");
         stack__debug(s, (void (*)(elem_t))operator_debug_i32);
         stack__debug(t, (void (*)(elem_t))operator_debug_i32);
     }
 
-    stack__mix(s);
-    stack__mix(t);
+    stack__shuffle(s);
+    stack__shuffle(t);
 
     if (debug) {
         printf("\n\tStacks after mix:");
@@ -837,8 +837,8 @@ int main(void)
     print_test_result(test_stack__foreach_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__sort_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__sort_on_non_empty_stack(false), &nb_success, &nb_tests);
-    print_test_result(test_stack__mix_on_empty_stack(false), &nb_success, &nb_tests);
-    print_test_result(test_stack__mix_on_non_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__shuffle_on_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__shuffle_on_non_empty_stack(false), &nb_success, &nb_tests);
 
     print_test_summary(nb_success, nb_tests);
 

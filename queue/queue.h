@@ -156,7 +156,7 @@ void queue__sort(const Queue q, const compare_func_t f);
  * @note Complexity: O(n)
  * @param q the queue
  * */
-void queue__mix(const Queue q);
+void queue__shuffle(const Queue q);
 
 
 /**

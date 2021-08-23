@@ -846,7 +846,7 @@ static char test_queue__sort_on_non_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__mix_on_empty_queue(char debug)
+static char test_queue__shuffle_on_empty_queue(char debug)
 {
     printf("%s ", __func__);
 
@@ -854,8 +854,8 @@ static char test_queue__mix_on_empty_queue(char debug)
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
-    queue__mix(q);
-    queue__mix(w);
+    queue__shuffle(q);
+    queue__shuffle(w);
 
     if (debug) {
         printf("\n\tQueues after mix:");
@@ -870,7 +870,7 @@ static char test_queue__mix_on_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__mix_on_non_empty_queue(char debug)
+static char test_queue__shuffle_on_non_empty_queue(char debug)
 {
     printf("%s ", __func__);
 
@@ -886,16 +886,16 @@ static char test_queue__mix_on_non_empty_queue(char debug)
     queue__from_array(w, src, N, INT);
 
     if (debug) {
-        printf("\n\tQueues before mix:");
+        printf("\n\tQueues before shuffle:");
         queue__debug(q, (void (*)(elem_t))operator_debug_i32);
         queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
 
-    queue__mix(q);
-    queue__mix(w);
+    queue__shuffle(q);
+    queue__shuffle(w);
 
     if (debug) {
-        printf("\n\tQueues after mix:");
+        printf("\n\tQueues after shuffle:");
         queue__debug(q, (void (*)(elem_t))operator_debug_i32);
         queue__debug(w, (void (*)(elem_t))operator_debug_i32);
     }
@@ -953,8 +953,8 @@ int main(void)
     print_test_result(test_queue__foreach_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__sort_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__sort_on_non_empty_queue(false), &nb_success, &nb_tests);
-    print_test_result(test_queue__mix_on_empty_queue(false), &nb_success, &nb_tests);
-    print_test_result(test_queue__mix_on_non_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__shuffle_on_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__shuffle_on_non_empty_queue(false), &nb_success, &nb_tests);
 
     print_test_summary(nb_success, nb_tests);
 

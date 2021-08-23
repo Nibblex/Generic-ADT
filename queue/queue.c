@@ -319,7 +319,7 @@ inline void queue__sort(const Queue q, const compare_func_t f)
     qsort((q->back == q->front) ? q->elems : q->elems + q->front, q->size, sizeof(elem_t), f);
 }
 
-void queue__mix(const Queue q)
+void queue__shuffle(const Queue q)
 {
     size_t a, b;
     if (!q || q->size < 2) return;

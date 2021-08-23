@@ -101,8 +101,8 @@ char stack__pop(const Stack s, elem_t *top)
 
     s->size--;
 
-    if (s->size < s->capacity>>1 && s->capacity > DEFAULT_STACK_CAPACITY) {
-        new_capacity = s->capacity>>1;
+    new_capacity = s->capacity>>1;
+    if (s->size < new_capacity && s->capacity > DEFAULT_STACK_CAPACITY) {
         realloc_res = realloc(s->elems, sizeof(elem_t) * new_capacity);
         if (!realloc_res) return FAILURE;
 
@@ -113,7 +113,7 @@ char stack__pop(const Stack s, elem_t *top)
     return SUCCESS;
 }
 
-char stack__peek(const Stack s, elem_t *top)
+char stack__top(const Stack s, elem_t *top)
 {
     if (!s || !s->size || !top) return FAILURE;
 

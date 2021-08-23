@@ -15,7 +15,7 @@
  * void (*delete_op)(elem_t)
  * void (*debug_op)(elem_t)
  *
- * 2) 'stack__peek' and 'stack__pop' return a dynamically allocated pointer to an element in the
+ * 2) 'stack__top' and 'stack__pop' return a dynamically allocated pointer to an element in the
  * the stack in order to make it survive independently of the stack life cycle.
  * The user has to manually free the return pointer after usage.
  */
@@ -51,7 +51,7 @@ char stack__push(const Stack s, const elem_t element);
 
 
 /**
- * @brief Retrieve a copy of the top element (similar to 'stack__peek' but the element is removed of the stack)
+ * @brief Retrieve a copy of the top element (similar to 'stack__top' but the element is removed of the stack)
  * @details The element is stored in 'top' variable and must be manually freed by user afterward
  * @note Complexity: O(1)
  * @param s the stack
@@ -69,7 +69,7 @@ char stack__pop(const Stack s, elem_t *top);
  * @param top pointer to storage variable
  * @return 0 on success, 1 otherwise
  */
-char stack__peek(const Stack s, elem_t *top);
+char stack__top(const Stack s, elem_t *top);
 
 
 /**

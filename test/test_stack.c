@@ -395,7 +395,7 @@ static char test_stack__clear_on_non_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__peek_on_empty_stack(char debug)
+static char test_stack__top_on_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
@@ -403,13 +403,13 @@ static char test_stack__peek_on_empty_stack(char debug)
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
-    result = (stack__peek(s, NULL)
-           && stack__peek(t, NULL)
+    result = (stack__top(s, NULL)
+           && stack__top(t, NULL)
            && stack__is_empty(s)
            && stack__is_empty(t)) ? TEST_SUCCESS : TEST_FAILURE;
 
     if (debug) {
-        printf("\n\tStacks after peek:");
+        printf("\n\tStacks after top:");
         stack__debug(s, (void (*)(elem_t))operator_debug_i32);
         stack__debug(t, (void (*)(elem_t))operator_debug_i32);
     }
@@ -419,7 +419,7 @@ static char test_stack__peek_on_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__peek_on_non_empty_stack(char debug)
+static char test_stack__top_on_non_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
@@ -437,20 +437,20 @@ static char test_stack__peek_on_non_empty_stack(char debug)
     stack__push(t, &value2);
 
     if (debug) {
-        printf("\n\tStacks before peek:");
+        printf("\n\tStacks before top:");
         stack__debug(s, (void (*)(elem_t))operator_debug_i32);
         stack__debug(t, (void (*)(elem_t))operator_debug_i32);
     }
 
-    result = (!stack__peek(s, &top_s)
-           && !stack__peek(t, &top_t)
+    result = (!stack__top(s, &top_s)
+           && !stack__top(t, &top_t)
            && !stack__is_empty(s)
            && !stack__is_empty(t)
            && *(int *)top_s == 7
            && *(int *)top_t == 7) ? TEST_SUCCESS : TEST_FAILURE;
 
     if (debug) {
-        printf("\n\tStacks after peek:");
+        printf("\n\tStacks after top:");
         stack__debug(s, (void (*)(elem_t))operator_debug_i32);
         stack__debug(t, (void (*)(elem_t))operator_debug_i32);
     }
@@ -827,8 +827,8 @@ int main(void)
     print_test_result(test_stack__clean_NULL_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__clear_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__clear_on_non_empty_stack(false), &nb_success, &nb_tests);
-    print_test_result(test_stack__peek_on_empty_stack(false), &nb_success, &nb_tests);
-    print_test_result(test_stack__peek_on_non_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__top_on_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__top_on_non_empty_stack(false), &nb_success, &nb_tests);
 
     print_test_result(test_stack__from_array(false), &nb_success, &nb_tests);
     print_test_result(test_stack__to_array_on_empty_stack(false), &nb_success, &nb_tests);

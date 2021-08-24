@@ -61,7 +61,7 @@ inline Stack stack__empty_copy_disabled(void)
 char stack__push(const Stack s, const elem_t element)
 {
     size_t new_capacity;
-    void *realloc_res = NULL;
+    elem_t *realloc_res = NULL;
     if (!s) return FAILURE;
 
     // Adjust capacity if necessary
@@ -88,7 +88,7 @@ char stack__push(const Stack s, const elem_t element)
 char stack__pop(const Stack s, elem_t *top)
 {
     size_t new_capacity;
-    void *realloc_res = NULL;
+    elem_t *realloc_res = NULL;
     if (!s || !s->size) return FAILURE;
 
     if (top) {

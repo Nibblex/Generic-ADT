@@ -92,7 +92,7 @@ inline Queue queue__empty_copy_disabled(void)
 char queue__enqueue(const Queue q, const elem_t element)
 {
     size_t new_capacity;
-    void *realloc_res = NULL;
+    elem_t *realloc_res = NULL;
     if (!q) return FAILURE;
 
     // Adjust capacity if necessary

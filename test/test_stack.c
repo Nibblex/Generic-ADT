@@ -468,19 +468,22 @@ static char test_stack__from_array(char debug)
     char result;
     int A[5] = {1, 2, 3, 4, 5};
     char B[5] = {'a', 'b', 'c', 'd', 'e'};
+    char C[5] = {'f', 'g', 'h', 'i', 'j'};
     Stack s_int = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t_int = stack__empty_copy_disabled();
     Stack s_char = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t_char = stack__empty_copy_disabled();
 
-    result = (stack__from_array(s_int, A, 5, INT)
-           && stack__from_array(t_int, A, 5, INT)
-           && stack__from_array(s_char, B, 5, CHAR)
-           && stack__from_array(t_char, B, 5, CHAR)
+    result = (stack__from_array(s_int, (elem_t *)A, 5, INT)
+           && stack__from_array(t_int, (elem_t *)A, 5, INT)
+           && stack__from_array(s_char, (elem_t *)B, 5, CHAR)
+           && stack__from_array(t_char, (elem_t *)B, 5, CHAR)
+           && stack__from_array(s_char, (elem_t *)C, 5, CHAR)
+           && stack__from_array(t_char, (elem_t *)C, 5, CHAR)
            && stack__size(s_int) == 5
            && stack__size(t_int) == 5
-           && stack__size(s_char) == 5
-           && stack__size(t_char) == 5) ? TEST_SUCCESS : TEST_FAILURE;
+           && stack__size(s_char) == 10
+           && stack__size(t_char) == 10) ? TEST_SUCCESS : TEST_FAILURE;
 
     if (debug) {
         printf("\n\tStacks after to_array:");
@@ -606,8 +609,8 @@ static char test_stack__foreach_on_non_empty_stack(char debug)
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
-    stack__from_array(s, array, N, INT);
-    stack__from_array(t, array, N, INT);
+    stack__from_array(s, (elem_t *)array, N, INT);
+    stack__from_array(t, (elem_t *)array, N, INT);
 
     for (u32 i = 0; i < N>>1; i++) {
         stack__pop(s, NULL);
@@ -695,8 +698,8 @@ static char test_stack__sort_on_non_empty_stack(char debug)
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
-    stack__from_array(s, unordered, N, INT);
-    stack__from_array(t, unordered, N, INT);
+    stack__from_array(s, (elem_t *)unordered, N, INT);
+    stack__from_array(t, (elem_t *)unordered, N, INT);
 
     if (debug) {
         printf("\n\tStacks before sort:");
@@ -767,8 +770,8 @@ static char test_stack__shuffle_on_non_empty_stack(char debug)
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
-    stack__from_array(s, src, N, INT);
-    stack__from_array(t, src, N, INT);
+    stack__from_array(s, (elem_t *)src, N, INT);
+    stack__from_array(t, (elem_t *)src, N, INT);
 
     if (debug) {
         printf("\n\tStacks before shuffle:");

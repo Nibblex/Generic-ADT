@@ -121,6 +121,7 @@ char queue__enqueue(const Queue q, const elem_t element)
 
 char queue__dequeue(const Queue q)
 {
+    size_t new_capacity;
     if (!q || !q->size) return FAILURE;
 
     if (q->operator_delete) {
@@ -130,9 +131,9 @@ char queue__dequeue(const Queue q)
     q->front = (q->front + 1 == q->capacity) ? 0 : q->front + 1;
     q->size--;
 
-    //note: in order to avoid overwriting datas, a new elems must be created
-    if (q->size < q->capacity>>1 && q->capacity > DEFAULT_QUEUE_CAPACITY) {
-        if (queue__shrink(q->capacity>>1, q)) return FAILURE;
+    new_capacity = q->capacity>>1;
+    if (q->size < new_capacity && q->capacity > DEFAULT_QUEUE_CAPACITY) {
+        if (queue__shrink(new_capacity, q)) return FAILURE;
     }
 
     return SUCCESS;
@@ -140,6 +141,7 @@ char queue__dequeue(const Queue q)
 
 char queue__pop(const Queue q, elem_t *front)
 {
+    size_t new_capacity;
     if (!q || !q->size) return FAILURE;
 
     if (front) {
@@ -153,9 +155,9 @@ char queue__pop(const Queue q, elem_t *front)
     q->front = (q->front + 1 == q->capacity) ? 0 : q->front + 1;
     q->size--;
 
-    //note: in order to avoid overwriting datas, a new elems must be created
-    if (q->size < q->capacity>>1 && q->capacity > DEFAULT_QUEUE_CAPACITY) {
-        if (queue__shrink(q->capacity>>1, q)) return FAILURE;
+    new_capacity = q->capacity>>1;
+    if (q->size < new_capacity && q->capacity > DEFAULT_QUEUE_CAPACITY) {
+        if (queue__shrink(new_capacity, q)) return FAILURE;
     }
 
     return SUCCESS;
@@ -197,7 +199,7 @@ inline size_t queue__size(const Queue q)
     return q ? q->size : 0;
 }
 
-Queue queue__from_array(Queue q, const elem_t *A, const size_t n_elems, const DataType type)
+Queue queue__from_array(Queue q, const elem_t A, const size_t n_elems, const DataType type)
 {
     if (!A) return q;
 

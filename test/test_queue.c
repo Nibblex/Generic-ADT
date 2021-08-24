@@ -591,6 +591,7 @@ static char test_queue__from_array(char debug)
     char result;
     int A[5] = {1, 2, 3, 4, 5};
     char B[5] = {'a', 'b', 'c', 'd', 'e'};
+    char C[5] = {'f', 'g', 'h', 'i', 'j'};
     Queue q_int = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w_int = queue__empty_copy_disabled();
     Queue q_char = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
@@ -600,10 +601,12 @@ static char test_queue__from_array(char debug)
            && queue__from_array(w_int, A, 5, INT)
            && queue__from_array(q_char, B, 5, CHAR)
            && queue__from_array(w_char, B, 5, CHAR)
+           && queue__from_array(q_char, C, 5, CHAR)
+           && queue__from_array(w_char, C, 5, CHAR)
            && queue__size(q_int) == 5
            && queue__size(w_int) == 5
-           && queue__size(q_char) == 5
-           && queue__size(w_char) == 5) ? TEST_SUCCESS : TEST_FAILURE;
+           && queue__size(q_char) == 10
+           && queue__size(w_char) == 10) ? TEST_SUCCESS : TEST_FAILURE;
 
     if (debug) {
         printf("\n\tQueues after to_array:");

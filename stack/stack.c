@@ -149,49 +149,43 @@ Stack stack__from_array(Stack s, const elem_t *A, const size_t n_elems, const Da
     switch (type) {
         case CHAR:
             {
-                char *B = (char *)A;
                 for (size_t i = 0; i < n_elems; i++) {
-                    if (stack__push(s, &B[i])) goto error;
+                    if (stack__push(s, (char *)A+i)) goto error;
                 }
             }
             break;
         case INT:
             {
-                int *B = (int *)A;
                 for (size_t i = 0; i < n_elems; i++) {
-                    if (stack__push(s, &B[i])) goto error;
+                    if (stack__push(s, (int *)A+i)) goto error;
                 }
             }
             break;
         case UINT:
             {
-                unsigned int *B = (unsigned int *)A;
                 for (size_t i = 0; i < n_elems; i++) {
-                    if (stack__push(s, &B[i])) goto error;
+                    if (stack__push(s, (unsigned int *)A+i)) goto error;
                 }
             }
             break;
         case FLOAT:
             {
-                float *B = (float *)A;
                 for (size_t i = 0; i < n_elems; i++) {
-                    if (stack__push(s, &B[i])) goto error;
+                    if (stack__push(s, (float *)A+i)) goto error;
                 }
             }
             break;
         case STRING:
             {
-                char **B = (char **)A;
                 for (size_t i = 0; i < n_elems; i++) {
-                    if (stack__push(s, &B[i])) goto error;
+                    if (stack__push(s, (char **)A+i)) goto error;
                 }
             }
             break;
         case GENERIC:
             {
-                elem_t *B = (elem_t *)A;
                 for (size_t i = 0; i < n_elems; i++) {
-                    if (stack__push(s, &B[i])) goto error;
+                    if (stack__push(s, (elem_t *)A+i)) goto error;
                 }
             }
             break;

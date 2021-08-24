@@ -40,6 +40,7 @@ void* operator_copy(const int *p_value);
 void operator_delete(int *p_value);
 int operator_compare(const void *v1, const void *v2);
 void operator_debug_i32(const int *p_value);
+void operator_debug_u32(const int *p_value);
 void operator_debug_char(const char *p_value);
 void plus_op(int *v, void *user_data);
 

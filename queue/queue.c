@@ -203,84 +203,51 @@ Queue queue__from_array(Queue q, const elem_t A, const size_t n_elems, const Dat
 {
     if (!A) return q;
 
+    if (!q) {
+        q = queue__init(NULL, NULL);
+        if (!q) return NULL;
+    }
+
     switch (type) {
         case CHAR:
-            {
-                if (!q) {
-                    q = queue__init(NULL, NULL);
-                    if (!q) return NULL;
-                }
-                char *B = (char *)A;
-                for (size_t i = 0; i < n_elems; i++) {
-                    queue__enqueue(q, &B[i]);
-                }
+            for (size_t i = 0; i < n_elems; i++) {
+                if (queue__enqueue(q, (char *)A+i)) goto error;
             }
             break;
         case INT:
-            {
-                if (!q) {
-                    q = queue__init(NULL, NULL);
-                    if (!q) return NULL;
-                }
-                int *B = (int *)A;
-                for (size_t i = 0; i < n_elems; i++) {
-                    queue__enqueue(q, &B[i]);
-                }
+            for (size_t i = 0; i < n_elems; i++) {
+                if (queue__enqueue(q, (int *)A+i)) goto error;
             }
             break;
         case UINT:
-            {
-                if (!q) {
-                    q = queue__init(NULL, NULL);
-                    if (!q) return NULL;
-                }
-                unsigned int *B = (unsigned int *)A;
-                for (size_t i = 0; i < n_elems; i++) {
-                    queue__enqueue(q, &B[i]);
-                }
+            for (size_t i = 0; i < n_elems; i++) {
+                if (queue__enqueue(q, (unsigned int *)A+i)) goto error;
             }
             break;
         case FLOAT:
-            {
-                if (!q) {
-                    q = queue__init(NULL, NULL);
-                    if (!q) return NULL;
-                }
-                float *B = (float *)A;
-                for (size_t i = 0; i < n_elems; i++) {
-                    queue__enqueue(q, &B[i]);
-                }
+            for (size_t i = 0; i < n_elems; i++) {
+                if (queue__enqueue(q, (float *)A+i)) goto error;
             }
             break;
         case STRING:
-            {
-                if (!q) {
-                    q = queue__init(NULL, NULL);
-                    if (!q) return NULL;
-                }
-                char **B = (char **)A;
-                for (size_t i = 0; i < n_elems; i++) {
-                    queue__enqueue(q, &B[i]);
-                }
+            for (size_t i = 0; i < n_elems; i++) {
+                if (queue__enqueue(q, (char **)A+i)) goto error;
             }
             break;
         case GENERIC:
-            {
-                if (!q) {
-                    q = queue__init(NULL, NULL);
-                    if (!q) return NULL;
-                }
-                elem_t *B = (elem_t *)A;
-                for (size_t i = 0; i < n_elems; i++) {
-                    queue__enqueue(q, &B[i]);
-                }
+            for (size_t i = 0; i < n_elems; i++) {
+                if (queue__enqueue(q, (elem_t *)A+i)) goto error;
             }
             break;
         default:
-            return NULL;
+            goto error;
     }
 
     return q;
+
+error:
+    queue__free(q);
+    return NULL;
 }
 
 elem_t *queue__to_array(const Queue q)

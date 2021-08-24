@@ -466,37 +466,37 @@ static char test_stack__from_array(char debug)
     printf("%s ", __func__);
 
     char result;
-    int A[5] = {1, 2, 3, 4, 5};
-    char B[5] = {'a', 'b', 'c', 'd', 'e'};
-    char C[5] = {'f', 'g', 'h', 'i', 'j'};
-    Stack s_int = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
-    Stack t_int = stack__empty_copy_disabled();
+    char A[5] = {'a', 'b', 'c', 'd', 'e'};
+    char B[5] = {'f', 'g', 'h', 'i', 'j'};
+    int C[5] = {1, 2, 3, 4, 5};
     Stack s_char = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t_char = stack__empty_copy_disabled();
+    Stack s_int = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+    Stack t_int = stack__empty_copy_disabled();
 
-    result = (stack__from_array(s_int, (elem_t *)A, 5, INT)
-           && stack__from_array(t_int, (elem_t *)A, 5, INT)
+    result = (stack__from_array(s_char, (elem_t *)A, 5, CHAR)
+           && stack__from_array(t_char, (elem_t *)A, 5, CHAR)
            && stack__from_array(s_char, (elem_t *)B, 5, CHAR)
            && stack__from_array(t_char, (elem_t *)B, 5, CHAR)
-           && stack__from_array(s_char, (elem_t *)C, 5, CHAR)
-           && stack__from_array(t_char, (elem_t *)C, 5, CHAR)
-           && stack__size(s_int) == 5
-           && stack__size(t_int) == 5
+           && stack__from_array(s_int, (elem_t *)C, 5, INT)
+           && stack__from_array(t_int, (elem_t *)C, 5, INT)
            && stack__size(s_char) == 10
-           && stack__size(t_char) == 10) ? TEST_SUCCESS : TEST_FAILURE;
+           && stack__size(t_char) == 10
+           && stack__size(s_int) == 5
+           && stack__size(t_int) == 5) ? TEST_SUCCESS : TEST_FAILURE;
 
     if (debug) {
         printf("\n\tStacks after to_array:");
-        stack__debug(s_int, (void (*)(elem_t))operator_debug_i32);
-        stack__debug(t_int, (void (*)(elem_t))operator_debug_i32);
         stack__debug(s_char, (void (*)(elem_t))operator_debug_char);
         stack__debug(t_char, (void (*)(elem_t))operator_debug_char);
+        stack__debug(s_int, (void (*)(elem_t))operator_debug_i32);
+        stack__debug(t_int, (void (*)(elem_t))operator_debug_i32);
     }
 
-    stack__free(s_int);
-    stack__free(t_int);
     stack__free(s_char);
     stack__free(t_char);
+    stack__free(s_int);
+    stack__free(t_int);
     return result;
 }
 

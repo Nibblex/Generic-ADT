@@ -589,37 +589,37 @@ static char test_queue__from_array(char debug)
     printf("%s ", __func__);
 
     char result;
-    int A[5] = {1, 2, 3, 4, 5};
-    char B[5] = {'a', 'b', 'c', 'd', 'e'};
-    char C[5] = {'f', 'g', 'h', 'i', 'j'};
-    Queue q_int = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
-    Queue w_int = queue__empty_copy_disabled();
+    char A[5] = {'a', 'b', 'c', 'd', 'e'};
+    char B[5] = {'f', 'g', 'h', 'i', 'j'};
+    int C[5] = {1, 2, 3, 4, 5};
     Queue q_char = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w_char = queue__empty_copy_disabled();
+    Queue q_int = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+    Queue w_int = queue__empty_copy_disabled();
 
-    result = (queue__from_array(q_int, A, 5, INT)
-           && queue__from_array(w_int, A, 5, INT)
+    result = (queue__from_array(q_char, A, 5, CHAR)
+           && queue__from_array(w_char, A, 5, CHAR)
            && queue__from_array(q_char, B, 5, CHAR)
            && queue__from_array(w_char, B, 5, CHAR)
-           && queue__from_array(q_char, C, 5, CHAR)
-           && queue__from_array(w_char, C, 5, CHAR)
-           && queue__size(q_int) == 5
-           && queue__size(w_int) == 5
+           && queue__from_array(q_int, C, 5, INT)
+           && queue__from_array(w_int, C, 5, INT)
            && queue__size(q_char) == 10
-           && queue__size(w_char) == 10) ? TEST_SUCCESS : TEST_FAILURE;
+           && queue__size(w_char) == 10
+           && queue__size(q_int) == 5
+           && queue__size(w_int) == 5) ? TEST_SUCCESS : TEST_FAILURE;
 
     if (debug) {
         printf("\n\tQueues after to_array:");
-        queue__debug(q_int, (void (*)(elem_t))operator_debug_i32);
-        queue__debug(w_int, (void (*)(elem_t))operator_debug_i32);
         queue__debug(q_char, (void (*)(elem_t))operator_debug_char);
         queue__debug(w_char, (void (*)(elem_t))operator_debug_char);
+        queue__debug(q_int, (void (*)(elem_t))operator_debug_i32);
+        queue__debug(w_int, (void (*)(elem_t))operator_debug_i32);
     }
 
-    queue__free(q_int);
-    queue__free(w_int);
     queue__free(q_char);
     queue__free(w_char);
+    queue__free(q_int);
+    queue__free(w_int);
     return result;
 }
 

@@ -109,7 +109,7 @@ size_t stack__size(const Stack s);
  * @param type type of array elements, available types: 'CHAR', 'INT', 'UINT', 'FLOAT', 'STRING', 'GENERIC'
  * @return a stack containing all the elements of the array, NULL on error
  */
-Stack stack__from_array(Stack s, const void *A, const size_t n_elems, const DataType type);
+Stack stack__from_array(Stack s, const elem_t *A, const size_t n_elems, const DataType type);
 
 
 /**

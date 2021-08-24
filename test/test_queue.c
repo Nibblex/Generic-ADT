@@ -590,8 +590,7 @@ static char test_queue__from_array(char debug)
 
     char result;
     int A[5] = {1, 2, 3, 4, 5};
-    int B[5] = {6, 7, 8, 9, 10};
-    char C[5] = {'a', 'b', 'c', 'd', 'e'};
+    char B[5] = {'a', 'b', 'c', 'd', 'e'};
     Queue q_int = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w_int = queue__empty_copy_disabled();
     Queue q_char = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
@@ -599,12 +598,10 @@ static char test_queue__from_array(char debug)
 
     result = (queue__from_array(q_int, A, 5, INT)
            && queue__from_array(w_int, A, 5, INT)
-           && queue__from_array(q_int, B, 5, INT)
-           && queue__from_array(w_int, B, 5, INT)
-           && queue__from_array(q_char, C, 5, CHAR)
-           && queue__from_array(w_char, C, 5, CHAR)
-           && queue__size(q_int) == 10
-           && queue__size(w_int) == 10
+           && queue__from_array(q_char, B, 5, CHAR)
+           && queue__from_array(w_char, B, 5, CHAR)
+           && queue__size(q_int) == 5
+           && queue__size(w_int) == 5
            && queue__size(q_char) == 5
            && queue__size(w_char) == 5) ? TEST_SUCCESS : TEST_FAILURE;
 

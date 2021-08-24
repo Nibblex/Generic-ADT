@@ -467,8 +467,7 @@ static char test_stack__from_array(char debug)
 
     char result;
     int A[5] = {1, 2, 3, 4, 5};
-    int B[5] = {6, 7, 8, 9, 10};
-    char C[5] = {'a', 'b', 'c', 'd', 'e'};
+    char B[5] = {'a', 'b', 'c', 'd', 'e'};
     Stack s_int = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t_int = stack__empty_copy_disabled();
     Stack s_char = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
@@ -476,12 +475,10 @@ static char test_stack__from_array(char debug)
 
     result = (stack__from_array(s_int, A, 5, INT)
            && stack__from_array(t_int, A, 5, INT)
-           && stack__from_array(s_int, B, 5, INT)
-           && stack__from_array(t_int, B, 5, INT)
-           && stack__from_array(s_char, C, 5, CHAR)
-           && stack__from_array(t_char, C, 5, CHAR)
-           && stack__size(s_int) == 10
-           && stack__size(t_int) == 10
+           && stack__from_array(s_char, B, 5, CHAR)
+           && stack__from_array(t_char, B, 5, CHAR)
+           && stack__size(s_int) == 5
+           && stack__size(t_int) == 5
            && stack__size(s_char) == 5
            && stack__size(t_char) == 5) ? TEST_SUCCESS : TEST_FAILURE;
 

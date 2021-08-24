@@ -141,84 +141,69 @@ Stack stack__from_array(Stack s, const void *A, const size_t n_elems, const Data
 {
     if (!A) return s;
 
+    if (!s) {
+        s = stack__init(NULL, NULL);
+        if (!s) return NULL;
+    }
+
     switch (type) {
         case CHAR:
             {
-                if (!s) {
-                    s = stack__init(NULL, NULL);
-                    if (!s) return NULL;
-                }
                 char *B = (char *)A;
                 for (size_t i = 0; i < n_elems; i++) {
-                    stack__push(s, &B[i]);
+                    if (stack__push(s, &B[i])) goto error;
                 }
             }
             break;
         case INT:
             {
-                if (!s) {
-                    s = stack__init(NULL, NULL);
-                    if (!s) return NULL;
-                }
                 int *B = (int *)A;
                 for (size_t i = 0; i < n_elems; i++) {
-                    stack__push(s, &B[i]);
+                    if (stack__push(s, &B[i])) goto error;
                 }
             }
             break;
         case UINT:
             {
-                if (!s) {
-                    s = stack__init(NULL, NULL);
-                    if (!s) return NULL;
-                }
                 unsigned int *B = (unsigned int *)A;
                 for (size_t i = 0; i < n_elems; i++) {
-                    stack__push(s, &B[i]);
+                    if (stack__push(s, &B[i])) goto error;
                 }
             }
             break;
         case FLOAT:
             {
-                if (!s) {
-                    s = stack__init(NULL, NULL);
-                    if (!s) return NULL;
-                }
                 float *B = (float *)A;
                 for (size_t i = 0; i < n_elems; i++) {
-                    stack__push(s, &B[i]);
+                    if (stack__push(s, &B[i])) goto error;
                 }
             }
             break;
         case STRING:
             {
-                if (!s) {
-                    s = stack__init(NULL, NULL);
-                    if (!s) return NULL;
-                }
                 char **B = (char **)A;
                 for (size_t i = 0; i < n_elems; i++) {
-                    stack__push(s, &B[i]);
+                    if (stack__push(s, &B[i])) goto error;
                 }
             }
             break;
         case GENERIC:
             {
-                if (!s) {
-                    s = stack__init(NULL, NULL);
-                    if (!s) return NULL;
-                }
                 elem_t *B = (elem_t *)A;
                 for (size_t i = 0; i < n_elems; i++) {
-                    stack__push(s, &B[i]);
+                    if (stack__push(s, &B[i])) goto error;
                 }
             }
             break;
         default:
-            return NULL;
+            goto error;
     }
 
     return s;
+
+error:
+    stack__free(s);
+    return NULL;
 }
 
 elem_t *stack__to_array(const Stack s)

@@ -27,7 +27,7 @@
 typedef void * elem_t;
 
 /**
- * Data types used in 'queue__from_array' function as a parameter
+ * Data types definition used in some functions
  */
 typedef enum {CHAR = 0, INT, UINT, FLOAT, STRING, GENERIC} DataType;
 

@@ -1,6 +1,13 @@
 #ifndef __COMMON_TESTS_UTILS_H__
 #define __COMMON_TESTS_UTILS_H__
 
+#ifndef TEST_SUCCESS
+#define TEST_SUCCESS 0
+#endif
+#ifndef TEST_FAILURE
+#define TEST_FAILURE 1
+#endif
+
 #define STACK_DEBUG_char(A, B, C) \
     if (debug) { \
         printf(C); \
@@ -28,13 +35,6 @@
         queue__debug(A, (void (*)(elem_t))operator_debug_i32); \
         queue__debug(B, (void (*)(elem_t))operator_debug_i32); \
     }
-
-#ifndef TEST_SUCCESS
-#define TEST_SUCCESS 0
-#endif
-#ifndef TEST_FAILURE
-#define TEST_FAILURE 1
-#endif
 
 #include <stdio.h>
 #include <stdlib.h>

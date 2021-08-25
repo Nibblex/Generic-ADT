@@ -67,6 +67,7 @@ char stack__push(const Stack s, const elem_t element)
     // Adjust capacity if necessary
     if (s->size == s->capacity) {
         new_capacity = s->capacity<<1;
+
         do {
             realloc_res = realloc(s->elems, sizeof(elem_t) * new_capacity);
             if (!realloc_res) {
@@ -75,8 +76,8 @@ char stack__push(const Stack s, const elem_t element)
         } while (!realloc_res);
         if (new_capacity == s->capacity) return FAILURE;
 
-        s->capacity = new_capacity;
         s->elems = realloc_res;
+        s->capacity = new_capacity;
     }
 
     s->elems[s->size] = s->operator_copy ? s->operator_copy(element) : element;
@@ -102,12 +103,12 @@ char stack__pop(const Stack s, elem_t *top)
     s->size--;
 
     new_capacity = s->capacity>>1;
-    if (s->size < new_capacity && s->capacity > DEFAULT_STACK_CAPACITY) {
+    if (s->size < new_capacity && new_capacity >= DEFAULT_STACK_CAPACITY) {
         realloc_res = realloc(s->elems, sizeof(elem_t) * new_capacity);
-        if (!realloc_res) return FAILURE;
-
-        s->elems = realloc_res;
-        s->capacity = new_capacity;
+        if (realloc_res) {
+            s->elems = realloc_res;
+            s->capacity = new_capacity;
+        }
     }
 
     return SUCCESS;
@@ -257,7 +258,10 @@ void stack__foreach(const Stack s, const applying_func_t f, void *user_data)
 
 void stack__clean_NULL(Stack s)
 {
-    size_t k = 0;
+    size_t k;
+    if (!s) return;
+
+    k = 0;
     for (size_t i = 0; i < s->size; i++) {
         if (s->elems[i]) {
             s->elems[k] = s->elems[i];

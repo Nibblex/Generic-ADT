@@ -98,6 +98,7 @@ char queue__enqueue(const Queue q, const elem_t element)
     // Adjust capacity if necessary
     if (q->size == q->capacity) {
         new_capacity = q->capacity<<1;
+
         do {
             realloc_res = realloc(q->elems, sizeof(elem_t) * new_capacity);
             if (!realloc_res) {
@@ -106,8 +107,9 @@ char queue__enqueue(const Queue q, const elem_t element)
         } while (!realloc_res);
         if (new_capacity == q->capacity) return FAILURE;
 
-        q->capacity = new_capacity;
         q->elems = realloc_res;
+        q->capacity = new_capacity;
+
         q->back = q->front + q->size;
         memmove(q->elems + q->size, q->elems, sizeof(elem_t) * q->front);
     }
@@ -132,7 +134,7 @@ char queue__dequeue(const Queue q)
     q->size--;
 
     new_capacity = q->capacity>>1;
-    if (q->size < new_capacity && q->capacity > DEFAULT_QUEUE_CAPACITY) {
+    if (q->size < new_capacity && new_capacity >= DEFAULT_QUEUE_CAPACITY) {
         if (queue__shrink(new_capacity, q)) return FAILURE;
     }
 

@@ -201,9 +201,11 @@ inline size_t queue__size(const Queue q)
 
 Queue queue__from_array(Queue q, const elem_t A, const size_t n_elems, const DataType type)
 {
+    char new_queue = false;
     if (!A) return q;
 
     if (!q) {
+        new_queue = true;
         q = queue__init(NULL, NULL);
         if (!q) return NULL;
     }
@@ -246,7 +248,10 @@ Queue queue__from_array(Queue q, const elem_t A, const size_t n_elems, const Dat
     return q;
 
 error:
-    queue__free(q);
+    if (new_queue) {
+        queue__free(q);
+    }
+
     return NULL;
 }
 

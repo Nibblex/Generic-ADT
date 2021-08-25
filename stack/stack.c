@@ -139,9 +139,11 @@ size_t stack__size(const Stack s)
 
 Stack stack__from_array(Stack s, const elem_t *A, const size_t n_elems, const DataType type)
 {
+    char new_stack = false;
     if (!A) return s;
 
     if (!s) {
+        new_stack = true;
         s = stack__init(NULL, NULL);
         if (!s) return NULL;
     }
@@ -184,7 +186,10 @@ Stack stack__from_array(Stack s, const elem_t *A, const size_t n_elems, const Da
     return s;
 
 error:
-    stack__free(s);
+    if (new_stack) {
+        stack__free(s);
+    }
+
     return NULL;
 }
 

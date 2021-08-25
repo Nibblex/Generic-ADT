@@ -118,7 +118,7 @@ static char test_stack__push_on_empty_stack(char debug)
            && stack__size(t) == 1) ? TEST_SUCCESS : TEST_FAILURE;
 
     if (debug) {
-        printf("\n\tStacks after enqueue:");
+        printf("\n\tStacks after push:");
         stack__debug(s, (void (*)(elem_t))operator_debug_i32);
         stack__debug(t, (void (*)(elem_t))operator_debug_i32);
     }
@@ -463,7 +463,7 @@ static char test_stack__top_on_non_empty_stack(char debug)
 
 static char test_stack__from_array(char debug)
 {
-    printf("%s ", __func__);
+    printf("%s... ", __func__);
 
     char result;
     char A[5] = {'a', 'b', 'c', 'd', 'e'};
@@ -502,7 +502,7 @@ static char test_stack__from_array(char debug)
 
 static char test_stack__to_array_on_empty_stack(char debug)
 {
-    printf("%s ", __func__);
+    printf("%s... ", __func__);
 
     char result;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
@@ -526,7 +526,7 @@ static char test_stack__to_array_on_empty_stack(char debug)
 
 static char test_stack__to_array_on_non_empty_stack(char debug)
 {
-    printf("%s ", __func__);
+    printf("%s... ", __func__);
 
     char result;
     u32 N = 5;
@@ -573,7 +573,7 @@ static char test_stack__to_array_on_non_empty_stack(char debug)
 
 static char test_stack__foreach_on_empty_stack(char debug)
 {
-    printf("%s ", __func__);
+    printf("%s... ", __func__);
 
     char result;
     int value = 1;
@@ -598,7 +598,7 @@ static char test_stack__foreach_on_empty_stack(char debug)
 
 static char test_stack__foreach_on_non_empty_stack(char debug)
 {
-    printf("%s ", __func__);
+    printf("%s... ", __func__);
 
     char result;
     u32 N = 8;
@@ -663,7 +663,7 @@ static char test_stack__foreach_on_non_empty_stack(char debug)
 
 static char test_stack__sort_on_empty_stack(char debug)
 {
-    printf("%s ", __func__);
+    printf("%s... ", __func__);
 
     char result;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
@@ -687,7 +687,7 @@ static char test_stack__sort_on_empty_stack(char debug)
 
 static char test_stack__sort_on_non_empty_stack(char debug)
 {
-    printf("%s ", __func__);
+    printf("%s... ", __func__);
 
     char result;
     u32 N = 8;
@@ -736,7 +736,7 @@ static char test_stack__sort_on_non_empty_stack(char debug)
 
 static char test_stack__shuffle_on_empty_stack(char debug)
 {
-    printf("%s ", __func__);
+    printf("%s... ", __func__);
 
     char result;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
@@ -760,7 +760,7 @@ static char test_stack__shuffle_on_empty_stack(char debug)
 
 static char test_stack__shuffle_on_non_empty_stack(char debug)
 {
-    printf("%s ", __func__);
+    printf("%s... ", __func__);
 
     char result;
     u32 N = 8;

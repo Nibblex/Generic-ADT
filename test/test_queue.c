@@ -586,7 +586,7 @@ static char test_queue__back_on_non_empty_queue(char debug)
 
 static char test_queue__from_array(char debug)
 {
-    printf("%s ", __func__);
+    printf("%s... ", __func__);
 
     char result;
     char A[5] = {'a', 'b', 'c', 'd', 'e'};
@@ -625,7 +625,7 @@ static char test_queue__from_array(char debug)
 
 static char test_queue__to_array_on_empty_queue(char debug)
 {
-    printf("%s ", __func__);
+    printf("%s... ", __func__);
 
     char result;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
@@ -649,7 +649,7 @@ static char test_queue__to_array_on_empty_queue(char debug)
 
 static char test_queue__to_array_on_non_empty_queue(char debug)
 {
-    printf("%s ", __func__);
+    printf("%s... ", __func__);
 
     char result;
     u32 N = 5;
@@ -696,7 +696,7 @@ static char test_queue__to_array_on_non_empty_queue(char debug)
 
 static char test_queue__foreach_on_empty_queue(char debug)
 {
-    printf("%s ", __func__);
+    printf("%s... ", __func__);
 
     char result;
     int value = 1;
@@ -721,7 +721,7 @@ static char test_queue__foreach_on_empty_queue(char debug)
 
 static char test_queue__foreach_on_non_empty_queue(char debug)
 {
-    printf("%s ", __func__);
+    printf("%s... ", __func__);
 
     char result;
     u32 N = 8;
@@ -775,7 +775,7 @@ static char test_queue__foreach_on_non_empty_queue(char debug)
 
 static char test_queue__sort_on_empty_queue(char debug)
 {
-    printf("%s ", __func__);
+    printf("%s... ", __func__);
 
     char result;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
@@ -799,7 +799,7 @@ static char test_queue__sort_on_empty_queue(char debug)
 
 static char test_queue__sort_on_non_empty_queue(char debug)
 {
-    printf("%s ", __func__);
+    printf("%s... ", __func__);
 
     char result;
     u32 N = 8;
@@ -848,7 +848,7 @@ static char test_queue__sort_on_non_empty_queue(char debug)
 
 static char test_queue__shuffle_on_empty_queue(char debug)
 {
-    printf("%s ", __func__);
+    printf("%s... ", __func__);
 
     char result;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
@@ -872,7 +872,7 @@ static char test_queue__shuffle_on_empty_queue(char debug)
 
 static char test_queue__shuffle_on_non_empty_queue(char debug)
 {
-    printf("%s ", __func__);
+    printf("%s... ", __func__);
 
     char result;
     u32 N = 8;

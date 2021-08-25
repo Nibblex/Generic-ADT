@@ -202,7 +202,7 @@ inline size_t queue__size(const Queue q)
 Queue queue__from_array(Queue q, const elem_t A, const size_t n_elems, const DataType type)
 {
     char new_queue = false;
-    if (!A) return q;
+    if (!A) return NULL;
 
     if (!q) {
         new_queue = true;

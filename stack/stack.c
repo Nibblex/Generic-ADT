@@ -308,7 +308,7 @@ void stack__debug(const Stack s, void (*debug_op) (elem_t))
         printf("\n\n");
         stack__is_copy_enabled(s) ? printf("\tStack with copy enabled:")
                                   : printf("\tStack with copy disabled:");
-        printf("\n\tsize: %lu, \n\tcapacity: %lu, \n\tcontent: \n\t", s->size, s->capacity);
+        printf("\n\tStack size: %lu, \n\tStack capacity: %lu, \n\tStack content: \n\t", s->size, s->capacity);
         printf("{ ");
         for (size_t i = 0; i < s->capacity; i++) {
             if (i < s->size) {
@@ -317,7 +317,6 @@ void stack__debug(const Stack s, void (*debug_op) (elem_t))
                 printf("_ ");
             }
         }
-        printf("} ");
-        printf("\n\n");
+        printf("}\n");
     }
 }

@@ -433,6 +433,9 @@ void queue__debug(const Queue q, void (*debug_op) (elem_t))
     if (!q || !q->elems) {
         printf("\n\tQueue (NULL)\n");
     } else {
+        printf("\n\n");
+        queue__is_copy_enabled(q) ? printf("\tQueue with copy enabled:")
+                                  : printf("\tQueue with copy disabled:");
         printf("\n\tQueue size: %lu\n\tQueue capacity: %lu\n\tQueue front: %lu\n\tQueue back: %lu\n\tQueue content: \n", q->size
                                                                                                                        , q->capacity
                                                                                                                        , q->front

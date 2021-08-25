@@ -152,9 +152,9 @@ static char test_stack__push_on_non_empty_stack(char debug)
         stack__push(t, &i);
     }
 
-    DEBUG_i32(s, t, "\n\tStacks after push:")
-
     result = (stack__size(s) == N && stack__size(t) == N) ? TEST_SUCCESS : TEST_FAILURE;
+
+    DEBUG_i32(s, t, "\n\tStacks after push:")
 
     stack__free(s);
     stack__free(t);
@@ -268,9 +268,9 @@ static char test_stack__clean_NULL_on_empty_stack(char debug)
     stack__clean_NULL(s);
     stack__clean_NULL(t);
 
-    DEBUG_i32(s, t, "\n\tStacks after clean_NULL:")
-
     result = (stack__is_empty(s) && stack__is_empty(t)) ? TEST_SUCCESS : TEST_FAILURE;
+
+    DEBUG_i32(s, t, "\n\tStacks after clean_NULL:")
 
     stack__free(s);
     stack__free(t);
@@ -296,9 +296,9 @@ static char test_stack__clean_NULL_on_non_empty_stack(char debug)
     stack__clean_NULL(s);
     stack__clean_NULL(t);
 
-    DEBUG_i32(s, t, "\n\tStacks after clean_NULL:")
-
     result = (stack__size(s) == N>>1 && stack__size(t) == N>>1) ? TEST_SUCCESS : TEST_FAILURE;
+
+    DEBUG_i32(s, t, "\n\tStacks after clean_NULL:")
 
     stack__free(s);
     stack__free(t);
@@ -316,9 +316,9 @@ static char test_stack__clear_on_empty_stack(char debug)
     stack__clear(s);
     stack__clear(t);
 
-    DEBUG_i32(s, t, "\n\tStacks after clear:")
-
     result = (stack__is_empty(s) && stack__is_empty(t)) ? TEST_SUCCESS : TEST_FAILURE;
+
+    DEBUG_i32(s, t, "\n\tStacks after clear:")
 
     stack__free(s);
     stack__free(t);
@@ -344,9 +344,9 @@ static char test_stack__clear_on_non_empty_stack(char debug)
     stack__clear(s);
     stack__clear(t);
 
-    DEBUG_i32(s, t, "\n\tStacks after clear:")
-
     result = (stack__is_empty(s) && stack__is_empty(t)) ? TEST_SUCCESS : TEST_FAILURE;
+
+    DEBUG_i32(s, t, "\n\tStacks after clear:")
 
     stack__free(s);
     stack__free(t);
@@ -482,9 +482,9 @@ static char test_stack__to_array_on_non_empty_stack(char debug)
     A = (int **)stack__to_array(s);
     B = (int **)stack__to_array(t);
 
-    DEBUG_i32(s, t, "\n\tStacks after to_array:")
-
     result = (stack__size(s) == N && stack__size(t) == N) ? TEST_SUCCESS : TEST_FAILURE;
+
+    DEBUG_i32(s, t, "\n\tStacks after to_array:")
 
     for (u32 i = 0; i < N; i++) {
         result |= (char)(*A[i] != (int)i || *B[i] != (int)N);
@@ -512,9 +512,9 @@ static char test_stack__foreach_on_empty_stack(char debug)
     stack__foreach(s, (applying_func_t) plus_op, &value);
     stack__foreach(t, (applying_func_t) plus_op, &value);
 
-    DEBUG_i32(s, t, "\n\tStacks after foreach:")
-
     result = (stack__is_empty(s) && stack__is_empty(t)) ? TEST_SUCCESS : TEST_FAILURE;
+
+    DEBUG_i32(s, t, "\n\tStacks after foreach:")
 
     stack__free(s);
     stack__free(t);
@@ -555,8 +555,6 @@ static char test_stack__foreach_on_non_empty_stack(char debug)
     stack__foreach(s, (applying_func_t) plus_op, &value);
     stack__foreach(t, (applying_func_t) plus_op, &value);
 
-    DEBUG_i32(s, t, "\n\tStacks after foreach:")
-
     C = stack__to_array(s);
     D = stack__to_array(t);
 
@@ -564,6 +562,8 @@ static char test_stack__foreach_on_non_empty_stack(char debug)
     for (u32 i = 0; i < N-M; i++) {
         result |= (char)(*(int *)A[i] + value != *(int *)C[i] || *(int *)B[i] != *(int *)D[i]);
     }
+
+    DEBUG_i32(s, t, "\n\tStacks after foreach:")
 
     for (u32 i = 0; i < N-M; i++) {
         free(A[i]);
@@ -589,9 +589,9 @@ static char test_stack__sort_on_empty_stack(char debug)
     stack__sort(s, operator_compare);
     stack__sort(t, operator_compare);
 
-    DEBUG_i32(s, t, "\n\tStacks after sort:")
-
     result = (stack__is_empty(s) && stack__is_empty(t)) ? TEST_SUCCESS : TEST_FAILURE;
+
+    DEBUG_i32(s, t, "\n\tStacks after sort:")
 
     stack__free(s);
     stack__free(t);
@@ -619,8 +619,6 @@ static char test_stack__sort_on_non_empty_stack(char debug)
     stack__sort(s, operator_compare);
     stack__sort(t, operator_compare);
 
-    DEBUG_i32(s, t, "\n\tStacks after sort:")
-
     A = stack__to_array(s);
     B = stack__to_array(t);
 
@@ -628,6 +626,8 @@ static char test_stack__sort_on_non_empty_stack(char debug)
     for (u32 i = 0; i < 8; i++) {
         result |= (char)(ordered[i] != *(int *)A[i] || ordered[i] != *(int *)B[i]);
     }
+
+    DEBUG_i32(s, t, "\n\tStacks after sort:")
 
     for (u32 i = 0; i < 8; i++) {
         free(A[i]);
@@ -650,9 +650,9 @@ static char test_stack__shuffle_on_empty_stack(char debug)
     stack__shuffle(s);
     stack__shuffle(t);
 
-    DEBUG_i32(s, t, "\n\tStacks after shuffle:")
-
     result = (stack__is_empty(s) && stack__is_empty(t)) ? TEST_SUCCESS : TEST_FAILURE;
+
+    DEBUG_i32(s, t, "\n\tStacks after shuffle:")
 
     stack__free(s);
     stack__free(t);
@@ -679,12 +679,12 @@ static char test_stack__shuffle_on_non_empty_stack(char debug)
     stack__shuffle(s);
     stack__shuffle(t);
 
-    DEBUG_i32(s, t, "\n\tStacks after shuffle:")
-
     A = stack__to_array(s);
     B = stack__to_array(t);
 
     result = TEST_SUCCESS;
+
+    DEBUG_i32(s, t, "\n\tStacks after shuffle:")
 
     for (u32 i = 0; i < N; i++) {
         free(A[i]);

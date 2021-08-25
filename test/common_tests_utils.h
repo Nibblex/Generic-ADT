@@ -1,6 +1,34 @@
 #ifndef __COMMON_TESTS_UTILS_H__
 #define __COMMON_TESTS_UTILS_H__
 
+#define STACK_DEBUG_char(A, B, C) \
+    if (debug) { \
+        printf(C); \
+        stack__debug(A, (void (*)(elem_t))operator_debug_char); \
+        stack__debug(B, (void (*)(elem_t))operator_debug_char); \
+    }
+
+#define STACK_DEBUG_i32(A, B, C) \
+    if (debug) { \
+        printf(C); \
+        stack__debug(A, (void (*)(elem_t))operator_debug_i32); \
+        stack__debug(B, (void (*)(elem_t))operator_debug_i32); \
+    }
+
+#define QUEUE_DEBUG_char(A, B, C) \
+    if (debug) { \
+        printf(C); \
+        queue__debug(A, (void (*)(elem_t))operator_debug_char); \
+        queue__debug(B, (void (*)(elem_t))operator_debug_char); \
+    }
+
+#define QUEUE_DEBUG_i32(A, B, C) \
+    if (debug) { \
+        printf(C); \
+        queue__debug(A, (void (*)(elem_t))operator_debug_i32); \
+        queue__debug(B, (void (*)(elem_t))operator_debug_i32); \
+    }
+
 #ifndef TEST_SUCCESS
 #define TEST_SUCCESS 0
 #endif
@@ -40,7 +68,7 @@ void* operator_copy(const int *p_value);
 void operator_delete(int *p_value);
 int operator_compare(const void *v1, const void *v2);
 void operator_debug_i32(const int *p_value);
-void operator_debug_u32(const int *p_value);
+void operator_debug_u32(const u32 *p_value);
 void operator_debug_char(const char *p_value);
 void plus_op(int *v, void *user_data);
 

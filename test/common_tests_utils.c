@@ -74,7 +74,7 @@ void operator_debug_i32(const int *p_value)
     }
 }
 
-void operator_debug_u32(const int *p_value)
+void operator_debug_u32(const u32 *p_value)
 {
     if (!p_value) {
         printf("NULL ");

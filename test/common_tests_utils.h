@@ -8,33 +8,31 @@
 #define TEST_FAILURE 1
 #endif
 
-#define STACK_DEBUG_char(A, B, C) \
+#define DEBUG_char(A, B, C, N) \
     if (debug) { \
         printf(C); \
-        stack__debug(A, (void (*)(elem_t))operator_debug_char); \
-        stack__debug(B, (void (*)(elem_t))operator_debug_char); \
+        N(A, (void (*)(elem_t))operator_debug_char); \
+        N(B, (void (*)(elem_t))operator_debug_char); \
     }
+
+#define DEBUG_i32(A, B, C, N) \
+    if (debug) { \
+        printf(C); \
+        N(A, (void (*)(elem_t))operator_debug_i32); \
+        N(B, (void (*)(elem_t))operator_debug_i32); \
+    }
+
+#define STACK_DEBUG_char(A, B, C) \
+    DEBUG_char(A, B, C, stack__debug)
 
 #define STACK_DEBUG_i32(A, B, C) \
-    if (debug) { \
-        printf(C); \
-        stack__debug(A, (void (*)(elem_t))operator_debug_i32); \
-        stack__debug(B, (void (*)(elem_t))operator_debug_i32); \
-    }
+    DEBUG_i32(A, B, C, stack__debug)
 
 #define QUEUE_DEBUG_char(A, B, C) \
-    if (debug) { \
-        printf(C); \
-        queue__debug(A, (void (*)(elem_t))operator_debug_char); \
-        queue__debug(B, (void (*)(elem_t))operator_debug_char); \
-    }
+    DEBUG_char(A, B, C, queue__debug)
 
 #define QUEUE_DEBUG_i32(A, B, C) \
-    if (debug) { \
-        printf(C); \
-        queue__debug(A, (void (*)(elem_t))operator_debug_i32); \
-        queue__debug(B, (void (*)(elem_t))operator_debug_i32); \
-    }
+    DEBUG_i32(A, B, C, queue__debug)
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -745,34 +745,49 @@ static char test_queue__shuffle_on_non_empty_queue(char debug)
 
     char result;
     u32 N = 8;
-    int src[8] = {5, -3, 2, 0, 1, 0, 7, 4};
-    elem_t *A = NULL;
-    elem_t *B = NULL;
-    Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
-    Queue w = queue__empty_copy_disabled();
+    char src_char[8] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+    int src_int[8] = {0, 1, 2, 3, 4, 5, 6, 7};
+    elem_t *A = NULL, *B = NULL, *C = NULL, *D = NULL;
+    Queue q_char = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+    Queue w_char = queue__empty_copy_disabled();
+    Queue q_int = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+    Queue w_int = queue__empty_copy_disabled();
 
-    queue__from_array(q, src, N, INT);
-    queue__from_array(w, src, N, INT);
+    queue__from_array(q_char, src_char, N, CHAR);
+    queue__from_array(w_char, src_char, N, CHAR);
+    queue__from_array(q_int, src_int, N, INT);
+    queue__from_array(w_int, src_int, N, INT);
 
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues before sort:")
+    QUEUE_DEBUG_char(q_char, w_char, "\n\tQueues before shuffle:")
+    QUEUE_DEBUG_i32(q_int, w_int, " ")
 
-    queue__shuffle(q);
-    queue__shuffle(w);
+    queue__shuffle(q_char);
+    queue__shuffle(w_char);
+    queue__shuffle(q_int);
+    queue__shuffle(w_int);
 
-    A = queue__to_array(q);
-    B = queue__to_array(w);
+    A = queue__to_array(q_char);
+    B = queue__to_array(w_char);
+    C = queue__to_array(q_int);
+    D = queue__to_array(w_int);
 
     result = TEST_SUCCESS;
 
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues after sort:")
+    QUEUE_DEBUG_char(q_char, w_char, "\n\tQueues after shuffle:")
+    QUEUE_DEBUG_i32(q_int, w_int, " ")
 
     for (u32 i = 0; i < N; i++) {
         free(A[i]);
+        free(C[i]);
     }
     free(A);
     free(B);
-    queue__free(q);
-    queue__free(w);
+    free(C);
+    free(D);
+    queue__free(q_char);
+    queue__free(w_char);
+    queue__free(q_int);
+    queue__free(w_int);
     return result;
 }
 

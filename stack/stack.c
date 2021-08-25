@@ -138,7 +138,7 @@ size_t stack__size(const Stack s)
     return s ? s->size : 0;
 }
 
-Stack stack__from_array(Stack s, const elem_t *A, const size_t n_elems, const DataType type)
+Stack stack__from_array(Stack s, const elem_t A, const size_t n_elems, const DataType type)
 {
     char new_stack = false;
     if (!A) return NULL;

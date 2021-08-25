@@ -13,9 +13,9 @@ static char test_stack__empty_copy_enabled(char debug)
     char result;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
 
-    if (debug) stack__debug(s, (void (*)(elem_t))operator_debug_i32);
-
     result = s ? TEST_SUCCESS : TEST_FAILURE;
+
+    if (debug) stack__debug(s, (void (*)(elem_t))operator_debug_i32);
 
     stack__free(s);
     return result;
@@ -28,9 +28,9 @@ static char test_stack__empty_copy_disabled(char debug)
     char result;
     Stack s = stack__empty_copy_disabled();
 
-    if (debug) stack__debug(s, (void (*)(elem_t))operator_debug_i32);
-
     result = s ? TEST_SUCCESS : TEST_FAILURE;
+
+    if (debug) stack__debug(s, (void (*)(elem_t))operator_debug_i32);
 
     stack__free(s);
     return result;

@@ -2,6 +2,12 @@
 #include "../queue/queue.h"
 #include "../common/defs.h"
 
+#define QUEUE_DEBUG_char(A, B, C) \
+    DEBUG_char(A, B, C, queue__debug)
+
+#define QUEUE_DEBUG_i32(A, B, C) \
+    DEBUG_i32(A, B, C, queue__debug)
+
 ////////////////////////////////////////////////////////////////////
 ///     TEST SUITE
 ////////////////////////////////////////////////////////////////////

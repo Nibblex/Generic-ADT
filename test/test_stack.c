@@ -2,6 +2,12 @@
 #include "../stack/stack.h"
 #include "../common/defs.h"
 
+#define STACK_DEBUG_char(A, B, C) \
+    DEBUG_char(A, B, C, stack__debug)
+
+#define STACK_DEBUG_i32(A, B, C) \
+    DEBUG_i32(A, B, C, stack__debug)
+
 ////////////////////////////////////////////////////////////////////
 ///     TEST SUITE
 ////////////////////////////////////////////////////////////////////

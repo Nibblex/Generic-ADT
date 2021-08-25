@@ -8,6 +8,12 @@
 #define STACK_DEBUG_i32(A, B, C) \
     DEBUG_i32(A, B, C, stack__debug)
 
+#define STACK_FREE(A, B, C, D) \
+    stack__free(A); \
+    stack__free(B); \
+    stack__free(C); \
+    stack__free(D);
+
 ////////////////////////////////////////////////////////////////////
 ///     TEST SUITE
 ////////////////////////////////////////////////////////////////////
@@ -23,7 +29,7 @@ static char test_stack__empty_copy_enabled(char debug)
 
     if (debug) stack__debug(s, (void (*)(elem_t))operator_debug_i32);
 
-    stack__free(s);
+    STACK_FREE(s, NULL, NULL, NULL)
     return result;
 }
 
@@ -38,7 +44,7 @@ static char test_stack__empty_copy_disabled(char debug)
 
     if (debug) stack__debug(s, (void (*)(elem_t))operator_debug_i32);
 
-    stack__free(s);
+    STACK_FREE(s, NULL, NULL, NULL)
     return result;
 }
 
@@ -52,8 +58,7 @@ static char test_stack__is_copy_enabled(void)
 
     result = (stack__is_copy_enabled(s) && !stack__is_copy_enabled(t)) ? TEST_SUCCESS : TEST_FAILURE;
 
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -72,8 +77,7 @@ static char test_stack__size(void)
 
     result = (stack__size(s) == 2 && stack__size(t) == 2) ? TEST_SUCCESS : TEST_FAILURE;
 
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -87,8 +91,7 @@ static char test_stack__is_empty_on_empty_stack(void)
 
     result = (stack__is_empty(s) && stack__is_empty(t)) ? TEST_SUCCESS : TEST_FAILURE;
 
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -105,8 +108,7 @@ static char test_stack__is_empty_on_non_empty_stack(void)
 
     result = (!stack__is_empty(s) && !stack__is_empty(t)) ? TEST_SUCCESS : TEST_FAILURE;
 
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -125,8 +127,7 @@ static char test_stack__push_on_empty_stack(char debug)
 
     STACK_DEBUG_i32(s, t, "\n\tStacks after push:")
 
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -148,8 +149,7 @@ static char test_stack__push_on_non_empty_stack(char debug)
 
     STACK_DEBUG_i32(s, t, "\n\tStacks after push:")
 
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -168,8 +168,7 @@ static char test_stack__pop_on_empty_stack(char debug)
 
     STACK_DEBUG_i32(s, t, "\n\tStacks after pop:")
 
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -204,8 +203,7 @@ static char test_stack__pop_on_non_empty_stack(char debug)
 
     STACK_DEBUG_i32(s, t, "\n\tStacks after pop:")
 
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -244,8 +242,7 @@ static char test_stack__push_and_pop_on_multiple_elements(char debug)
 
     STACK_DEBUG_i32(s, t, "\nAdded 20 elements, expected capacity of 64 and size of 40\n")
 
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -264,8 +261,7 @@ static char test_stack__clean_NULL_on_empty_stack(char debug)
 
     STACK_DEBUG_i32(s, t, "\n\tStacks after clean_NULL:")
 
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -292,8 +288,7 @@ static char test_stack__clean_NULL_on_non_empty_stack(char debug)
 
     STACK_DEBUG_i32(s, t, "\n\tStacks after clean_NULL:")
 
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -312,8 +307,7 @@ static char test_stack__clear_on_empty_stack(char debug)
 
     STACK_DEBUG_i32(s, t, "\n\tStacks after clear:")
 
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -340,8 +334,7 @@ static char test_stack__clear_on_non_empty_stack(char debug)
 
     STACK_DEBUG_i32(s, t, "\n\tStacks after clear:")
 
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -360,8 +353,7 @@ static char test_stack__top_on_empty_stack(char debug)
 
     STACK_DEBUG_i32(s, t, "\n\tStacks after top:")
 
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -394,8 +386,7 @@ static char test_stack__top_on_non_empty_stack(char debug)
     STACK_DEBUG_i32(s, t, "\n\tStacks after top:")
 
     free(top_s);
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -426,10 +417,7 @@ static char test_stack__from_array(char debug)
     STACK_DEBUG_char(s_char, t_char, "\n\tStacks after from_array:")
     STACK_DEBUG_i32(s_int, t_int, " ")
 
-    stack__free(s_char);
-    stack__free(t_char);
-    stack__free(s_int);
-    stack__free(t_int);
+    STACK_FREE(s_char, t_char, s_int, t_int)
     return result;
 }
 
@@ -448,8 +436,7 @@ static char test_stack__to_array_on_empty_stack(char debug)
 
     STACK_DEBUG_i32(s, t, "\n\tStacks after to_array:")
 
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -487,8 +474,7 @@ static char test_stack__to_array_on_non_empty_stack(char debug)
     }
     free(A);
     free(B);
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -508,8 +494,7 @@ static char test_stack__foreach_on_empty_stack(char debug)
 
     STACK_DEBUG_i32(s, t, "\n\tStacks after foreach:")
 
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -565,8 +550,7 @@ static char test_stack__foreach_on_non_empty_stack(char debug)
     free(B);
     free(C);
     free(D);
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -585,8 +569,7 @@ static char test_stack__sort_on_empty_stack(char debug)
 
     STACK_DEBUG_i32(s, t, "\n\tStacks after sort:")
 
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -626,8 +609,7 @@ static char test_stack__sort_on_non_empty_stack(char debug)
     }
     free(A);
     free(B);
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -646,8 +628,7 @@ static char test_stack__shuffle_on_empty_stack(char debug)
 
     STACK_DEBUG_i32(s, t, "\n\tStacks after shuffle:")
 
-    stack__free(s);
-    stack__free(t);
+    STACK_FREE(s, t, NULL, NULL)
     return result;
 }
 
@@ -660,33 +641,33 @@ static char test_stack__shuffle_on_non_empty_stack(char debug)
     char src_char[8] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
     int src_int[8] = {0, 1, 2, 3, 4, 5, 6, 7};
     elem_t *A = NULL, *B = NULL, *C = NULL, *D = NULL;
-    Stack q_char = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
-    Stack w_char = stack__empty_copy_disabled();
-    Stack q_int = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
-    Stack w_int = stack__empty_copy_disabled();
+    Stack s_char = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+    Stack t_char = stack__empty_copy_disabled();
+    Stack s_int = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+    Stack t_int = stack__empty_copy_disabled();
 
-    stack__from_array(q_char, src_char, N, CHAR);
-    stack__from_array(w_char, src_char, N, CHAR);
-    stack__from_array(q_int, src_int, N, INT);
-    stack__from_array(w_int, src_int, N, INT);
+    stack__from_array(s_char, src_char, N, CHAR);
+    stack__from_array(t_char, src_char, N, CHAR);
+    stack__from_array(s_int, src_int, N, INT);
+    stack__from_array(t_int, src_int, N, INT);
 
-    STACK_DEBUG_char(q_char, w_char, "\n\tStacks before shuffle:")
-    STACK_DEBUG_i32(q_int, w_int, " ")
+    STACK_DEBUG_char(s_char, t_char, "\n\tStacks before shuffle:")
+    STACK_DEBUG_i32(s_int, t_int, " ")
 
-    stack__shuffle(q_char);
-    stack__shuffle(w_char);
-    stack__shuffle(q_int);
-    stack__shuffle(w_int);
+    stack__shuffle(s_char);
+    stack__shuffle(t_char);
+    stack__shuffle(s_int);
+    stack__shuffle(t_int);
 
-    A = stack__to_array(q_char);
-    B = stack__to_array(w_char);
-    C = stack__to_array(q_int);
-    D = stack__to_array(w_int);
+    A = stack__to_array(s_char);
+    B = stack__to_array(t_char);
+    C = stack__to_array(s_int);
+    D = stack__to_array(t_int);
 
     result = TEST_SUCCESS;
 
-    STACK_DEBUG_char(q_char, w_char, "\n\tQueues after shuffle:")
-    STACK_DEBUG_i32(q_int, w_int, " ")
+    STACK_DEBUG_char(s_char, t_char, "\n\tQueues after shuffle:")
+    STACK_DEBUG_i32(s_int, t_int, " ")
 
     for (u32 i = 0; i < N; i++) {
         free(A[i]);
@@ -696,10 +677,7 @@ static char test_stack__shuffle_on_non_empty_stack(char debug)
     free(B);
     free(C);
     free(D);
-    stack__free(q_char);
-    stack__free(w_char);
-    stack__free(q_int);
-    stack__free(w_int);
+    STACK_FREE(s_char, t_char, s_int, t_int)
     return result;
 }
 

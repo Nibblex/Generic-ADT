@@ -8,6 +8,12 @@
 #define QUEUE_DEBUG_i32(A, B, C) \
     DEBUG_i32(A, B, C, queue__debug)
 
+#define QUEUE_FREE(A, B, C, D) \
+    queue__free(A); \
+    queue__free(B); \
+    queue__free(C); \
+    queue__free(D);
+
 ////////////////////////////////////////////////////////////////////
 ///     TEST SUITE
 ////////////////////////////////////////////////////////////////////
@@ -23,7 +29,7 @@ static char test_queue__empty_copy_enabled(char debug)
 
     if (debug) queue__debug(q, (void (*)(elem_t))operator_debug_i32);
 
-    queue__free(q);
+    QUEUE_FREE(q, NULL, NULL, NULL)
     return result;
 }
 
@@ -38,7 +44,7 @@ static char test_queue__empty_copy_disabled(char debug)
 
     if (debug) queue__debug(q, (void (*)(elem_t))operator_debug_i32);
 
-    queue__free(q);
+    QUEUE_FREE(q, NULL, NULL, NULL)
     return result;
 }
 
@@ -52,8 +58,7 @@ static char test_queue__is_copy_enabled(void)
 
     result = (queue__is_copy_enabled(q) && !queue__is_copy_enabled(w)) ? TEST_SUCCESS : TEST_FAILURE;
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -72,8 +77,7 @@ static char test_queue__size(void)
 
     result = (queue__size(q) == 2 && queue__size(w) == 2) ? TEST_SUCCESS : TEST_FAILURE;
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -87,8 +91,7 @@ static char test_queue__is_empty_on_empty_queue(void)
 
     result = (queue__is_empty(q) && queue__is_empty(w)) ? TEST_SUCCESS : TEST_FAILURE;
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -105,8 +108,7 @@ static char test_queue__is_empty_on_non_empty_queue(void)
 
     result = (!queue__is_empty(q) && !queue__is_empty(w)) ? TEST_SUCCESS : TEST_FAILURE;
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -125,8 +127,7 @@ static char test_queue__enqueue_on_empty_queue(char debug)
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after enqueue:")
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -148,8 +149,7 @@ static char test_queue__enqueue_on_non_empty_queue(char debug)
 
     result = (queue__size(q) == N && queue__size(w) == N) ? TEST_SUCCESS : TEST_FAILURE;
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -168,8 +168,7 @@ static char test_queue__dequeue_on_empty_queue(char debug)
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after dequeue:")
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -196,8 +195,7 @@ static char test_queue__dequeue_on_non_empty_queue(char debug)
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after dequeue:")
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -236,8 +234,7 @@ static char test_queue__enqueue_and_dequeue_on_multiple_elements(char debug)
 
     QUEUE_DEBUG_i32(q, w, "\nAdded 20 elements, expected capacity of 64 and size of 40\n")
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -256,8 +253,7 @@ static char test_queue__pop_on_empty_queue(char debug)
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after pop:")
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -292,8 +288,7 @@ static char test_queue__pop_on_non_empty_queue(char debug)
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after pop:")
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -312,8 +307,7 @@ static char test_queue__clean_NULL_on_empty_queue(char debug)
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after clean_NULL:")
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -340,8 +334,7 @@ static char test_queue__clean_NULL_on_non_empty_queue(char debug)
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after clean_NULL:")
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -360,8 +353,7 @@ static char test_queue__clear_on_empty_queue(char debug)
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after clear:")
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -388,8 +380,7 @@ static char test_queue__clear_on_non_empty_queue(char debug)
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after clear:")
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -408,8 +399,7 @@ static char test_queue__front_on_empty_queue(char debug)
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after front:")
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -439,8 +429,7 @@ static char test_queue__front_on_non_empty_queue(char debug)
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after front:")
 
     free(front_q);
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -459,8 +448,7 @@ static char test_queue__back_on_empty_queue(char debug)
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after back:")
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -493,8 +481,7 @@ static char test_queue__back_on_non_empty_queue(char debug)
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after back:")
 
     free(back_q);
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -525,10 +512,7 @@ static char test_queue__from_array(char debug)
     QUEUE_DEBUG_char(q_char, w_char, "\n\tQueues after from_array:")
     QUEUE_DEBUG_i32(q_int, w_int, " ")
 
-    queue__free(q_char);
-    queue__free(w_char);
-    queue__free(q_int);
-    queue__free(w_int);
+    QUEUE_FREE(q_char, w_char, q_int, w_int)
     return result;
 }
 
@@ -547,8 +531,7 @@ static char test_queue__to_array_on_empty_queue(char debug)
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after to_array:")
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -586,8 +569,7 @@ static char test_queue__to_array_on_non_empty_queue(char debug)
     }
     free(A);
     free(B);
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -607,8 +589,7 @@ static char test_queue__foreach_on_empty_queue(char debug)
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after foreach:")
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -653,8 +634,7 @@ static char test_queue__foreach_on_non_empty_queue(char debug)
     free(B);
     free(C);
     free(D);
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -673,8 +653,7 @@ static char test_queue__sort_on_empty_queue(char debug)
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after sort:")
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -714,8 +693,7 @@ static char test_queue__sort_on_non_empty_queue(char debug)
     }
     free(A);
     free(B);
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -734,8 +712,7 @@ static char test_queue__shuffle_on_empty_queue(char debug)
 
     result = (queue__is_empty(q) && queue__is_empty(w)) ? TEST_SUCCESS : TEST_FAILURE;
 
-    queue__free(q);
-    queue__free(w);
+    QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
@@ -784,10 +761,7 @@ static char test_queue__shuffle_on_non_empty_queue(char debug)
     free(B);
     free(C);
     free(D);
-    queue__free(q_char);
-    queue__free(w_char);
-    queue__free(q_int);
-    queue__free(w_int);
+    QUEUE_FREE(q_char, w_char, q_int, w_int)
     return result;
 }
 

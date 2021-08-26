@@ -51,15 +51,6 @@ char queue__enqueue(const Queue q, const elem_t element);
 
 
 /**
- * @brief Removes the front element of the queue
- * @note Complexity: O(1)
- * @param q the queue
- * @return 0 on success, 1 otherwise
- */
-char queue__dequeue(const Queue q);
-
-
-/**
  * @brief Retrieve a copy of the front element (similar to 'queue__front' but the element is removed of the queue)
  * @details The element is stored in 'front' variable and must be manually freed by user afterward
  * @note Complexity: O(1)

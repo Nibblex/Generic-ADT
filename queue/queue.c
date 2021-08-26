@@ -121,26 +121,6 @@ char queue__enqueue(const Queue q, const elem_t element)
     return SUCCESS;
 }
 
-char queue__dequeue(const Queue q)
-{
-    size_t new_capacity;
-    if (!q || !q->size) return FAILURE;
-
-    if (q->operator_delete) {
-        q->operator_delete(q->elems[q->front]);
-    }
-
-    q->front = (q->front + 1 == q->capacity) ? 0 : q->front + 1;
-    q->size--;
-
-    new_capacity = q->capacity>>1;
-    if (q->size < new_capacity && new_capacity >= DEFAULT_QUEUE_CAPACITY) {
-        if (queue__shrink(new_capacity, q)) return FAILURE;
-    }
-
-    return SUCCESS;
-}
-
 char queue__pop(const Queue q, elem_t *front)
 {
     size_t new_capacity;

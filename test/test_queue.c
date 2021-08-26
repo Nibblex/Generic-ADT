@@ -153,52 +153,6 @@ static bool test_queue__enqueue_on_non_empty_queue(char debug)
     return result;
 }
 
-static bool test_queue__dequeue_on_empty_queue(char debug)
-{
-    printf("%s... ", __func__);
-
-    bool result;
-    Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
-    Queue w = queue__empty_copy_disabled();
-
-    result = (queue__dequeue(q)
-           && queue__dequeue(w)
-           && queue__is_empty(q)
-           && queue__is_empty(w)) ? TEST_SUCCESS : TEST_FAILURE;
-
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues after dequeue:")
-
-    QUEUE_FREE(q, w, NULL, NULL)
-    return result;
-}
-
-static bool test_queue__dequeue_on_non_empty_queue(char debug)
-{
-    printf("%s... ", __func__);
-
-    bool result;
-    u32 N = 5;
-    Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
-    Queue w = queue__empty_copy_disabled();
-
-    for (u32 i = 0; i < N; i++) {
-        queue__enqueue(q, &i);
-        queue__enqueue(w, &i);
-    }
-
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues before dequeue:")
-
-    result = (!queue__dequeue(q)
-           && !queue__dequeue(w)
-           && queue__size(q) == N-1
-           && queue__size(w) == N-1) ? TEST_SUCCESS : TEST_FAILURE;
-
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues after dequeue:")
-
-    QUEUE_FREE(q, w, NULL, NULL)
-    return result;
-}
-
 static bool test_queue__enqueue_and_dequeue_on_multiple_elements(char debug)
 {
     printf("%s... ", __func__);
@@ -217,8 +171,8 @@ static bool test_queue__enqueue_and_dequeue_on_multiple_elements(char debug)
     QUEUE_DEBUG_i32(q, w, "\nAdded 60 elements, expected capacity of 64 and size of 60\n")
 
     for (u32 i = 0; i < 40; i++) {
-        queue__dequeue(q);
-        queue__dequeue(w);
+        queue__pop(q, NULL);
+        queue__pop(w, NULL);
     }
 
     result |= queue__size(q) != 20 || queue__size(w) != 20;
@@ -789,8 +743,6 @@ int main(void)
 
     print_test_result(test_queue__enqueue_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__enqueue_on_non_empty_queue(false), &nb_success, &nb_tests);
-    print_test_result(test_queue__dequeue_on_empty_queue(false), &nb_success, &nb_tests);
-    print_test_result(test_queue__dequeue_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__enqueue_and_dequeue_on_multiple_elements(false), &nb_success, &nb_tests);
     print_test_result(test_queue__pop_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__pop_on_non_empty_queue(false), &nb_success, &nb_tests);

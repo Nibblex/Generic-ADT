@@ -14,12 +14,11 @@
 #define false 0
 #endif
 
-#define SWAP(x, y) \
+#define SWAP(a, b) \
     do { \
-        unsigned char __temp[sizeof(x) == sizeof(y) ? (signed)sizeof(x) : -1]; \
-        memcpy(__temp, &y, sizeof(x)); \
-        memcpy(&y, &x, sizeof(x)); \
-        memcpy(&x, __temp, sizeof(x)); \
+        elem_t __temp = (a); \
+        (a) = (b); \
+        (b) = __temp; \
     } while (false)
 
 #define INC_POINTER(p, __size) \

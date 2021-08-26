@@ -153,7 +153,7 @@ static bool test_queue__enqueue_on_non_empty_queue(char debug)
     return result;
 }
 
-static bool test_queue__enqueue_and_dequeue_on_multiple_elements(char debug)
+static bool test_queue__enqueue_and_pop_on_multiple_elements(char debug)
 {
     printf("%s... ", __func__);
 
@@ -743,7 +743,7 @@ int main(void)
 
     print_test_result(test_queue__enqueue_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__enqueue_on_non_empty_queue(false), &nb_success, &nb_tests);
-    print_test_result(test_queue__enqueue_and_dequeue_on_multiple_elements(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__enqueue_and_pop_on_multiple_elements(false), &nb_success, &nb_tests);
     print_test_result(test_queue__pop_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__pop_on_non_empty_queue(false), &nb_success, &nb_tests);
 

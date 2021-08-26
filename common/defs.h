@@ -25,9 +25,9 @@
 #define INC_POINTER(p, __size) \
     do { \
         unsigned long int __temp; \
-        memcpy(&__temp, &p, sizeof(unsigned long int)); \
+        __temp = (long unsigned int)p; \
         __temp += __size; \
-        memcpy(&p, &__temp, sizeof(unsigned long int)); \
+        p = (void *)__temp; \
     } while (false)
 
 /**

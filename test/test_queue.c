@@ -708,9 +708,9 @@ static char test_queue__shuffle_on_empty_queue(char debug)
     queue__shuffle(q);
     queue__shuffle(w);
 
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues after shuffle:")
-
     result = (queue__is_empty(q) && queue__is_empty(w)) ? TEST_SUCCESS : TEST_FAILURE;
+
+    QUEUE_DEBUG_i32(q, w, "\n\tQueues after shuffle:")
 
     QUEUE_FREE(q, w, NULL, NULL)
     return result;

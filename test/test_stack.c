@@ -463,11 +463,11 @@ static char test_stack__to_array_on_non_empty_stack(char debug)
 
     result = (stack__size(s) == N && stack__size(t) == N) ? TEST_SUCCESS : TEST_FAILURE;
 
-    STACK_DEBUG_i32(s, t, "\n\tStacks after to_array:")
-
     for (u32 i = 0; i < N; i++) {
         result |= (char)(*A[i] != (int)i || *B[i] != (int)N);
     }
+
+    STACK_DEBUG_i32(s, t, "\n\tStacks after to_array:")
 
     for (u32 i = 0; i < N; i++) {
         free(A[i]);

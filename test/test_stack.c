@@ -666,7 +666,7 @@ static char test_stack__shuffle_on_non_empty_stack(char debug)
 
     result = TEST_SUCCESS;
 
-    STACK_DEBUG_char(s_char, t_char, "\n\tQueues after shuffle:")
+    STACK_DEBUG_char(s_char, t_char, "\n\tStacks after shuffle:")
     STACK_DEBUG_i32(s_int, t_int, " ")
 
     for (u32 i = 0; i < N; i++) {

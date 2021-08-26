@@ -14,7 +14,7 @@
 #define false 0
 #endif
 
-#define SWAP(x,y) \
+#define SWAP(x, y) \
     do { \
         unsigned char swap_temp[sizeof(x) == sizeof(y) ? (signed)sizeof(x) : -1]; \
         memcpy(swap_temp, &y, sizeof(x)); \

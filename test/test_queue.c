@@ -499,12 +499,12 @@ static bool test_queue__from_array(char debug)
     Queue q_int = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w_int = NULL;
 
-    result = (queue__from_array(q_char, A, 5, CHAR)
-           && (w_char = queue__from_array(w_char, A, 5, CHAR))
-           && queue__from_array(q_char, B, 5, CHAR)
-           && queue__from_array(w_char, B, 5, CHAR)
-           && queue__from_array(q_int, C, 5, INT)
-           && (w_int = queue__from_array(w_int, C, 5, INT))
+    result = (queue__from_array(q_char, A, 5, sizeof(char))
+           && (w_char = queue__from_array(w_char, A, 5, sizeof(char)))
+           && queue__from_array(q_char, B, 5, sizeof(char))
+           && queue__from_array(w_char, B, 5, sizeof(char))
+           && queue__from_array(q_int, C, 5, sizeof(int))
+           && (w_int = queue__from_array(w_int, C, 5, sizeof(int)))
            && queue__size(q_char) == 10
            && queue__size(w_char) == 10
            && queue__size(q_int) == 5
@@ -613,8 +613,8 @@ static bool test_queue__foreach_on_non_empty_queue(char debug)
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
-    queue__from_array(q, array, N, INT);
-    queue__from_array(w, array, N, INT);
+    queue__from_array(q, array, N, sizeof(int));
+    queue__from_array(w, array, N, sizeof(int));
 
     A = queue__to_array(q);
     B = queue__to_array(w);
@@ -678,8 +678,8 @@ static bool test_queue__sort_on_non_empty_queue(char debug)
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
-    queue__from_array(q, unordered, N, INT);
-    queue__from_array(w, unordered, N, INT);
+    queue__from_array(q, unordered, N, sizeof(int));
+    queue__from_array(w, unordered, N, sizeof(int));
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues before sort:")
 
@@ -738,10 +738,10 @@ static bool test_queue__shuffle_on_non_empty_queue(char debug)
     Queue q_int = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w_int = queue__empty_copy_disabled();
 
-    queue__from_array(q_char, src_char, N, CHAR);
-    queue__from_array(w_char, src_char, N, CHAR);
-    queue__from_array(q_int, src_int, N, INT);
-    queue__from_array(w_int, src_int, N, INT);
+    queue__from_array(q_char, src_char, N, sizeof(char));
+    queue__from_array(w_char, src_char, N, sizeof(char));
+    queue__from_array(q_int, src_int, N, sizeof(int));
+    queue__from_array(w_int, src_int, N, sizeof(int));
 
     QUEUE_DEBUG_char(q_char, w_char, "\n\tQueues before shuffle:")
     QUEUE_DEBUG_i32(q_int, w_int, " ")

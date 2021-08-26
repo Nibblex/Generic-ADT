@@ -138,7 +138,7 @@ size_t stack__size(const Stack s)
     return s ? s->size : 0;
 }
 
-Stack stack__from_array(Stack s, const elem_t A, const size_t n_elems, const DataType type)
+Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t size)
 {
     char new_stack = false;
     if (!A) return NULL;
@@ -149,39 +149,9 @@ Stack stack__from_array(Stack s, const elem_t A, const size_t n_elems, const Dat
         if (!s) return NULL;
     }
 
-    switch (type) {
-        case CHAR:
-            for (size_t i = 0; i < n_elems; i++) {
-                if (stack__push(s, (char *)A+i)) goto error;
-            }
-            break;
-        case INT:
-            for (size_t i = 0; i < n_elems; i++) {
-                if (stack__push(s, (int *)A+i)) goto error;
-            }
-            break;
-        case UINT:
-            for (size_t i = 0; i < n_elems; i++) {
-                if (stack__push(s, (unsigned int *)A+i)) goto error;
-            }
-            break;
-        case FLOAT:
-            for (size_t i = 0; i < n_elems; i++) {
-                if (stack__push(s, (float *)A+i)) goto error;
-            }
-            break;
-        case STRING:
-            for (size_t i = 0; i < n_elems; i++) {
-                if (stack__push(s, (char **)A+i)) goto error;
-            }
-            break;
-        case GENERIC:
-            for (size_t i = 0; i < n_elems; i++) {
-                if (stack__push(s, (elem_t *)A+i)) goto error;
-            }
-            break;
-        default:
-            goto error;
+    for (size_t i = 0; i < n_elems; i++) {
+        if (stack__push(s, A)) goto error;
+        INC_POINTER(A, size);
     }
 
     return s;

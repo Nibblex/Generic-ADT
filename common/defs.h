@@ -16,10 +16,18 @@
 
 #define SWAP(x, y) \
     do { \
-        unsigned char swap_temp[sizeof(x) == sizeof(y) ? (signed)sizeof(x) : -1]; \
-        memcpy(swap_temp, &y, sizeof(x)); \
+        unsigned char __temp[sizeof(x) == sizeof(y) ? (signed)sizeof(x) : -1]; \
+        memcpy(__temp, &y, sizeof(x)); \
         memcpy(&y, &x, sizeof(x)); \
-        memcpy(&x, swap_temp, sizeof(x)); \
+        memcpy(&x, __temp, sizeof(x)); \
+    } while (false)
+
+#define INC_POINTER(p, __size) \
+    do { \
+        unsigned long int __temp; \
+        memcpy(&__temp, &p, sizeof(unsigned long int)); \
+        __temp += __size; \
+        memcpy(&p, &__temp, sizeof(unsigned long int)); \
     } while (false)
 
 /**

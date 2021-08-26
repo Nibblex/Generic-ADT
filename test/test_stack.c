@@ -404,12 +404,12 @@ static int test_stack__from_array(char debug)
     Stack s_int = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t_int = NULL;
 
-    result = (stack__from_array(s_char, A, 5, CHAR)
-           && (t_char = stack__from_array(t_char, A, 5, CHAR))
-           && stack__from_array(s_char, B, 5, CHAR)
-           && stack__from_array(t_char, B, 5, CHAR)
-           && stack__from_array(s_int, C, 5, INT)
-           && (t_int = stack__from_array(t_int, C, 5, INT))
+    result = (stack__from_array(s_char, A, 5, sizeof(char))
+           && (t_char = stack__from_array(t_char, A, 5, sizeof(char)))
+           && stack__from_array(s_char, B, 5, sizeof(char))
+           && stack__from_array(t_char, B, 5, sizeof(char))
+           && stack__from_array(s_int, C, 5, sizeof(int))
+           && (t_int = stack__from_array(t_int, C, 5, sizeof(int)))
            && stack__size(s_char) == 10
            && stack__size(t_char) == 10
            && stack__size(s_int) == 5
@@ -519,8 +519,8 @@ static bool test_stack__foreach_on_non_empty_stack(char debug)
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
-    stack__from_array(s, array, N, INT);
-    stack__from_array(t, array, N, INT);
+    stack__from_array(s, array, N, sizeof(int));
+    stack__from_array(t, array, N, sizeof(int));
 
     for (u32 i = 0; i < N>>1; i++) {
         stack__pop(s, NULL);
@@ -594,8 +594,8 @@ static bool test_stack__sort_on_non_empty_stack(char debug)
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
-    stack__from_array(s, unordered, N, INT);
-    stack__from_array(t, unordered, N, INT);
+    stack__from_array(s, unordered, N, sizeof(int));
+    stack__from_array(t, unordered, N, sizeof(int));
 
     STACK_DEBUG_i32(s, t, "\n\tStacks before sort:")
 
@@ -654,10 +654,10 @@ static int test_stack__shuffle_on_non_empty_stack(char debug)
     Stack s_int = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t_int = stack__empty_copy_disabled();
 
-    stack__from_array(s_char, src_char, N, CHAR);
-    stack__from_array(t_char, src_char, N, CHAR);
-    stack__from_array(s_int, src_int, N, INT);
-    stack__from_array(t_int, src_int, N, INT);
+    stack__from_array(s_char, src_char, N, sizeof(char));
+    stack__from_array(t_char, src_char, N, sizeof(char));
+    stack__from_array(s_int, src_int, N, sizeof(int));
+    stack__from_array(t_int, src_int, N, sizeof(int));
 
     STACK_DEBUG_char(s_char, t_char, "\n\tStacks before shuffle:")
     STACK_DEBUG_i32(s_int, t_int, " ")

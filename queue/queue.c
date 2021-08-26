@@ -201,7 +201,7 @@ inline size_t queue__size(const Queue q)
     return q ? q->size : 0;
 }
 
-Queue queue__from_array(Queue q, const elem_t A, const size_t n_elems, const DataType type)
+Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t size)
 {
     char new_queue = false;
     if (!A) return NULL;
@@ -212,39 +212,9 @@ Queue queue__from_array(Queue q, const elem_t A, const size_t n_elems, const Dat
         if (!q) return NULL;
     }
 
-    switch (type) {
-        case CHAR:
-            for (size_t i = 0; i < n_elems; i++) {
-                if (queue__enqueue(q, (char *)A+i)) goto error;
-            }
-            break;
-        case INT:
-            for (size_t i = 0; i < n_elems; i++) {
-                if (queue__enqueue(q, (int *)A+i)) goto error;
-            }
-            break;
-        case UINT:
-            for (size_t i = 0; i < n_elems; i++) {
-                if (queue__enqueue(q, (unsigned int *)A+i)) goto error;
-            }
-            break;
-        case FLOAT:
-            for (size_t i = 0; i < n_elems; i++) {
-                if (queue__enqueue(q, (float *)A+i)) goto error;
-            }
-            break;
-        case STRING:
-            for (size_t i = 0; i < n_elems; i++) {
-                if (queue__enqueue(q, (char **)A+i)) goto error;
-            }
-            break;
-        case GENERIC:
-            for (size_t i = 0; i < n_elems; i++) {
-                if (queue__enqueue(q, (elem_t *)A+i)) goto error;
-            }
-            break;
-        default:
-            goto error;
+    for (size_t i = 0; i < n_elems; i++) {
+        if (queue__enqueue(q, A)) goto error;
+        INC_POINTER(A, size);
     }
 
     return q;

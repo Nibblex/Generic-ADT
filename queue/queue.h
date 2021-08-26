@@ -129,7 +129,7 @@ size_t queue__size(const Queue q);
  * @param type type of array elements, available types: 'CHAR', 'INT', 'UINT', 'FLOAT', 'STRING', 'GENERIC'
  * @return a queue containing all the elements of the array, NULL on error
  */
-Queue queue__from_array(Queue q, const elem_t A, const size_t n_elems, const DataType type);
+Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t size);
 
 
 /**

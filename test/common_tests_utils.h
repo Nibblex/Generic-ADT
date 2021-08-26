@@ -1,6 +1,7 @@
 #ifndef __COMMON_TESTS_UTILS_H__
 #define __COMMON_TESTS_UTILS_H__
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 

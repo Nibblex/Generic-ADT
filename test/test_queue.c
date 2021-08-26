@@ -18,11 +18,11 @@
 ///     TEST SUITE
 ////////////////////////////////////////////////////////////////////
 
-static char test_queue__empty_copy_enabled(char debug)
+static bool test_queue__empty_copy_enabled(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
 
     result = q ? TEST_SUCCESS : TEST_FAILURE;
@@ -33,11 +33,11 @@ static char test_queue__empty_copy_enabled(char debug)
     return result;
 }
 
-static char test_queue__empty_copy_disabled(char debug)
+static bool test_queue__empty_copy_disabled(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Queue q = queue__empty_copy_disabled();
 
     result = q ? TEST_SUCCESS : TEST_FAILURE;
@@ -48,11 +48,11 @@ static char test_queue__empty_copy_disabled(char debug)
     return result;
 }
 
-static char test_queue__is_copy_enabled(void)
+static bool test_queue__is_copy_enabled(void)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
@@ -62,11 +62,11 @@ static char test_queue__is_copy_enabled(void)
     return result;
 }
 
-static char test_queue__size(void)
+static bool test_queue__size(void)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
@@ -81,11 +81,11 @@ static char test_queue__size(void)
     return result;
 }
 
-static char test_queue__is_empty_on_empty_queue(void)
+static bool test_queue__is_empty_on_empty_queue(void)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
@@ -95,11 +95,11 @@ static char test_queue__is_empty_on_empty_queue(void)
     return result;
 }
 
-static char test_queue__is_empty_on_non_empty_queue(void)
+static bool test_queue__is_empty_on_non_empty_queue(void)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
@@ -112,11 +112,11 @@ static char test_queue__is_empty_on_non_empty_queue(void)
     return result;
 }
 
-static char test_queue__enqueue_on_empty_queue(char debug)
+static bool test_queue__enqueue_on_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
@@ -131,11 +131,11 @@ static char test_queue__enqueue_on_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__enqueue_on_non_empty_queue(char debug)
+static bool test_queue__enqueue_on_non_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     u32 N = 5;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
@@ -153,11 +153,11 @@ static char test_queue__enqueue_on_non_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__dequeue_on_empty_queue(char debug)
+static bool test_queue__dequeue_on_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
@@ -172,11 +172,11 @@ static char test_queue__dequeue_on_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__dequeue_on_non_empty_queue(char debug)
+static bool test_queue__dequeue_on_non_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     u32 N = 5;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
@@ -199,11 +199,11 @@ static char test_queue__dequeue_on_non_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__enqueue_and_dequeue_on_multiple_elements(char debug)
+static bool test_queue__enqueue_and_dequeue_on_multiple_elements(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
@@ -221,7 +221,7 @@ static char test_queue__enqueue_and_dequeue_on_multiple_elements(char debug)
         queue__dequeue(w);
     }
 
-    result |= (char)(queue__size(q) != 20 || queue__size(w) != 20);
+    result |= queue__size(q) != 20 || queue__size(w) != 20;
 
     QUEUE_DEBUG_i32(q, w, "\nRemoved 40 elements, expected capacity of 32 and size of 20\n")
 
@@ -230,7 +230,7 @@ static char test_queue__enqueue_and_dequeue_on_multiple_elements(char debug)
         queue__enqueue(w, &i);
     }
 
-    result |= (char)(queue__size(q) != 40 || queue__size(w) != 40);
+    result |= queue__size(q) != 40 || queue__size(w) != 40;
 
     QUEUE_DEBUG_i32(q, w, "\nAdded 20 elements, expected capacity of 64 and size of 40\n")
 
@@ -238,11 +238,11 @@ static char test_queue__enqueue_and_dequeue_on_multiple_elements(char debug)
     return result;
 }
 
-static char test_queue__pop_on_empty_queue(char debug)
+static bool test_queue__pop_on_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
@@ -257,11 +257,11 @@ static char test_queue__pop_on_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__pop_on_non_empty_queue(char debug)
+static bool test_queue__pop_on_non_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     u32 N = 5;
     elem_t front_q = NULL;
     elem_t front_w = NULL;
@@ -277,12 +277,12 @@ static char test_queue__pop_on_non_empty_queue(char debug)
 
     result = TEST_SUCCESS;
     for (u32 i = 0; i < N; i++) {
-        result |= (char)(queue__pop(q, &front_q)
-                      || queue__pop(w, &front_w)
-                      || queue__size(q) != N-i-1
-                      || queue__size(w) != N-i-1
-                      || *(u32 *)front_q != i
-                      || *(u32 *)front_w != N);
+        result |= (queue__pop(q, &front_q)
+                || queue__pop(w, &front_w)
+                || queue__size(q) != N-i-1
+                || queue__size(w) != N-i-1
+                || *(u32 *)front_q != i
+                || *(u32 *)front_w != N);
         free(front_q);
     }
 
@@ -292,11 +292,11 @@ static char test_queue__pop_on_non_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__clean_NULL_on_empty_queue(char debug)
+static bool test_queue__clean_NULL_on_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
@@ -311,11 +311,11 @@ static char test_queue__clean_NULL_on_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__clean_NULL_on_non_empty_queue(char debug)
+static bool test_queue__clean_NULL_on_non_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     u32 N = 8;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
@@ -338,11 +338,11 @@ static char test_queue__clean_NULL_on_non_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__clear_on_empty_queue(char debug)
+static bool test_queue__clear_on_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
@@ -357,11 +357,11 @@ static char test_queue__clear_on_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__clear_on_non_empty_queue(char debug)
+static bool test_queue__clear_on_non_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     u32 N = 5;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
@@ -384,11 +384,11 @@ static char test_queue__clear_on_non_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__front_on_empty_queue(char debug)
+static bool test_queue__front_on_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
@@ -403,11 +403,11 @@ static char test_queue__front_on_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__front_on_non_empty_queue(char debug)
+static bool test_queue__front_on_non_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     int value = 5;
     elem_t front_q = NULL;
     elem_t front_w = NULL;
@@ -433,11 +433,11 @@ static char test_queue__front_on_non_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__back_on_empty_queue(char debug)
+static bool test_queue__back_on_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
@@ -452,11 +452,11 @@ static char test_queue__back_on_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__back_on_non_empty_queue(char debug)
+static bool test_queue__back_on_non_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     int value1 = 5;
     int value2 = 7;
     elem_t back_q = NULL;
@@ -485,11 +485,11 @@ static char test_queue__back_on_non_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__from_array(char debug)
+static bool test_queue__from_array(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     char A[5] = {'a', 'b', 'c', 'd', 'e'};
     char B[5] = {'f', 'g', 'h', 'i', 'j'};
     int C[5] = {1, 2, 3, 4, 5};
@@ -516,11 +516,11 @@ static char test_queue__from_array(char debug)
     return result;
 }
 
-static char test_queue__to_array_on_empty_queue(char debug)
+static bool test_queue__to_array_on_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
@@ -535,11 +535,11 @@ static char test_queue__to_array_on_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__to_array_on_non_empty_queue(char debug)
+static bool test_queue__to_array_on_non_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     u32 N = 5;
     int **A = NULL;
     int **B = NULL;
@@ -559,7 +559,7 @@ static char test_queue__to_array_on_non_empty_queue(char debug)
     result = (queue__size(q) == N && queue__size(w) == N) ? TEST_SUCCESS : TEST_FAILURE;
 
     for (u32 i = 0; i < N; i++) {
-        result |= (char)(*A[i] != (int)i || *B[i] != (int)N);
+        result |= *A[i] != (int)i || *B[i] != (int)N;
     }
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after to_array:")
@@ -573,11 +573,11 @@ static char test_queue__to_array_on_non_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__foreach_on_empty_queue(char debug)
+static bool test_queue__foreach_on_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     int value = 1;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
@@ -593,11 +593,11 @@ static char test_queue__foreach_on_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__foreach_on_non_empty_queue(char debug)
+static bool test_queue__foreach_on_non_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     u32 N = 8;
     int value = 1;
     int array[8] = {-5, 0, 2, 7, 11, 1, 3, 10};
@@ -621,7 +621,7 @@ static char test_queue__foreach_on_non_empty_queue(char debug)
 
     result = TEST_SUCCESS;
     for (u32 i = 0; i < N; i++) {
-        result |= (char)(*(int *)A[i] + value != *(int *)C[i] || *(int *)B[i] != *(int *)D[i]);
+        result |= *(int *)A[i] + value != *(int *)C[i] || *(int *)B[i] != *(int *)D[i];
     }
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after foreach:")
@@ -638,11 +638,11 @@ static char test_queue__foreach_on_non_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__sort_on_empty_queue(char debug)
+static bool test_queue__sort_on_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
@@ -657,11 +657,11 @@ static char test_queue__sort_on_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__sort_on_non_empty_queue(char debug)
+static bool test_queue__sort_on_non_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     u32 N = 8;
     int unordered[8] = {5, -3, 2, 0, 1, 0, 7, 4};
     int ordered[8] = {-3, 0, 0, 1, 2, 4, 5, 7};
@@ -683,7 +683,7 @@ static char test_queue__sort_on_non_empty_queue(char debug)
 
     result = TEST_SUCCESS;
     for (u32 i = 0; i < 8; i++) {
-        result |= (char)(ordered[i] != *(int *)A[i] || ordered[i] != *(int *)B[i]);
+        result |= ordered[i] != *(int *)A[i] || ordered[i] != *(int *)B[i];
     }
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after sort:")
@@ -697,11 +697,11 @@ static char test_queue__sort_on_non_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__shuffle_on_empty_queue(char debug)
+static bool test_queue__shuffle_on_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
@@ -716,11 +716,11 @@ static char test_queue__shuffle_on_empty_queue(char debug)
     return result;
 }
 
-static char test_queue__shuffle_on_non_empty_queue(char debug)
+static bool test_queue__shuffle_on_non_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     u32 N = 8;
     char src_char[8] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
     int src_int[8] = {0, 1, 2, 3, 4, 5, 6, 7};

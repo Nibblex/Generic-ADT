@@ -18,11 +18,11 @@
 ///     TEST SUITE
 ////////////////////////////////////////////////////////////////////
 
-static char test_stack__empty_copy_enabled(char debug)
+static bool test_stack__empty_copy_enabled(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
 
     result = s ? TEST_SUCCESS : TEST_FAILURE;
@@ -33,11 +33,11 @@ static char test_stack__empty_copy_enabled(char debug)
     return result;
 }
 
-static char test_stack__empty_copy_disabled(char debug)
+static bool test_stack__empty_copy_disabled(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Stack s = stack__empty_copy_disabled();
 
     result = s ? TEST_SUCCESS : TEST_FAILURE;
@@ -48,11 +48,11 @@ static char test_stack__empty_copy_disabled(char debug)
     return result;
 }
 
-static char test_stack__is_copy_enabled(void)
+static bool test_stack__is_copy_enabled(void)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
@@ -62,11 +62,11 @@ static char test_stack__is_copy_enabled(void)
     return result;
 }
 
-static char test_stack__size(void)
+static bool test_stack__size(void)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
@@ -81,11 +81,11 @@ static char test_stack__size(void)
     return result;
 }
 
-static char test_stack__is_empty_on_empty_stack(void)
+static bool test_stack__is_empty_on_empty_stack(void)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
@@ -95,11 +95,11 @@ static char test_stack__is_empty_on_empty_stack(void)
     return result;
 }
 
-static char test_stack__is_empty_on_non_empty_stack(void)
+static bool test_stack__is_empty_on_non_empty_stack(void)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
@@ -112,11 +112,11 @@ static char test_stack__is_empty_on_non_empty_stack(void)
     return result;
 }
 
-static char test_stack__push_on_empty_stack(char debug)
+static bool test_stack__push_on_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
@@ -131,11 +131,11 @@ static char test_stack__push_on_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__push_on_non_empty_stack(char debug)
+static bool test_stack__push_on_non_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     u32 N = 5;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
@@ -153,11 +153,11 @@ static char test_stack__push_on_non_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__pop_on_empty_stack(char debug)
+static bool test_stack__pop_on_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
@@ -172,11 +172,11 @@ static char test_stack__pop_on_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__pop_on_non_empty_stack(char debug)
+static bool test_stack__pop_on_non_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     u32 N = 5;
     elem_t top_s = NULL;
     elem_t top_t = NULL;
@@ -192,12 +192,12 @@ static char test_stack__pop_on_non_empty_stack(char debug)
 
     result = TEST_SUCCESS;
     for (u32 i = 0; i < N; i++) {
-        result |= (char)(stack__pop(s, &top_s)
-                      || stack__pop(t, &top_t)
-                      || stack__size(s) != N-i-1
-                      || stack__size(t) != N-i-1
-                      || *(u32 *)top_s != N-i-1
-                      || *(u32 *)top_t != N);
+        result |= (stack__pop(s, &top_s)
+                || stack__pop(t, &top_t)
+                || stack__size(s) != N-i-1
+                || stack__size(t) != N-i-1
+                || *(u32 *)top_s != N-i-1
+                || *(u32 *)top_t != N);
         free(top_s);
     }
 
@@ -207,11 +207,11 @@ static char test_stack__pop_on_non_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__push_and_pop_on_multiple_elements(char debug)
+static bool test_stack__push_and_pop_on_multiple_elements(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
@@ -229,7 +229,7 @@ static char test_stack__push_and_pop_on_multiple_elements(char debug)
         stack__pop(t, NULL);
     }
 
-    result |= (char)(stack__size(s) != 20 || stack__size(t) != 20);
+    result |= (stack__size(s) != 20 || stack__size(t) != 20);
 
     STACK_DEBUG_i32(s, t, "\nRemoved 40 elements, expected capacity of 32 and size of 20\n")
 
@@ -238,7 +238,7 @@ static char test_stack__push_and_pop_on_multiple_elements(char debug)
         stack__push(t, &i);
     }
 
-    result |= (char)(stack__size(s) != 40 || stack__size(t) != 40);
+    result |= (stack__size(s) != 40 || stack__size(t) != 40);
 
     STACK_DEBUG_i32(s, t, "\nAdded 20 elements, expected capacity of 64 and size of 40\n")
 
@@ -246,11 +246,11 @@ static char test_stack__push_and_pop_on_multiple_elements(char debug)
     return result;
 }
 
-static char test_stack__clean_NULL_on_empty_stack(char debug)
+static bool test_stack__clean_NULL_on_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
@@ -265,11 +265,11 @@ static char test_stack__clean_NULL_on_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__clean_NULL_on_non_empty_stack(char debug)
+static bool test_stack__clean_NULL_on_non_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     u32 N = 8;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
@@ -292,11 +292,11 @@ static char test_stack__clean_NULL_on_non_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__clear_on_empty_stack(char debug)
+static bool test_stack__clear_on_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
@@ -311,11 +311,11 @@ static char test_stack__clear_on_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__clear_on_non_empty_stack(char debug)
+static bool test_stack__clear_on_non_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     u32 N = 5;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
@@ -338,11 +338,11 @@ static char test_stack__clear_on_non_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__top_on_empty_stack(char debug)
+static bool test_stack__top_on_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
@@ -357,11 +357,11 @@ static char test_stack__top_on_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__top_on_non_empty_stack(char debug)
+static bool test_stack__top_on_non_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     int value1 = 5;
     int value2 = 7;
     elem_t top_s = NULL;
@@ -390,14 +390,15 @@ static char test_stack__top_on_non_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__from_array(char debug)
+static int test_stack__from_array(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     char A[5] = {'a', 'b', 'c', 'd', 'e'};
     char B[5] = {'f', 'g', 'h', 'i', 'j'};
     int C[5] = {1, 2, 3, 4, 5};
+    elem_t *D = NULL;
     Stack s_char = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t_char = stack__empty_copy_disabled();
     Stack s_int = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
@@ -414,18 +415,25 @@ static char test_stack__from_array(char debug)
            && stack__size(s_int) == 5
            && stack__size(t_int) == 5) ? TEST_SUCCESS : TEST_FAILURE;
 
+    D = stack__to_array(t_int);
+
+    for (u32 i = 0; i < 5; i++) {
+        result |= (C[i] != *(int *)D[i]);
+    }
+
     STACK_DEBUG_char(s_char, t_char, "\n\tStacks after from_array:")
     STACK_DEBUG_i32(s_int, t_int, " ")
 
+    free(D);
     STACK_FREE(s_char, t_char, s_int, t_int)
     return result;
 }
 
-static char test_stack__to_array_on_empty_stack(char debug)
+static bool test_stack__to_array_on_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
@@ -440,11 +448,11 @@ static char test_stack__to_array_on_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__to_array_on_non_empty_stack(char debug)
+static bool test_stack__to_array_on_non_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     u32 N = 5;
     int **A = NULL;
     int **B = NULL;
@@ -464,7 +472,7 @@ static char test_stack__to_array_on_non_empty_stack(char debug)
     result = (stack__size(s) == N && stack__size(t) == N) ? TEST_SUCCESS : TEST_FAILURE;
 
     for (u32 i = 0; i < N; i++) {
-        result |= (char)(*A[i] != (int)i || *B[i] != (int)N);
+        result |= *A[i] != (int)i || *B[i] != (int)N;
     }
 
     STACK_DEBUG_i32(s, t, "\n\tStacks after to_array:")
@@ -478,11 +486,11 @@ static char test_stack__to_array_on_non_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__foreach_on_empty_stack(char debug)
+static bool test_stack__foreach_on_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     int value = 1;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
@@ -498,11 +506,11 @@ static char test_stack__foreach_on_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__foreach_on_non_empty_stack(char debug)
+static bool test_stack__foreach_on_non_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     u32 N = 8;
     u32 M = 2;
     int value = 1;
@@ -537,7 +545,7 @@ static char test_stack__foreach_on_non_empty_stack(char debug)
 
     result = TEST_SUCCESS;
     for (u32 i = 0; i < N-M; i++) {
-        result |= (char)(*(int *)A[i] + value != *(int *)C[i] || *(int *)B[i] != *(int *)D[i]);
+        result |= *(int *)A[i] + value != *(int *)C[i] || *(int *)B[i] != *(int *)D[i];
     }
 
     STACK_DEBUG_i32(s, t, "\n\tStacks after foreach:")
@@ -554,11 +562,11 @@ static char test_stack__foreach_on_non_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__sort_on_empty_stack(char debug)
+static bool test_stack__sort_on_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
@@ -573,11 +581,11 @@ static char test_stack__sort_on_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__sort_on_non_empty_stack(char debug)
+static bool test_stack__sort_on_non_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     u32 N = 8;
     int unordered[8] = {5, -3, 2, 0, 1, 0, 7, 4};
     int ordered[8] = {-3, 0, 0, 1, 2, 4, 5, 7};
@@ -599,7 +607,7 @@ static char test_stack__sort_on_non_empty_stack(char debug)
 
     result = TEST_SUCCESS;
     for (u32 i = 0; i < 8; i++) {
-        result |= (char)(ordered[i] != *(int *)A[i] || ordered[i] != *(int *)B[i]);
+        result |= ordered[i] != *(int *)A[i] || ordered[i] != *(int *)B[i];
     }
 
     STACK_DEBUG_i32(s, t, "\n\tStacks after sort:")
@@ -613,11 +621,11 @@ static char test_stack__sort_on_non_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__shuffle_on_empty_stack(char debug)
+static bool test_stack__shuffle_on_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Stack t = stack__empty_copy_disabled();
 
@@ -632,11 +640,11 @@ static char test_stack__shuffle_on_empty_stack(char debug)
     return result;
 }
 
-static char test_stack__shuffle_on_non_empty_stack(char debug)
+static int test_stack__shuffle_on_non_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
-    char result;
+    bool result;
     u32 N = 8;
     char src_char[8] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
     int src_int[8] = {0, 1, 2, 3, 4, 5, 6, 7};

@@ -192,12 +192,12 @@ static bool test_stack__pop_on_non_empty_stack(char debug)
 
     result = TEST_SUCCESS;
     for (u32 i = 0; i < N; i++) {
-        result |= (stack__pop(s, &top_s)
-                || stack__pop(t, &top_t)
-                || stack__size(s) != N-i-1
-                || stack__size(t) != N-i-1
-                || *(u32 *)top_s != N-i-1
-                || *(u32 *)top_t != N);
+        result |= stack__pop(s, &top_s)
+               || stack__pop(t, &top_t)
+               || stack__size(s) != N-i-1
+               || stack__size(t) != N-i-1
+               || *(u32 *)top_s != N-i-1
+               || *(u32 *)top_t != N;
         free(top_s);
     }
 
@@ -229,7 +229,7 @@ static bool test_stack__push_and_pop_on_multiple_elements(char debug)
         stack__pop(t, NULL);
     }
 
-    result |= (stack__size(s) != 20 || stack__size(t) != 20);
+    result |= stack__size(s) != 20 || stack__size(t) != 20;
 
     STACK_DEBUG_i32(s, t, "\nRemoved 40 elements, expected capacity of 32 and size of 20\n")
 
@@ -238,7 +238,7 @@ static bool test_stack__push_and_pop_on_multiple_elements(char debug)
         stack__push(t, &i);
     }
 
-    result |= (stack__size(s) != 40 || stack__size(t) != 40);
+    result |= stack__size(s) != 40 || stack__size(t) != 40;
 
     STACK_DEBUG_i32(s, t, "\nAdded 20 elements, expected capacity of 64 and size of 40\n")
 
@@ -400,16 +400,16 @@ static int test_stack__from_array(char debug)
     int C[5] = {1, 2, 3, 4, 5};
     elem_t *D = NULL;
     Stack s_char = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
-    Stack t_char = stack__empty_copy_disabled();
+    Stack t_char = NULL;
     Stack s_int = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
-    Stack t_int = stack__empty_copy_disabled();
+    Stack t_int = NULL;
 
     result = (stack__from_array(s_char, A, 5, CHAR)
-           && stack__from_array(t_char, A, 5, CHAR)
+           && (t_char = stack__from_array(t_char, A, 5, CHAR))
            && stack__from_array(s_char, B, 5, CHAR)
            && stack__from_array(t_char, B, 5, CHAR)
            && stack__from_array(s_int, C, 5, INT)
-           && stack__from_array(t_int, C, 5, INT)
+           && (t_int = stack__from_array(t_int, C, 5, INT))
            && stack__size(s_char) == 10
            && stack__size(t_char) == 10
            && stack__size(s_int) == 5
@@ -418,7 +418,7 @@ static int test_stack__from_array(char debug)
     D = stack__to_array(t_int);
 
     for (u32 i = 0; i < 5; i++) {
-        result |= (C[i] != *(int *)D[i]);
+        result |= C[i] != *(int *)D[i];
     }
 
     STACK_DEBUG_char(s_char, t_char, "\n\tStacks after from_array:")

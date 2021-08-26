@@ -277,12 +277,12 @@ static bool test_queue__pop_on_non_empty_queue(char debug)
 
     result = TEST_SUCCESS;
     for (u32 i = 0; i < N; i++) {
-        result |= (queue__pop(q, &front_q)
-                || queue__pop(w, &front_w)
-                || queue__size(q) != N-i-1
-                || queue__size(w) != N-i-1
-                || *(u32 *)front_q != i
-                || *(u32 *)front_w != N);
+        result |= queue__pop(q, &front_q)
+               || queue__pop(w, &front_w)
+               || queue__size(q) != N-i-1
+               || queue__size(w) != N-i-1
+               || *(u32 *)front_q != i
+               || *(u32 *)front_w != N;
         free(front_q);
     }
 
@@ -493,25 +493,33 @@ static bool test_queue__from_array(char debug)
     char A[5] = {'a', 'b', 'c', 'd', 'e'};
     char B[5] = {'f', 'g', 'h', 'i', 'j'};
     int C[5] = {1, 2, 3, 4, 5};
+    elem_t *D = NULL;
     Queue q_char = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
-    Queue w_char = queue__empty_copy_disabled();
+    Queue w_char = NULL;
     Queue q_int = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
-    Queue w_int = queue__empty_copy_disabled();
+    Queue w_int = NULL;
 
     result = (queue__from_array(q_char, A, 5, CHAR)
-           && queue__from_array(w_char, A, 5, CHAR)
+           && (w_char = queue__from_array(w_char, A, 5, CHAR))
            && queue__from_array(q_char, B, 5, CHAR)
            && queue__from_array(w_char, B, 5, CHAR)
            && queue__from_array(q_int, C, 5, INT)
-           && queue__from_array(w_int, C, 5, INT)
+           && (w_int = queue__from_array(w_int, C, 5, INT))
            && queue__size(q_char) == 10
            && queue__size(w_char) == 10
            && queue__size(q_int) == 5
            && queue__size(w_int) == 5) ? TEST_SUCCESS : TEST_FAILURE;
 
+    D = queue__to_array(w_int);
+
+    for (u32 i = 0; i < 5; i++) {
+        result |= C[i] != *(int *)D[i];
+    }
+
     QUEUE_DEBUG_char(q_char, w_char, "\n\tQueues after from_array:")
     QUEUE_DEBUG_i32(q_int, w_int, " ")
 
+    free(D);
     QUEUE_FREE(q_char, w_char, q_int, w_int)
     return result;
 }

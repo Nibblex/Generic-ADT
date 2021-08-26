@@ -120,13 +120,13 @@ size_t queue__size(const Queue q);
 
 
 /**
- * @brief Adds the first 'n_elems' elements of the given array in the queue
+ * @brief Enqueues the first 'n_elems' elements of the given array in the queue
  * @details If the queue already has elements they are kept in that queue
  * @note Complexity: O(n)
  * @param q the queue, if q == NULL creates a new one with copy disabled by default
  * @param A the array, if A == NULL returns the queue unaltered
  * @param n_elems number of elements to enqueue, must be less than the array length
- * @param type type of array elements, available types: 'CHAR', 'INT', 'UINT', 'FLOAT', 'STRING', 'GENERIC'
+ * @param size size of the elements contained in the given array
  * @return a queue containing all the elements of the array, NULL on error
  */
 Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t size);

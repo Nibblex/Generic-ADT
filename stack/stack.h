@@ -100,13 +100,13 @@ size_t stack__size(const Stack s);
 
 
 /**
- * @brief Adds the first 'n_elems' elements of the given array in the stack
+ * @brief Pushes the first 'n_elems' elements of the given array in the stack
  * @details If the stack already has elements they are kept in that stack
  * @note Complexity: O(n)
  * @param s the stack, if q == NULL creates a new one with copy disabled by default
  * @param A the array, if A == NULL returns the stack unaltered
  * @param n_elems number of elements to push, must be less than the array length
- * @param type type of array elements, available types: 'CHAR', 'INT', 'UINT', 'FLOAT', 'STRING', 'GENERIC'
+ * @param size size of the elements contained in the given array
  * @return a stack containing all the elements of the array, NULL on error
  */
 Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t size);

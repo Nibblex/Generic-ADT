@@ -158,7 +158,7 @@ char queue__pop(const Queue q, elem_t *front)
     q->size--;
 
     new_capacity = q->capacity>>1;
-    if (q->size < new_capacity && q->capacity > DEFAULT_QUEUE_CAPACITY) {
+    if (q->size < new_capacity && new_capacity >= DEFAULT_QUEUE_CAPACITY) {
         if (queue__shrink(new_capacity, q)) return FAILURE;
     }
 

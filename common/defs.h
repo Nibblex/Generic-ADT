@@ -25,9 +25,9 @@
 #define INC_POINTER(p, __size) \
     do { \
         unsigned long int __temp; \
-        __temp = (long unsigned int)p; \
-        __temp += __size; \
-        p = (void *)__temp; \
+        __temp = (long unsigned int)(p); \
+        __temp += (__size); \
+        (p) = (void *)__temp; \
     } while (false)
 
 /**

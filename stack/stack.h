@@ -25,9 +25,9 @@ typedef struct StackSt * Stack;
 /**
  * @brief Create an empty stack with copy enabled
  * @note Complexity: O(1)
- * @param copy_op copy operator
- * @param delete_op delete operator
- * @return a newly created stack, NULL on error
+ * @param copy_op Copy operator
+ * @param delete_op Delete operator
+ * @return a pointer to stack on success, NULL on failure
  */
 Stack stack__empty_copy_enabled(const copy_operator_t copy_op, const delete_operator_t delete_op);
 
@@ -35,7 +35,7 @@ Stack stack__empty_copy_enabled(const copy_operator_t copy_op, const delete_oper
 /**
  * @brief Create an empty stack with copy disabled
  * @note Complexity: O(1)
- * @return a newly created stack, NULL on error
+ * @return a pointer to stack on success, NULL on failure
  */
 Stack stack__empty_copy_disabled(void);
 
@@ -43,9 +43,9 @@ Stack stack__empty_copy_disabled(void);
 /**
  * @brief Adds an element in the stack
  * @note Complexity: O(1)
- * @param s the stack
- * @param element the element to add
- * @return 0 on success, 1 otherwise
+ * @param s The stack
+ * @param element The element to add
+ * @return 0 on success, -1 on failure
  */
 char stack__push(const Stack s, const elem_t element);
 
@@ -54,9 +54,9 @@ char stack__push(const Stack s, const elem_t element);
  * @brief Retrieve a copy of the top element (similar to 'stack__top' but the element is removed of the stack)
  * @details The element is stored in 'top' variable and must be manually freed by user afterward
  * @note Complexity: O(1)
- * @param s the stack
+ * @param s The stack
  * @param top pointer to storage variable
- * @return 0 on success, 1 otherwise
+ * @return 0 on success, -1 on failure
  */
 char stack__pop(const Stack s, elem_t *top);
 
@@ -65,27 +65,27 @@ char stack__pop(const Stack s, elem_t *top);
  * @brief Retrieve the element on the top of the stack without removing it
  * @details The element is stored in 'top' variable and must be manually freed by user afterward
  * @note Complexity: O(1)
- * @param s the stack
+ * @param s The stack
  * @param top pointer to storage variable
- * @return 0 on success, 1 otherwise
+ * @return 0 on success, -1 on failure
  */
 char stack__top(const Stack s, elem_t *top);
 
 
 /**
- * @brief Verify if the element's copy is enabled for the given stack
+ * @brief Checks if the stack has the copy operator enabled
  * @note Complexity: O(1)
- * @param s the stack
- * @return 1 if the stack has copy enabled, 0 otherwise
+ * @param s The stack
+ * @return 1 if the stack has copy enabled, 0 if not, -1 on failure
  */
 char stack__is_copy_enabled(const Stack s);
 
 
 /**
- * @brief Verify if the stack is empty
+ * @brief Checks if the stack is empty
  * @note Complexity: O(1)
- * @param s the stack
- * @return 1 if the stack is empty, 0 otherwise
+ * @param s The stack
+ * @return 1 if the stack is empty, 0 if not, -1 on failure
  */
 char stack__is_empty(const Stack s);
 
@@ -93,21 +93,22 @@ char stack__is_empty(const Stack s);
 /**
  * @brief Number of elements in the stack
  * @note Complexity: O(1)
- * @param s the stack
- * @return an unsigned integer corresponding to the number of elements in the stack
+ * @param s The stack
+ * @return a size_t number corresponding to the current stack size on success, -1 on failure
  */
 size_t stack__size(const Stack s);
 
 
 /**
  * @brief Pushes the first 'n_elems' elements of the given array in the stack
- * @details If the stack already has elements they are kept in that stack
+ * @details If s == NULL creates a new stack with copy disabled by default
+ * @details If A == NULL returns the stack unaltered
  * @note Complexity: O(n)
- * @param s the stack, if q == NULL creates a new one with copy disabled by default
- * @param A the array, if A == NULL returns the stack unaltered
- * @param n_elems number of elements to push, must be less than the array length
- * @param size size of the elements contained in the given array
- * @return a stack containing all the elements of the array, NULL on error
+ * @param s The stack
+ * @param A The array
+ * @param n_elems Number of elements to push, must be less than or equal to the length of the array
+ * @param size Byte size of the elements contained in the given array
+ * @return a pointer to stack on success, NULL on failure
  */
 Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t size);
 
@@ -116,25 +117,25 @@ Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t siz
  * @brief Retrieves a copy of all items in a stack stored in array
  * @details The array must be manually freed by user afterward
  * @note Complexity: O(n)
- * @param s the stack
- * @return a dynamically allocated array which contains all the elements from the given stack, NULL on error
+ * @param s The stack
+ * @return a pointer to dynamically allocated array which contains all the elements from the given stack on success, NULL on failure
  */
 elem_t *stack__to_array(const Stack s);
 
 
 /**
- * @brief Uses qsort to sort the stack using the comparison criteria given by the received compare function
+ * @brief Uses qsort to sort the stack elements using the comparison criteria given by the received compare function
  * @note Complexity: O(n*log(n))
- * @param s the stack
- * @param f the compare function
+ * @param s The stack
+ * @param f The compare function
  */
 void stack__sort(const Stack s, const compare_func_t f);
 
 
 /**
- * @brief Randomly mixes the stack
+ * @brief Randomly shuffles the stack
  * @note Complexity: O(n)
- * @param s the stack
+ * @param s The stack
  */
 void stack__shuffle(const Stack s);
 
@@ -142,9 +143,9 @@ void stack__shuffle(const Stack s);
 /**
  * @brief Maps the given function to the stack
  * @note Complexity: O(n) with copy enabled, O(n²) with copy disabled
- * @param s the stack
- * @param f the applying function
- * @param user_data optional data to be used as an additional argument of the application function
+ * @param s The stack
+ * @param f The applying function
+ * @param user_data Optional data to be used as an additional argument of the application function
  */
 void stack__foreach(const Stack s, const applying_func_t f, void *user_data);
 
@@ -152,7 +153,7 @@ void stack__foreach(const Stack s, const applying_func_t f, void *user_data);
 /**
  * @brief Removes all NULL pointers in the stack
  * @note Complexity: O(n)
- * @param s the stack
+ * @param s The stack
  */
 void stack__clean_NULL(const Stack s);
 
@@ -161,7 +162,7 @@ void stack__clean_NULL(const Stack s);
  * @brief Removes all elements in the stack
  * @details If copy is enabled frees all allocated memory used by these elements, the stack is still usable afterwards
  * @note Complexity: O(n) with copy enabled, O(1) with copy disabled
- * @param s the stack
+ * @param s The stack
  */
 void stack__clear(const Stack s);
 
@@ -170,7 +171,7 @@ void stack__clear(const Stack s);
  * @brief Frees all allocated memory used by the stack
  * @details If copy is enabled frees all memory used by the elements in the stack
  * @note Complexity: O(n) with copy enabled, O(1) with copy disabled
- * @param s the stack
+ * @param s The stack
  */
 void stack__free(const Stack s);
 
@@ -178,8 +179,8 @@ void stack__free(const Stack s);
 /**
  * @brief Prints the stack's content
  * @note Complexity: O(n)
- * @param s the stack
- * @param debug_op debug operator
+ * @param s The stack
+ * @param debug_op The debug operator
  */
 void stack__debug(const Stack s, void (*debug_op) (elem_t));
 

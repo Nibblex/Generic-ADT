@@ -153,7 +153,7 @@ static bool test_queue__enqueue_on_non_empty_queue(char debug)
     return result;
 }
 
-static bool test_queue__enqueue_and_pop_on_multiple_elements(char debug)
+static bool test_queue__enqueue_and_dequeue_on_multiple_elements(char debug)
 {
     printf("%s... ", __func__);
 
@@ -171,8 +171,8 @@ static bool test_queue__enqueue_and_pop_on_multiple_elements(char debug)
     QUEUE_DEBUG_i32(q, w, "\nAdded 60 elements, expected capacity of 64 and size of 60\n")
 
     for (u32 i = 0; i < 40; i++) {
-        queue__pop(q, NULL);
-        queue__pop(w, NULL);
+        queue__dequeue(q, NULL);
+        queue__dequeue(w, NULL);
     }
 
     result |= queue__size(q) != 20 || queue__size(w) != 20;
@@ -192,7 +192,7 @@ static bool test_queue__enqueue_and_pop_on_multiple_elements(char debug)
     return result;
 }
 
-static bool test_queue__pop_on_empty_queue(char debug)
+static bool test_queue__dequeue_on_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
@@ -200,18 +200,18 @@ static bool test_queue__pop_on_empty_queue(char debug)
     Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
     Queue w = queue__empty_copy_disabled();
 
-    result = (queue__pop(q, NULL)
-           && queue__pop(w, NULL)
+    result = (queue__dequeue(q, NULL)
+           && queue__dequeue(w, NULL)
            && queue__is_empty(q)
            && queue__is_empty(w)) ? TEST_SUCCESS : TEST_FAILURE;
 
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues after pop:")
+    QUEUE_DEBUG_i32(q, w, "\n\tQueues after dequeue:")
 
     QUEUE_FREE(q, w, NULL, NULL)
     return result;
 }
 
-static bool test_queue__pop_on_non_empty_queue(char debug)
+static bool test_queue__dequeue_on_non_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
@@ -227,12 +227,12 @@ static bool test_queue__pop_on_non_empty_queue(char debug)
         queue__enqueue(w, &i);
     }
 
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues before pop:")
+    QUEUE_DEBUG_i32(q, w, "\n\tQueues before dequeue:")
 
     result = TEST_SUCCESS;
     for (u32 i = 0; i < N; i++) {
-        result |= queue__pop(q, &front_q)
-               || queue__pop(w, &front_w)
+        result |= queue__dequeue(q, &front_q)
+               || queue__dequeue(w, &front_w)
                || queue__size(q) != N-i-1
                || queue__size(w) != N-i-1
                || *(u32 *)front_q != i
@@ -240,7 +240,7 @@ static bool test_queue__pop_on_non_empty_queue(char debug)
         free(front_q);
     }
 
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues after pop:")
+    QUEUE_DEBUG_i32(q, w, "\n\tQueues after dequeue:")
 
     QUEUE_FREE(q, w, NULL, NULL)
     return result;
@@ -743,9 +743,9 @@ int main(void)
 
     print_test_result(test_queue__enqueue_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__enqueue_on_non_empty_queue(false), &nb_success, &nb_tests);
-    print_test_result(test_queue__enqueue_and_pop_on_multiple_elements(false), &nb_success, &nb_tests);
-    print_test_result(test_queue__pop_on_empty_queue(false), &nb_success, &nb_tests);
-    print_test_result(test_queue__pop_on_non_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__enqueue_and_dequeue_on_multiple_elements(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__dequeue_on_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__dequeue_on_non_empty_queue(false), &nb_success, &nb_tests);
 
     print_test_result(test_queue__clean_NULL_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__clean_NULL_on_non_empty_queue(false), &nb_success, &nb_tests);

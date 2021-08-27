@@ -125,17 +125,17 @@ char stack__top(const Stack s, elem_t *top)
 
 inline char stack__is_copy_enabled(const Stack s)
 {
-    return s->operator_copy && s->operator_delete;
+    return !s ? FAILURE : s->operator_copy && s->operator_delete;
 }
 
 inline char stack__is_empty(const Stack s)
 {
-    return s ? !s->size : true;
+    return !s ? FAILURE : !s->size;
 }
 
 size_t stack__size(const Stack s)
 {
-    return s ? s->size : 0;
+    return !s ? (size_t)FAILURE : s->size;
 }
 
 Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t size)
@@ -150,8 +150,8 @@ Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t siz
     }
 
     for (size_t i = 0; i < n_elems; i++) {
-        if (stack__push(s, A)) goto error;
-        INC_POINTER(A, size);
+        if (stack__push(s, A) < 0) goto error;
+        PTR_INCREMENT(A, size);
     }
 
     return s;
@@ -193,7 +193,7 @@ void stack__shuffle(const Stack s)
     for (size_t i = 0; i < s->size; i++){
         a = (size_t) (rand() % (int)s->size);
         b = (size_t) (rand() % (int)s->size);
-        SWAP(s->elems[a], s->elems[b]);
+        PTR_SWAP(s->elems[a], s->elems[b]);
     }
 }
 

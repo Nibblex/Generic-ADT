@@ -121,7 +121,7 @@ char queue__enqueue(const Queue q, const elem_t element)
     return SUCCESS;
 }
 
-char queue__pop(const Queue q, elem_t *front)
+char queue__dequeue(const Queue q, elem_t *front)
 {
     size_t new_capacity;
     if (!q || !q->size) return FAILURE;
@@ -168,17 +168,17 @@ char queue__back(const Queue q, elem_t *back)
 
 inline char queue__is_copy_enabled(const Queue q)
 {
-    return q->operator_copy && q->operator_delete;
+    return !q ? FAILURE : q->operator_copy && q->operator_delete;
 }
 
 inline char queue__is_empty(const Queue q)
 {
-    return q ? !q->size : true;
+    return !q ? FAILURE : q ? !q->size : true;
 }
 
 inline size_t queue__size(const Queue q)
 {
-    return q ? q->size : 0;
+    return !q ? (size_t)FAILURE : q->size;
 }
 
 Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t size)
@@ -194,7 +194,7 @@ Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t siz
 
     for (size_t i = 0; i < n_elems; i++) {
         if (queue__enqueue(q, A)) goto error;
-        INC_POINTER(A, size);
+        PTR_INCREMENT(A, size);
     }
 
     return q;
@@ -257,7 +257,7 @@ void queue__shuffle(const Queue q)
     for (size_t i = q->front; i < q->back; i++){
         a = (q->front + (size_t)(rand() % (int)(q->front + q->back)));
         b = (q->front + (size_t)(rand() % (int)(q->front + q->back)));
-        SWAP(q->elems[a], q->elems[b]);
+        PTR_SWAP(q->elems[a], q->elems[b]);
     }
 }
 

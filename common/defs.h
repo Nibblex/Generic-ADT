@@ -14,20 +14,27 @@
 #define false 0
 #endif
 
-#define SWAP(a, b) \
+/**
+ * Macro for pointer swap
+ */
+#define PTR_SWAP(a, b) \
     do { \
         elem_t __temp = (a); \
         (a) = (b); \
         (b) = __temp; \
     } while (false)
 
-#define INC_POINTER(p, __size) \
+/**
+ * Macro for pointer increment by __size bytes
+ */
+#define PTR_INCREMENT(p, __size) \
     do { \
-        unsigned long int __temp; \
+        size_t __temp; \
         __temp = (long unsigned int)(p); \
         __temp += (__size); \
         (p) = (void *)__temp; \
     } while (false)
+
 
 /**
  * Generical element type
@@ -35,17 +42,12 @@
 typedef void * elem_t;
 
 /**
- * Data types definition used in some functions
- */
-typedef enum {CHAR = 0, INT, UINT, FLOAT, STRING, GENERIC} DataType;
-
-/**
- * Function pointer for lambda applying
+ * Function pointer required to copy an entity within the structure
  */
 typedef elem_t (*copy_operator_t)(elem_t);
 
 /**
- * Function pointer for lambda applying
+ * Function pointer required to delete an entity within the structure
  */
 typedef void (*delete_operator_t)(elem_t);
 

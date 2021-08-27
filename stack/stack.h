@@ -23,6 +23,14 @@ typedef struct StackSt * Stack;
 
 
 /**
+ * @brief Create an empty stack with copy disabled
+ * @note Complexity: O(1)
+ * @return a pointer to stack on success, NULL on failure
+ */
+Stack stack__empty_copy_disabled(void);
+
+
+/**
  * @brief Create an empty stack with copy enabled
  * @note Complexity: O(1)
  * @param copy_op Copy operator
@@ -30,14 +38,6 @@ typedef struct StackSt * Stack;
  * @return a pointer to stack on success, NULL on failure
  */
 Stack stack__empty_copy_enabled(const copy_operator_t copy_op, const delete_operator_t delete_op);
-
-
-/**
- * @brief Create an empty stack with copy disabled
- * @note Complexity: O(1)
- * @return a pointer to stack on success, NULL on failure
- */
-Stack stack__empty_copy_disabled(void);
 
 
 /**

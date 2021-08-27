@@ -18,12 +18,12 @@
 ///     TEST SUITE
 ////////////////////////////////////////////////////////////////////
 
-static bool test_queue__empty_copy_enabled(char debug)
+static bool test_queue__empty_copy_disabled(char debug)
 {
     printf("%s... ", __func__);
 
     bool result;
-    Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+    Queue q = queue__empty_copy_disabled();
 
     result = q ? TEST_SUCCESS : TEST_FAILURE;
 
@@ -33,12 +33,12 @@ static bool test_queue__empty_copy_enabled(char debug)
     return result;
 }
 
-static bool test_queue__empty_copy_disabled(char debug)
+static bool test_queue__empty_copy_enabled(char debug)
 {
     printf("%s... ", __func__);
 
     bool result;
-    Queue q = queue__empty_copy_disabled();
+    Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
 
     result = q ? TEST_SUCCESS : TEST_FAILURE;
 
@@ -734,8 +734,8 @@ int main(void)
     int nb_tests = 0;
     printf("----------- TEST QUEUE -----------\n");
 
-    print_test_result(test_queue__empty_copy_enabled(false), &nb_success, &nb_tests);
     print_test_result(test_queue__empty_copy_disabled(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__empty_copy_enabled(false), &nb_success, &nb_tests);
     print_test_result(test_queue__is_copy_enabled(), &nb_success, &nb_tests);
     print_test_result(test_queue__size(), &nb_success, &nb_tests);
     print_test_result(test_queue__is_empty_on_empty_queue(), &nb_success, &nb_tests);

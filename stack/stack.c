@@ -46,16 +46,16 @@ static Stack stack__init(const copy_operator_t copy_op, const delete_operator_t 
 ///     STACK FUNCTIONS TO EXPORT
 ///////////////////////////////////////////////////////////////////////////////
 
+inline Stack stack__empty_copy_disabled(void)
+{
+    return stack__init(NULL, NULL);
+}
+
 inline Stack stack__empty_copy_enabled(const copy_operator_t copy_op, const delete_operator_t delete_op)
 {
     if (!copy_op || !delete_op) return NULL;
 
     return stack__init(copy_op, delete_op);
-}
-
-inline Stack stack__empty_copy_disabled(void)
-{
-    return stack__init(NULL, NULL);
 }
 
 char stack__push(const Stack s, const elem_t element)

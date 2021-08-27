@@ -77,16 +77,16 @@ static Queue queue__init(const copy_operator_t copy_op, const delete_operator_t 
 ///     QUEUE FUNCTIONS TO EXPORT
 ///////////////////////////////////////////////////////////////////////////////
 
+inline Queue queue__empty_copy_disabled(void)
+{
+    return queue__init(NULL, NULL);
+}
+
 inline Queue queue__empty_copy_enabled(const copy_operator_t copy_op, const delete_operator_t delete_op)
 {
     if (!copy_op || !delete_op) return NULL;
 
     return queue__init(copy_op, delete_op);
-}
-
-inline Queue queue__empty_copy_disabled(void)
-{
-    return queue__init(NULL, NULL);
 }
 
 char queue__enqueue(const Queue q, const elem_t element)

@@ -18,12 +18,12 @@
 ///     TEST SUITE
 ////////////////////////////////////////////////////////////////////
 
-static bool test_stack__empty_copy_enabled(char debug)
+static bool test_stack__empty_copy_disabled(char debug)
 {
     printf("%s... ", __func__);
 
     bool result;
-    Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+    Stack s = stack__empty_copy_disabled();
 
     result = s ? TEST_SUCCESS : TEST_FAILURE;
 
@@ -33,12 +33,12 @@ static bool test_stack__empty_copy_enabled(char debug)
     return result;
 }
 
-static bool test_stack__empty_copy_disabled(char debug)
+static bool test_stack__empty_copy_enabled(char debug)
 {
     printf("%s... ", __func__);
 
     bool result;
-    Stack s = stack__empty_copy_disabled();
+    Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
 
     result = s ? TEST_SUCCESS : TEST_FAILURE;
 
@@ -696,8 +696,8 @@ int main(void)
     int nb_tests = 0;
     printf("----------- TEST STACK -----------\n");
 
-    print_test_result(test_stack__empty_copy_enabled(false), &nb_success, &nb_tests);
     print_test_result(test_stack__empty_copy_disabled(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__empty_copy_enabled(false), &nb_success, &nb_tests);
     print_test_result(test_stack__is_copy_enabled(), &nb_success, &nb_tests);
     print_test_result(test_stack__size(), &nb_success, &nb_tests);
     print_test_result(test_stack__is_empty_on_empty_stack(), &nb_success, &nb_tests);

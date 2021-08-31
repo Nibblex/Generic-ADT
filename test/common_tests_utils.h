@@ -12,19 +12,37 @@
 #define TEST_FAILURE 1
 #endif
 
-#define DEBUG_char(A, B, C, N) \
+#define ADD_u32(N, M, A, B) \
+    for (u32 i = 0; i < M; i++) { \
+        N(A, &i); \
+        N(B, &i); \
+    }
+
+#define ADD_char(N, M, A, B) \
+    for (char i = 'a'; i < M; i++) { \
+        N(A, &i); \
+        N(B, &i); \
+    }
+
+#define DEBUG_char(N, A, B, C) \
     if (debug) { \
         printf(C); \
         N(A, (void (*)(elem_t))operator_debug_char); \
         N(B, (void (*)(elem_t))operator_debug_char); \
     }
 
-#define DEBUG_i32(A, B, C, N) \
+#define DEBUG_i32(N, A, B, C) \
     if (debug) { \
         printf(C); \
         N(A, (void (*)(elem_t))operator_debug_i32); \
         N(B, (void (*)(elem_t))operator_debug_i32); \
     }
+
+#define FREE(N, A, B, C, D) \
+    N(A); \
+    N(B); \
+    N(C); \
+    N(D);
 
 typedef unsigned int u32;
 

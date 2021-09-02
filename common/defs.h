@@ -36,16 +36,41 @@
     } while (false)
 
 /**
- * Macro to free internal memory used by the structure
+ * Macro to array shuffle from __start to __end
  */
-#define FREE_ELEMS(__ptr) \
+#define ARRAY_SHUFFLE(__ptr, __start, __end) \
     do { \
-        if (__ptr->operator_delete) { \
-            for (size_t i = 0; i < __ptr->size; i++) { \
+        for (size_t i = __start; i < __end; i++) { \
+            a = (__start + (size_t)(rand() % (int)(__start + __end))); \
+            b = (__start + (size_t)(rand() % (int)(__start + __end))); \
+            PTR_SWAP(__ptr[a], __ptr[b]); \
+        } \
+    } while (false)
+
+/**
+ * Macro to clean NULL elements in array from __start to __end
+ */
+#define ARRAY_CLEAN_NULL(__ptr, __start, __end) \
+    do { \
+        k = 0; \
+        for (size_t i = __start; i < __end; i++) { \
+            if (__ptr[i]) { \
+                __ptr[k] = __ptr[i]; \
+                k++; \
+            } \
+        } \
+    } while (false)
+
+/**
+ * Macro to free internal memory used by elements in the structure
+ */
+#define FREE_ELEMS(__ptr, __start, __end) \
+    do { \
+        if (__ptr->operator_delete && __ptr->elems) { \
+            for (size_t i = __start; i < __end; i++) { \
                 __ptr->operator_delete(__ptr->elems[i]); \
             } \
         } \
-        free(__ptr->elems); \
     } while (false)
 
 /**

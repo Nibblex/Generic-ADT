@@ -22,9 +22,32 @@ struct QueueSt
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-///     QUEUE FUNCTIONS UTILITARIES
+///     QUEUE MACRO UTILITARIES
 ///////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Macro to allocate all memory used by the queue
+ */
+#define QUEUE_INIT(__ptr, __copy_op, __delete_op) \
+    do { \
+        __ptr = malloc(sizeof(struct QueueSt)); \
+        if (!__ptr) return NULL; \
+        __ptr->elems = malloc(sizeof(elem_t) * DEFAULT_QUEUE_CAPACITY); \
+        if (!__ptr->elems) { \
+            free(__ptr); \
+            return NULL; \
+        } \
+        __ptr->capacity = DEFAULT_QUEUE_CAPACITY; \
+        __ptr->front = 0; \
+        __ptr->back = 0; \
+        __ptr->size = 0; \
+        __ptr->operator_copy = __copy_op; \
+        __ptr->operator_delete = __delete_op; \
+    } while (false)
+
+/**
+ * Macro to shrink the queue to the new capacity
+ */
 static char queue__shrink(size_t new_capacity, Queue q)
 {
     size_t n_elems_to_end;
@@ -42,35 +65,13 @@ static char queue__shrink(size_t new_capacity, Queue q)
         memcpy(new_elems + n_elems_to_end, q->elems, sizeof(elem_t) * q->back);
     }
 
-    q->front = 0;
-    q->back = q->size;
-
     free(q->elems);
     q->elems = new_elems;
     q->capacity = new_capacity;
+    q->front = 0;
+    q->back = q->size;
 
     return SUCCESS;
-}
-
-static Queue queue__init(const copy_operator_t copy_op, const delete_operator_t delete_op)
-{
-    Queue q = malloc(sizeof(struct QueueSt));
-    if (!q) return NULL;
-
-    q->elems = malloc(sizeof(elem_t) * DEFAULT_QUEUE_CAPACITY);
-    if (!q->elems) {
-        free(q);
-        return NULL;
-    }
-
-    q->capacity = DEFAULT_QUEUE_CAPACITY;
-    q->front = 0;
-    q->back = 0;
-    q->size = 0;
-    q->operator_copy = copy_op;
-    q->operator_delete = delete_op;
-
-    return q;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -79,14 +80,20 @@ static Queue queue__init(const copy_operator_t copy_op, const delete_operator_t 
 
 inline Queue queue__empty_copy_disabled(void)
 {
-    return queue__init(NULL, NULL);
+    Queue q = NULL;
+    QUEUE_INIT(q, NULL, NULL);
+
+    return q;
 }
 
 inline Queue queue__empty_copy_enabled(const copy_operator_t copy_op, const delete_operator_t delete_op)
 {
     if (!copy_op || !delete_op) return NULL;
 
-    return queue__init(copy_op, delete_op);
+    Queue q = NULL;
+    QUEUE_INIT(q, copy_op, delete_op);
+
+    return q;
 }
 
 char queue__enqueue(const Queue q, const elem_t element)
@@ -124,7 +131,7 @@ char queue__enqueue(const Queue q, const elem_t element)
 char queue__dequeue(const Queue q, elem_t *front)
 {
     size_t new_capacity;
-    if (!q || !q->size) return FAILURE;
+    if (!q || !q->elems || !q->size) return FAILURE;
 
     if (front) {
         *front = q->elems[q->front];
@@ -147,7 +154,7 @@ char queue__dequeue(const Queue q, elem_t *front)
 
 char queue__front(const Queue q, elem_t *front)
 {
-    if (!q || !q->size || !front) return FAILURE;
+    if (!q || !q->elems || !q->size || !front) return FAILURE;
 
     *front = q->operator_copy ? q->operator_copy(q->elems[q->front]) : q->elems[q->front];
 
@@ -157,7 +164,7 @@ char queue__front(const Queue q, elem_t *front)
 char queue__back(const Queue q, elem_t *back)
 {
     size_t index;
-    if (!q || !q->size || !back) return FAILURE;
+    if (!q || !q->elems || !q->size || !back) return FAILURE;
 
     index = q->back ? q->back - 1 : q->capacity - 1;
 
@@ -188,7 +195,7 @@ Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t siz
 
     if (!q) {
         new_queue = true;
-        q = queue__init(NULL, NULL);
+        QUEUE_INIT(q, NULL, NULL);
         if (!q) return NULL;
     }
 
@@ -210,7 +217,7 @@ error:
 
 elem_t *queue__to_array(const Queue q)
 {
-    if (!q || !q->size) return NULL;
+    if (!q || !q->elems || !q->size) return NULL;
 
     elem_t *res = malloc(sizeof(elem_t) * q->size);
     if (!res) return NULL;
@@ -237,7 +244,7 @@ elem_t *queue__to_array(const Queue q)
 
 inline void queue__sort(const Queue q, const compare_func_t f)
 {
-    if (!q || q->size < 2) return;
+    if (!q || !q->elems || q->size < 2) return;
 
     if (q->back < q->front) {
         queue__shrink(q->capacity, q);
@@ -249,23 +256,20 @@ inline void queue__sort(const Queue q, const compare_func_t f)
 void queue__shuffle(const Queue q)
 {
     size_t a, b;
-    if (!q || q->size < 2) return;
+    if (!q || !q->elems || q->size < 2) return;
 
-    if (q->back < q->front) {
-        queue__shrink(q->capacity, q);
-    }
-
-    for (size_t i = q->front; i < q->back; i++){
-        a = (q->front + (size_t)(rand() % (int)(q->front + q->back)));
-        b = (q->front + (size_t)(rand() % (int)(q->front + q->back)));
-        PTR_SWAP(q->elems[a], q->elems[b]);
+    if (q->front < q->back) {
+        ARRAY_SHUFFLE(q->elems, q->front, q->back);
+    } else {
+        ARRAY_SHUFFLE(q->elems, q->front, q->capacity);
+        ARRAY_SHUFFLE(q->elems, 0, q->back);
     }
 }
 
 void queue__foreach(const Queue q, const applying_func_t f, void *user_data)
 {
     char repeated;
-    if (!q || !q->size) return;
+    if (!q || !q->elems || !q->size) return;
 
     if (q->operator_copy && q->operator_delete) {
         if (q->front < q->back) {
@@ -333,19 +337,13 @@ void queue__foreach(const Queue q, const applying_func_t f, void *user_data)
 void queue__clean_NULL(const Queue q)
 {
     size_t k;
-    if (!q) return;
+    if (!q || !q->elems) return;
 
     if (q->back < q->front) {
         queue__shrink(q->capacity, q);
     }
 
-    k = 0;
-    for (size_t i = q->front; i < q->back; i++) {
-        if (q->elems[i]) {
-            q->elems[k] = q->elems[i];
-            k++;
-        }
-    }
+    ARRAY_CLEAN_NULL(q->elems, q->front, q->back);
 
     q->size = k;
     q->back = q->front + q->size;

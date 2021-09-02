@@ -48,8 +48,7 @@ struct QueueSt
 /**
  * Macro to grow the queue to __size capacity
  */
-#define QUEUE_GROW(__ptr) \
-    ARRAY_GROW(__ptr)
+#define QUEUE_GROW(__ptr) ARRAY_GROW(__ptr)
 
 /**
  * Macro to shrink the queue to the new capacity
@@ -140,7 +139,7 @@ char queue__dequeue(const Queue q, elem_t *front)
 
     new_capacity = q->capacity>>1;
     if (q->size < new_capacity && new_capacity >= DEFAULT_QUEUE_CAPACITY) {
-        if (queue__shrink(new_capacity, q)) return FAILURE;
+        queue__shrink(new_capacity, q);
     }
 
     return SUCCESS;
@@ -174,7 +173,7 @@ inline char queue__is_copy_enabled(const Queue q)
 
 inline char queue__is_empty(const Queue q)
 {
-    return !q ? FAILURE : q ? !q->size : true;
+    return !q ? FAILURE : !q->size;
 }
 
 inline size_t queue__size(const Queue q)
@@ -194,7 +193,7 @@ Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t siz
     }
 
     for (size_t i = 0; i < n_elems; i++) {
-        if (queue__enqueue(q, A)) goto error;
+        if (queue__enqueue(q, A) < 0) goto error;
         PTR_INCREMENT(A, size);
     }
 

@@ -44,8 +44,7 @@ struct StackSt
 /**
  * Macro to grow the queue to __size capacity
  */
-#define STACK_GROW(__ptr) \
-    ARRAY_GROW(__ptr)
+#define STACK_GROW(__ptr) ARRAY_GROW(__ptr)
 
 ///////////////////////////////////////////////////////////////////////////////
 ///     STACK FUNCTIONS TO EXPORT

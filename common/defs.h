@@ -35,18 +35,18 @@
         (__ptr) = (void *)__temp; \
     } while (false)
 
-#define ARRAY_GROW(__ptr, __size) \
+#define ARRAY_GROW(__ptr) \
     do { \
         size_t new_capacity = __ptr->elems ? __ptr->capacity<<1 : 1; \
         do { \
-            realloc_res = realloc(__ptr->elems, sizeof(elem_t) * __size); \
+            realloc_res = realloc(__ptr->elems, sizeof(elem_t) * new_capacity); \
             if (!realloc_res) { \
-                __size = (__size + __ptr->capacity)>>1; \
+                new_capacity = (new_capacity + __ptr->capacity)>>1; \
             } \
         } while (!realloc_res); \
-        if (__size == __ptr->capacity) return FAILURE; \
+        if (new_capacity == __ptr->capacity) return FAILURE; \
         __ptr->elems = realloc_res; \
-        __ptr->capacity = __size; \
+        __ptr->capacity = new_capacity; \
     } while (false)
 
 /**

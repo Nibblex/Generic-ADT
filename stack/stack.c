@@ -44,8 +44,8 @@ struct StackSt
 /**
  * Macro to grow the queue to __size capacity
  */
-#define STACK_GROW(__ptr, __size) \
-    ARRAY_GROW(__ptr, __size)
+#define STACK_GROW(__ptr) \
+    ARRAY_GROW(__ptr)
 
 ///////////////////////////////////////////////////////////////////////////////
 ///     STACK FUNCTIONS TO EXPORT
@@ -76,7 +76,7 @@ char stack__push(const Stack s, const elem_t element)
 
     // Adjust capacity if necessary
     if (s->size == s->capacity || !s->elems) {
-        STACK_GROW(s, new_capacity);
+        STACK_GROW(s);
     }
 
     s->elems[s->size] = s->operator_copy ? s->operator_copy(element) : element;

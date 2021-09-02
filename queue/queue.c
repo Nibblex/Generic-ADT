@@ -48,8 +48,8 @@ struct QueueSt
 /**
  * Macro to grow the queue to __size capacity
  */
-#define QUEUE_GROW(__ptr, __size) \
-    ARRAY_GROW(__ptr, __size)
+#define QUEUE_GROW(__ptr) \
+    ARRAY_GROW(__ptr)
 
 /**
  * Macro to shrink the queue to the new capacity
@@ -109,7 +109,7 @@ char queue__enqueue(const Queue q, const elem_t element)
 
     // Adjust capacity if necessary
     if (q->size == q->capacity || !q->elems) {
-        QUEUE_GROW(q, new_capacity);
+        QUEUE_GROW(q);
 
         q->back = q->front + q->size;
         memmove(q->elems + q->size, q->elems, sizeof(elem_t) * q->front);

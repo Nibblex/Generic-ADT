@@ -96,8 +96,8 @@ char queue__enqueue(const Queue q, const elem_t element)
     if (!q) return FAILURE;
 
     // Adjust capacity if necessary
-    if (q->size == q->capacity) {
-        new_capacity = q->capacity<<1;
+    if (q->size == q->capacity || !q->elems) {
+        new_capacity = q->elems ? q->capacity<<1 : 1;
 
         do {
             realloc_res = realloc(q->elems, sizeof(elem_t) * new_capacity);
@@ -202,9 +202,10 @@ Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t siz
 error:
     if (new_queue) {
         queue__free(q);
+        return NULL;
     }
 
-    return NULL;
+    return q;
 }
 
 elem_t *queue__to_array(const Queue q)
@@ -360,8 +361,6 @@ void queue__clear(const Queue q)
 
     free(q->elems);
     q->elems = malloc(sizeof(elem_t) * DEFAULT_QUEUE_CAPACITY);
-    if (!q->elems) return;
-
     q->capacity = DEFAULT_QUEUE_CAPACITY;
     q->front = 0;
     q->back = 0;
@@ -383,17 +382,19 @@ void queue__free(const Queue q)
 void queue__debug(const Queue q, void (*debug_op) (elem_t))
 {
     setvbuf (stdout, NULL, _IONBF, 0);
+    printf("\n");
     if (!q || !q->elems) {
-        printf("\n\tQueue (NULL)\n");
+        printf("\tInvalid queue (NULL)");
+    } else if (!debug_op) {
+        printf("\tInvalid degug operator (NULL)");
     } else {
-        printf("\n\n");
         queue__is_copy_enabled(q) ? printf("\tQueue with copy enabled:")
                                   : printf("\tQueue with copy disabled:");
-        printf("\n\tQueue size: %lu\n\tQueue capacity: %lu\n\tQueue front: %lu\n\tQueue back: %lu\n\tQueue content: \n", q->size
-                                                                                                                       , q->capacity
-                                                                                                                       , q->front
-                                                                                                                       , q->back);
-        printf("\t\t in queue order: { ");
+        printf("\n\tQueue size: %lu\n\tQueue capacity: %lu\n\tQueue front: %lu\n\tQueue back: %lu\n\tQueue content: \n\t", q->size
+                                                                                                                         , q->capacity
+                                                                                                                         , q->front
+                                                                                                                         , q->back);
+        printf("In queue order: { ");
         if (q->size) {
             if (q->front < q->back) {
                 for (size_t i = q->front; i < q->back; i++) {
@@ -408,7 +409,7 @@ void queue__debug(const Queue q, void (*debug_op) (elem_t))
                 }
             }
         }
-        printf("}\n\t\t in elems order: { ");
+        printf("}\n\tIn elems order: { ");
         if (!q->size) {
             for (size_t i = 0; i < q->capacity; i++) {
                 printf("_ ");
@@ -436,6 +437,7 @@ void queue__debug(const Queue q, void (*debug_op) (elem_t))
                 }
             }
         }
-        printf("}\n");
+        printf("}");
     }
+    printf("\n");
 }

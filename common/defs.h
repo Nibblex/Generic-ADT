@@ -15,7 +15,7 @@
 #endif
 
 /**
- * Macro for pointer swap
+ * Macro to pointer swap
  */
 #define PTR_SWAP(__ptr1, __ptr2) \
     do { \
@@ -25,7 +25,7 @@
     } while (false)
 
 /**
- * Macro for pointer increment by __size bytes
+ * Macro to pointer increment by __size bytes
  */
 #define PTR_INCREMENT(__ptr, __size) \
     do { \
@@ -35,6 +35,9 @@
         (__ptr) = (void *)__temp; \
     } while (false)
 
+/**
+ * Macro to free internal memory used by the structure
+ */
 #define FREE_ELEMS(__ptr) \
     do { \
         if (__ptr->operator_delete) { \

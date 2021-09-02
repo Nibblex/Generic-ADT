@@ -65,8 +65,8 @@ char stack__push(const Stack s, const elem_t element)
     if (!s) return FAILURE;
 
     // Adjust capacity if necessary
-    if (s->size == s->capacity) {
-        new_capacity = s->capacity<<1;
+    if (s->size == s->capacity || !s->elems) {
+        new_capacity = s->elems ? s->capacity<<1 : 1;
 
         do {
             realloc_res = realloc(s->elems, sizeof(elem_t) * new_capacity);
@@ -158,10 +158,12 @@ Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t siz
 
 error:
     if (new_stack) {
-        stack__free(s);
+        FREE_ELEMS(s);
+        free(s);
+        return NULL;
     }
 
-    return NULL;
+    return s;
 }
 
 elem_t *stack__to_array(const Stack s)
@@ -249,8 +251,6 @@ void stack__clear(const Stack s)
     FREE_ELEMS(s);
 
     s->elems = malloc(sizeof(elem_t) * DEFAULT_STACK_CAPACITY);
-    if (!s->elems) return;
-
     s->capacity = DEFAULT_STACK_CAPACITY;
     s->size = 0;
 }
@@ -267,10 +267,13 @@ void stack__free(const Stack s)
 void stack__debug(const Stack s, void (*debug_op) (elem_t))
 {
     setvbuf (stdout, NULL, _IONBF, 0);
-    if (!s || !s->elems)
-        printf("\tStack (NULL)\n");
-    else {
-        printf("\n\n");
+
+    printf("\n");
+    if (!s || !s->elems) {
+        printf("\tInvalid stack (NULL)");
+    } else if (!debug_op) {
+        printf("\tInvalid degug operator (NULL)");
+    } else {
         stack__is_copy_enabled(s) ? printf("\tStack with copy enabled:")
                                   : printf("\tStack with copy disabled:");
         printf("\n\tStack size: %lu, \n\tStack capacity: %lu, \n\tStack content: \n\t", s->size, s->capacity);
@@ -282,6 +285,7 @@ void stack__debug(const Stack s, void (*debug_op) (elem_t))
                 printf("_ ");
             }
         }
-        printf("}\n");
+        printf("}");
     }
+    printf("\n");
 }

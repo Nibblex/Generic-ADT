@@ -246,16 +246,12 @@ void stack__clear(const Stack s)
 {
     if (!s) return;
 
-    if (s->operator_delete) {
-        for (size_t i = 0; i < s->size; i++) {
-            s->operator_delete(s->elems[i]);
-        }
-    }
+    FREE_ELEMS(s);
 
-    free(s->elems);
     s->elems = malloc(sizeof(elem_t) * DEFAULT_STACK_CAPACITY);
     if (!s->elems) return;
 
+    s->capacity = DEFAULT_STACK_CAPACITY;
     s->size = 0;
 }
 
@@ -263,13 +259,8 @@ void stack__free(const Stack s)
 {
     if (!s) return;
 
-    if (s->operator_delete) {
-        for (size_t i = 0; i < s->size; i++) {
-            s->operator_delete(s->elems[i]);
-        }
-    }
+    FREE_ELEMS(s);
 
-    free(s->elems);
     free(s);
 }
 

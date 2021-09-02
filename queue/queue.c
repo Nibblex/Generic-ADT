@@ -362,6 +362,7 @@ void queue__clear(const Queue q)
     q->elems = malloc(sizeof(elem_t) * DEFAULT_QUEUE_CAPACITY);
     if (!q->elems) return;
 
+    q->capacity = DEFAULT_QUEUE_CAPACITY;
     q->front = 0;
     q->back = 0;
     q->size = 0;

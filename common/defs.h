@@ -17,24 +17,33 @@
 /**
  * Macro for pointer swap
  */
-#define PTR_SWAP(a, b) \
+#define PTR_SWAP(__ptr1, __ptr2) \
     do { \
-        elem_t __temp = (a); \
-        (a) = (b); \
-        (b) = __temp; \
+        elem_t __temp = (__ptr1); \
+        (__ptr1) = (__ptr2); \
+        (__ptr2) = __temp; \
     } while (false)
 
 /**
  * Macro for pointer increment by __size bytes
  */
-#define PTR_INCREMENT(p, __size) \
+#define PTR_INCREMENT(__ptr, __size) \
     do { \
         size_t __temp; \
-        __temp = (long unsigned int)(p); \
+        __temp = (long unsigned int)(__ptr); \
         __temp += (__size); \
-        (p) = (void *)__temp; \
+        (__ptr) = (void *)__temp; \
     } while (false)
 
+#define FREE_ELEMS(__ptr) \
+    do { \
+        if (__ptr->operator_delete) { \
+            for (size_t i = 0; i < __ptr->size; i++) { \
+                __ptr->operator_delete(__ptr->elems[i]); \
+            } \
+        } \
+        free(__ptr->elems); \
+    } while (false)
 
 /**
  * Generical element type

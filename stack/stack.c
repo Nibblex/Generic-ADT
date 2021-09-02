@@ -41,6 +41,12 @@ struct StackSt
         __ptr->operator_delete = __delete_op; \
     } while (false)
 
+/**
+ * Macro to grow the queue to __size capacity
+ */
+#define STACK_GROW(__ptr, __size) \
+    ARRAY_GROW(__ptr, __size)
+
 ///////////////////////////////////////////////////////////////////////////////
 ///     STACK FUNCTIONS TO EXPORT
 ///////////////////////////////////////////////////////////////////////////////
@@ -65,24 +71,12 @@ inline Stack stack__empty_copy_enabled(const copy_operator_t copy_op, const dele
 
 char stack__push(const Stack s, const elem_t element)
 {
-    size_t new_capacity;
     elem_t *realloc_res = NULL;
     if (!s) return FAILURE;
 
     // Adjust capacity if necessary
     if (s->size == s->capacity || !s->elems) {
-        new_capacity = s->elems ? s->capacity<<1 : 1;
-
-        do {
-            realloc_res = realloc(s->elems, sizeof(elem_t) * new_capacity);
-            if (!realloc_res) {
-                new_capacity = (new_capacity + s->capacity)>>1;
-            }
-        } while (!realloc_res);
-        if (new_capacity == s->capacity) return FAILURE;
-
-        s->elems = realloc_res;
-        s->capacity = new_capacity;
+        STACK_GROW(s, new_capacity);
     }
 
     s->elems[s->size] = s->operator_copy ? s->operator_copy(element) : element;

@@ -46,6 +46,12 @@ struct QueueSt
     } while (false)
 
 /**
+ * Macro to grow the queue to __size capacity
+ */
+#define QUEUE_GROW(__ptr, __size) \
+    ARRAY_GROW(__ptr, __size)
+
+/**
  * Macro to shrink the queue to the new capacity
  */
 static char queue__shrink(size_t new_capacity, Queue q)
@@ -98,24 +104,12 @@ inline Queue queue__empty_copy_enabled(const copy_operator_t copy_op, const dele
 
 char queue__enqueue(const Queue q, const elem_t element)
 {
-    size_t new_capacity;
     elem_t *realloc_res = NULL;
     if (!q) return FAILURE;
 
     // Adjust capacity if necessary
     if (q->size == q->capacity || !q->elems) {
-        new_capacity = q->elems ? q->capacity<<1 : 1;
-
-        do {
-            realloc_res = realloc(q->elems, sizeof(elem_t) * new_capacity);
-            if (!realloc_res) {
-                new_capacity = (new_capacity + q->capacity)>>1;
-            }
-        } while (!realloc_res);
-        if (new_capacity == q->capacity) return FAILURE;
-
-        q->elems = realloc_res;
-        q->capacity = new_capacity;
+        QUEUE_GROW(q, new_capacity);
 
         q->back = q->front + q->size;
         memmove(q->elems + q->size, q->elems, sizeof(elem_t) * q->front);

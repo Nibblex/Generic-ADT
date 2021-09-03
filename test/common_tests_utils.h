@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #ifndef TEST_SUCCESS
 #define TEST_SUCCESS 0
@@ -12,37 +13,41 @@
 #define TEST_FAILURE 1
 #endif
 
-#define ADD_u32(N, M, A, B) \
-    for (u32 i = 0; i < M; i++) { \
-        N(A, &i); \
-        N(B, &i); \
-    }
+#define ADD_u32(F, N, A, B) do { \
+    for (u32 i = 0; i < N; i++) { \
+        F(A, &i); \
+        F(B, &i); \
+    } \
+} while (false)
 
-#define ADD_char(N, M, A, B) \
-    for (char i = 'a'; i < M; i++) { \
-        N(A, &i); \
-        N(B, &i); \
-    }
+#define ADD_i32_RAND(F, N, A, B) do { \
+    int r; \
+    srand((u32)time(NULL)); \
+    for (u32 i = 0; i < N; i++) { \
+        r = rand() % 20; \
+        F(A, &r); \
+        F(B, &r); \
+    } \
+} while (false)
 
-#define DEBUG_char(N, A, B, C) \
+#define DEBUG_char(F, A, B, C) do { \
     if (debug) { \
         printf(C); \
-        N(A, (void (*)(elem_t))operator_debug_char); \
-        N(B, (void (*)(elem_t))operator_debug_char); \
-    }
+        F(A, (void (*)(elem_t))operator_debug_char); \
+        F(B, (void (*)(elem_t))operator_debug_char); \
+    } \
+} while (false)
 
-#define DEBUG_i32(N, A, B, C) \
+#define DEBUG_i32(F, A, B, C) do { \
     if (debug) { \
         printf(C); \
-        N(A, (void (*)(elem_t))operator_debug_i32); \
-        N(B, (void (*)(elem_t))operator_debug_i32); \
-    }
+        F(A, (void (*)(elem_t))operator_debug_i32); \
+        F(B, (void (*)(elem_t))operator_debug_i32); \
+    } \
+} while (false)
 
-#define FREE(N, A, B, C, D) \
-    N(A); \
-    N(B); \
-    N(C); \
-    N(D);
+#define FREE(F, A, B, C, D) \
+    F(A); F(B); F(C); F(D)
 
 typedef unsigned int u32;
 

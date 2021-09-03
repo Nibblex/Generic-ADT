@@ -17,75 +17,84 @@
 /**
  * Macro to pointer swap
  */
-#define PTR_SWAP(__ptr1, __ptr2) \
-    do { \
-        elem_t __temp = (__ptr1); \
-        (__ptr1) = (__ptr2); \
-        (__ptr2) = __temp; \
-    } while (false)
+#define PTR_SWAP(__ptr1, __ptr2) do { \
+    elem_t __temp = (__ptr1); \
+    (__ptr1) = (__ptr2); \
+    (__ptr2) = __temp; \
+} while (false)
 
 /**
  * Macro to pointer increment by __size bytes
  */
-#define PTR_INCREMENT(__ptr, __size) \
-    do { \
-        size_t __temp; \
-        __temp = (long unsigned int)(__ptr); \
-        __temp += (__size); \
-        (__ptr) = (void *)__temp; \
-    } while (false)
+#define PTR_INCREMENT(__ptr, __size) do { \
+    size_t __temp; \
+    __temp = (long unsigned int)(__ptr); \
+    __temp += (__size); \
+    (__ptr) = (void *)__temp; \
+} while (false)
 
-#define ARRAY_GROW(__ptr) \
+/**
+ * Macro to grow capacity
+ */
+#define ARRAY_GROW(__ptr) do { \
+    elem_t *realloc_res = NULL; \
+    size_t new_capacity = __ptr->elems ? __ptr->capacity<<1 : 1; \
     do { \
-        size_t new_capacity = __ptr->elems ? __ptr->capacity<<1 : 1; \
-        do { \
-            realloc_res = realloc(__ptr->elems, sizeof(elem_t) * new_capacity); \
-            if (!realloc_res) { \
-                new_capacity = (new_capacity + __ptr->capacity)>>1; \
-            } \
-        } while (!realloc_res); \
-        if (new_capacity == __ptr->capacity) return FAILURE; \
+        realloc_res = realloc(__ptr->elems, sizeof(elem_t) * new_capacity); \
+        if (!realloc_res) { \
+            new_capacity = (new_capacity + __ptr->capacity)>>1; \
+        } \
+    } while (!realloc_res); \
+    if (new_capacity == __ptr->capacity) return FAILURE; \
+    __ptr->elems = realloc_res; \
+    __ptr->capacity = new_capacity; \
+} while (false)
+
+/**
+ * Macro to shrink capacity
+ */
+#define ARRAY_SHRINK(__ptr, __nelems) do { \
+    elem_t *realloc_res = realloc(__ptr->elems, sizeof(elem_t) * __nelems); \
+    if (realloc_res) { \
         __ptr->elems = realloc_res; \
-        __ptr->capacity = new_capacity; \
-    } while (false)
+        __ptr->capacity = __nelems; \
+    } \
+} while (false)
 
 /**
  * Macro to array shuffle from __start to __end
  */
-#define ARRAY_SHUFFLE(__ptr, __start, __end) \
-    do { \
-        for (size_t i = __start; i < __end; i++) { \
-            a = (__start + (size_t)(rand() % (int)(__start + __end))); \
-            b = (__start + (size_t)(rand() % (int)(__start + __end))); \
-            PTR_SWAP(__ptr[a], __ptr[b]); \
-        } \
-    } while (false)
+#define ARRAY_SHUFFLE(__ptr, __start, __end) do { \
+    for (size_t i = __start; i < __end; i++) { \
+        a = (__start + (size_t)(rand() % (int)(__start + __end))); \
+        b = (__start + (size_t)(rand() % (int)(__start + __end))); \
+        PTR_SWAP(__ptr[a], __ptr[b]); \
+    } \
+} while (false)
 
 /**
  * Macro to clean NULL elements in array from __start to __end
  */
-#define ARRAY_CLEAN_NULL(__ptr, __start, __end) \
-    do { \
-        k = 0; \
-        for (size_t i = __start; i < __end; i++) { \
-            if (__ptr[i]) { \
-                __ptr[k] = __ptr[i]; \
-                k++; \
-            } \
+#define ARRAY_CLEAN_NULL(__ptr, __start, __end) do { \
+    k = 0; \
+    for (size_t i = __start; i < __end; i++) { \
+        if (__ptr[i]) { \
+            __ptr[k] = __ptr[i]; \
+            k++; \
         } \
-    } while (false)
+    } \
+} while (false)
 
 /**
  * Macro to free internal memory used by elements in the structure
  */
-#define FREE_ELEMS(__ptr, __start, __end) \
-    do { \
-        if (__ptr->operator_delete && __ptr->elems) { \
-            for (size_t i = __start; i < __end; i++) { \
-                __ptr->operator_delete(__ptr->elems[i]); \
-            } \
+#define FREE_ELEMS(__ptr, __start, __end) do { \
+    if (__ptr->operator_delete && __ptr->elems) { \
+        for (size_t i = __start; i < __end; i++) { \
+            __ptr->operator_delete(__ptr->elems[i]); \
         } \
-    } while (false)
+    } \
+} while (false)
 
 /**
  * Generical element type

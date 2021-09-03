@@ -28,56 +28,38 @@ struct QueueSt
 /**
  * Macro to allocate all memory used by the queue
  */
-#define QUEUE_INIT(__ptr, __copy_op, __delete_op) \
-    do { \
-        __ptr = malloc(sizeof(struct QueueSt)); \
-        if (!__ptr) return NULL; \
-        __ptr->elems = malloc(sizeof(elem_t) * DEFAULT_QUEUE_CAPACITY); \
-        if (!__ptr->elems) { \
-            free(__ptr); \
-            return NULL; \
-        } \
-        __ptr->capacity = DEFAULT_QUEUE_CAPACITY; \
-        __ptr->front = 0; \
-        __ptr->back = 0; \
-        __ptr->size = 0; \
-        __ptr->operator_copy = __copy_op; \
-        __ptr->operator_delete = __delete_op; \
-    } while (false)
+#define QUEUE_INIT(__ptr, __copy_op, __delete_op) do { \
+    __ptr = malloc(sizeof(struct QueueSt)); \
+    if (!__ptr) return NULL; \
+    __ptr->elems = malloc(sizeof(elem_t) * DEFAULT_QUEUE_CAPACITY); \
+    if (!__ptr->elems) { \
+        free(__ptr); \
+        return NULL; \
+    } \
+    __ptr->capacity = DEFAULT_QUEUE_CAPACITY; \
+    __ptr->front = 0; \
+    __ptr->back = 0; \
+    __ptr->size = 0; \
+    __ptr->operator_copy = __copy_op; \
+    __ptr->operator_delete = __delete_op; \
+} while (false)
 
 /**
  * Macro to grow the queue to __size capacity
  */
 #define QUEUE_GROW(__ptr) ARRAY_GROW(__ptr)
 
-/**
- * Macro to shrink the queue to the new capacity
- */
-static char queue__shrink(size_t new_capacity, Queue q)
-{
-    size_t n_elems_to_end;
-
-    if (new_capacity < q->size) return FAILURE;
-
-    elem_t *new_elems = malloc(sizeof(elem_t) * new_capacity);
-    if (!new_elems) return FAILURE;
-
-    if (q->front < q->back) {
-        memcpy(new_elems, q->elems + q->front, sizeof(elem_t) * q->size);
-    } else {
-        n_elems_to_end = q->capacity - q->front;
-        memcpy(new_elems, q->elems + q->front, sizeof(elem_t) * n_elems_to_end);
-        memcpy(new_elems + n_elems_to_end, q->elems, sizeof(elem_t) * q->back);
-    }
-
-    free(q->elems);
-    q->elems = new_elems;
-    q->capacity = new_capacity;
-    q->front = 0;
-    q->back = q->size;
-
-    return SUCCESS;
-}
+#define QUEUE_COMPACT(__ptr) do { \
+    if (__ptr->front < __ptr->back) { \
+        memmove(__ptr->elems, __ptr->elems + __ptr->front, sizeof(elem_t) * __ptr->size); \
+    } else { \
+        memmove(__ptr->elems + __ptr->back, \
+                __ptr->elems + __ptr->front, \
+                sizeof(elem_t) * (__ptr->capacity - __ptr->front)); \
+    } \
+    __ptr->front = 0; \
+    __ptr->back = __ptr->size; \
+} while (false)
 
 ///////////////////////////////////////////////////////////////////////////////
 ///     QUEUE FUNCTIONS TO EXPORT
@@ -103,7 +85,6 @@ inline Queue queue__empty_copy_enabled(const copy_operator_t copy_op, const dele
 
 char queue__enqueue(const Queue q, const elem_t element)
 {
-    elem_t *realloc_res = NULL;
     if (!q) return FAILURE;
 
     // Adjust capacity if necessary
@@ -139,7 +120,8 @@ char queue__dequeue(const Queue q, elem_t *front)
 
     new_capacity = q->capacity>>1;
     if (q->size < new_capacity && new_capacity >= DEFAULT_QUEUE_CAPACITY) {
-        queue__shrink(new_capacity, q);
+        QUEUE_COMPACT(q);
+        ARRAY_SHRINK(q, new_capacity);
     }
 
     return SUCCESS;
@@ -239,11 +221,11 @@ inline void queue__sort(const Queue q, const compare_func_t f)
 {
     if (!q || !q->elems || q->size < 2) return;
 
-    if (q->back < q->front) {
-        queue__shrink(q->capacity, q);
+    if (q->back <= q->front) {
+        QUEUE_COMPACT(q);
     }
 
-    qsort((q->back == q->front) ? q->elems : q->elems + q->front, q->size, sizeof(elem_t), f);
+    qsort(q->elems + q->front, q->size, sizeof(elem_t), f);
 }
 
 void queue__shuffle(const Queue q)
@@ -333,7 +315,7 @@ void queue__clean_NULL(const Queue q)
     if (!q || !q->elems) return;
 
     if (q->back < q->front) {
-        queue__shrink(q->capacity, q);
+        QUEUE_COMPACT(q);
     }
 
     ARRAY_CLEAN_NULL(q->elems, q->front, q->back);

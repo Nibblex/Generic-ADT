@@ -70,7 +70,6 @@ inline Stack stack__empty_copy_enabled(const copy_operator_t copy_op, const dele
 
 char stack__push(const Stack s, const elem_t element)
 {
-    elem_t *realloc_res = NULL;
     if (!s) return FAILURE;
 
     // Adjust capacity if necessary
@@ -87,7 +86,6 @@ char stack__push(const Stack s, const elem_t element)
 char stack__pop(const Stack s, elem_t *top)
 {
     size_t new_capacity;
-    elem_t *realloc_res = NULL;
     if (!s || !s->elems || !s->size) return FAILURE;
 
     if (top) {
@@ -102,11 +100,7 @@ char stack__pop(const Stack s, elem_t *top)
 
     new_capacity = s->capacity>>1;
     if (s->size < new_capacity && new_capacity >= DEFAULT_STACK_CAPACITY) {
-        realloc_res = realloc(s->elems, sizeof(elem_t) * new_capacity);
-        if (realloc_res) {
-            s->elems = realloc_res;
-            s->capacity = new_capacity;
-        }
+        ARRAY_SHRINK(s, new_capacity);
     }
 
     return SUCCESS;

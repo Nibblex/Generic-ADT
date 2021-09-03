@@ -40,11 +40,6 @@ struct StackSt
     __ptr->operator_delete = __delete_op; \
 } while (false)
 
-/**
- * Macro to double stack capacity
- */
-#define STACK_GROW(__ptr) ARRAY_GROW(__ptr)
-
 ///////////////////////////////////////////////////////////////////////////////
 ///     STACK FUNCTIONS TO EXPORT
 ///////////////////////////////////////////////////////////////////////////////
@@ -73,7 +68,7 @@ char stack__push(const Stack s, const elem_t element)
 
     // Adjust capacity if necessary
     if (s->size == s->capacity) {
-        STACK_GROW(s);
+        ARRAY_GROW(s);
     }
 
     s->elems[s->size] = s->operator_copy ? s->operator_copy(element) : element;
@@ -131,17 +126,12 @@ size_t stack__size(const Stack s)
 
 Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t size)
 {
-    elem_t *realloc_res = NULL;
     if (!A) return NULL;
 
     if (!s) {
         STACK_INIT(s, NULL, NULL, n_elems);
     } else {
-        realloc_res = realloc(s->elems, sizeof(elem_t) * (s->size + n_elems));
-        if (!realloc_res) return NULL;
-
-        s->elems = realloc_res;
-        s->capacity = s->size + n_elems;
+        ARRAY_GROW_BY(s, n_elems);
     }
 
     for (size_t i = 0; i < n_elems; i++) {

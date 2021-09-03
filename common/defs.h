@@ -30,6 +30,13 @@
     __ptr2 = __temp; \
 } while (false)
 
+#define ARRAY_GROW_BY(__ptr, __n_elems) do { \
+    elem_t *realloc_res = realloc(__ptr->elems, sizeof(elem_t) * (__ptr->size + __n_elems)); \
+    if (!realloc_res) return NULL; \
+    __ptr->elems = realloc_res; \
+    __ptr->capacity = __ptr->size + __n_elems; \
+} while (false)
+
 /**
  * Macro to grow capacity
  */

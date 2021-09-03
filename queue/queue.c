@@ -45,11 +45,6 @@ struct QueueSt
 } while (false)
 
 /**
- * Macro to double queue capacity
- */
-#define QUEUE_GROW(__ptr) ARRAY_GROW(__ptr)
-
-/**
  * Macro to shift entire queue to the left of the elems array
  */
 #define QUEUE_SHIFT(__ptr) do { \
@@ -86,7 +81,7 @@ char queue__enqueue(const Queue q, const elem_t element)
 
     // Adjust capacity if necessary
     if (q->back == q->capacity) {
-        QUEUE_GROW(q);
+        ARRAY_GROW(q);
     }
 
     q->elems[q->back] = q->operator_copy ? q->operator_copy(element) : element;
@@ -161,18 +156,13 @@ inline size_t queue__size(const Queue q)
 
 Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t size)
 {
-    elem_t *realloc_res = NULL;
     if (!A) return NULL;
 
     if (!q) {
         QUEUE_INIT(q, NULL, NULL, n_elems);
     } else {
         QUEUE_SHIFT(q);
-        realloc_res = realloc(q->elems, sizeof(elem_t) * (q->size + n_elems));
-        if (!realloc_res) return NULL;
-
-        q->elems = realloc_res;
-        q->capacity = q->size + n_elems;
+        ARRAY_GROW_BY(q, n_elems);
     }
 
     for (size_t i = 0; i < n_elems; i++) {

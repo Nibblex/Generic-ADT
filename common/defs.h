@@ -14,6 +14,13 @@
 #define false 0
 #endif
 
+
+/**
+ * Macro to pointer increment by __size bytes
+ */
+#define PTR_INCREMENT(__ptr, __size) \
+    __ptr = (void *)((size_t)__ptr + (__size))
+
 /**
  * Macro to pointer swap
  */
@@ -21,13 +28,6 @@
     elem_t __temp = __ptr1; \
     __ptr1 = __ptr2; \
     __ptr2 = __temp; \
-} while (false)
-
-/**
- * Macro to pointer increment by __size bytes
- */
-#define PTR_INCREMENT(__ptr, __size) do { \
-    __ptr = (void *)((size_t)__ptr + (__size)); \
 } while (false)
 
 /**
@@ -50,11 +50,11 @@
 /**
  * Macro to shrink capacity
  */
-#define ARRAY_SHRINK(__ptr, __nelems) do { \
-    elem_t *realloc_res = realloc(__ptr->elems, sizeof(elem_t) * __nelems); \
+#define ARRAY_SHRINK(__ptr, __n_elems) do { \
+    elem_t *realloc_res = realloc(__ptr->elems, sizeof(elem_t) * (__n_elems)); \
     if (realloc_res) { \
         __ptr->elems = realloc_res; \
-        __ptr->capacity = __nelems; \
+        __ptr->capacity = (__n_elems); \
     } \
 } while (false)
 
@@ -62,9 +62,9 @@
  * Macro to array shuffle from __start to __end
  */
 #define ARRAY_SHUFFLE(__ptr, __start, __end) do { \
-    for (size_t i = __start; i < __end; i++) { \
-        a = (__start + (size_t)(rand() % (int)(__start + __end))); \
-        b = (__start + (size_t)(rand() % (int)(__start + __end))); \
+    for (size_t i = (__start); i < __end; i++) { \
+        a = ((__start) + (size_t)(rand() % (int)((__start) + (__end)))); \
+        b = ((__start) + (size_t)(rand() % (int)((__start) + (__end)))); \
         PTR_SWAP(__ptr[a], __ptr[b]); \
     } \
 } while (false)
@@ -74,7 +74,7 @@
  */
 #define ARRAY_CLEAN_NULL(__ptr, __start, __end) do { \
     k = 0; \
-    for (size_t i = __start; i < __end; i++) { \
+    for (size_t i = (__start); i < (__end); i++) { \
         if (__ptr[i]) { \
             __ptr[k] = __ptr[i]; \
             k++; \
@@ -87,7 +87,7 @@
  */
 #define FREE_ELEMS(__ptr, __start, __end) do { \
     if (__ptr->operator_delete && __ptr->elems) { \
-        for (size_t i = __start; i < __end; i++) { \
+        for (size_t i = (__start); i < (__end); i++) { \
             __ptr->operator_delete(__ptr->elems[i]); \
         } \
     } \

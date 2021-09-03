@@ -26,22 +26,22 @@ struct StackSt
 /**
  * Macro to allocate all memory used by the stack
  */
-#define STACK_INIT(__ptr, __copy_op, __delete_op) do { \
+#define STACK_INIT(__ptr, __copy_op, __delete_op, __n_elems) do { \
     __ptr = malloc(sizeof(struct StackSt)); \
     if (!__ptr) return NULL; \
-    __ptr->elems = malloc(sizeof(elem_t) * DEFAULT_STACK_CAPACITY); \
+    __ptr->elems = malloc(sizeof(elem_t) * __n_elems); \
     if (!__ptr->elems) { \
         free(__ptr); \
         return NULL; \
     } \
-    __ptr->capacity = DEFAULT_STACK_CAPACITY; \
+    __ptr->capacity = __n_elems; \
     __ptr->size = 0; \
     __ptr->operator_copy = __copy_op; \
     __ptr->operator_delete = __delete_op; \
 } while (false)
 
 /**
- * Macro to grow the queue to __size capacity
+ * Macro to double stack capacity
  */
 #define STACK_GROW(__ptr) ARRAY_GROW(__ptr)
 
@@ -52,7 +52,7 @@ struct StackSt
 inline Stack stack__empty_copy_disabled(void)
 {
     Stack s = NULL;
-    STACK_INIT(s, NULL, NULL);
+    STACK_INIT(s, NULL, NULL, DEFAULT_STACK_CAPACITY);
 
     return s;
 }
@@ -62,7 +62,7 @@ inline Stack stack__empty_copy_enabled(const copy_operator_t copy_op, const dele
     if (!copy_op || !delete_op) return NULL;
 
     Stack s = NULL;
-    STACK_INIT(s, copy_op, delete_op);
+    STACK_INIT(s, copy_op, delete_op, DEFAULT_STACK_CAPACITY);
 
     return s;
 }
@@ -131,29 +131,25 @@ size_t stack__size(const Stack s)
 
 Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t size)
 {
-    char new_stack = false;
+    elem_t *realloc_res = NULL;
     if (!A) return NULL;
 
     if (!s) {
-        new_stack = true;
-        STACK_INIT(s, NULL, NULL);
-        if (!s) return NULL;
+        STACK_INIT(s, NULL, NULL, n_elems);
+    } else {
+        realloc_res = realloc(s->elems, sizeof(elem_t) * (s->size + n_elems));
+        if (!realloc_res) return NULL;
+
+        s->elems = realloc_res;
+        s->capacity = s->size + n_elems;
     }
 
     for (size_t i = 0; i < n_elems; i++) {
-        if (stack__push(s, A) < 0) goto error;
+        s->elems[s->size + i] = s->operator_copy ? s->operator_copy(A) : A;
         PTR_INCREMENT(A, size);
     }
 
-    return s;
-
-error:
-    if (new_stack) {
-        FREE_ELEMS(s, 0, s->size);
-        free(s->elems);
-        free(s);
-        return NULL;
-    }
+    s->size += n_elems;
 
     return s;
 }

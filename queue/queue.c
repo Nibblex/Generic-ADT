@@ -28,15 +28,15 @@ struct QueueSt
 /**
  * Macro to allocate all memory used by the queue
  */
-#define QUEUE_INIT(__ptr, __copy_op, __delete_op) do { \
+#define QUEUE_INIT(__ptr, __copy_op, __delete_op, __n_elems) do { \
     __ptr = malloc(sizeof(struct QueueSt)); \
     if (!__ptr) return NULL; \
-    __ptr->elems = malloc(sizeof(elem_t) * DEFAULT_QUEUE_CAPACITY); \
+    __ptr->elems = malloc(sizeof(elem_t) * __n_elems); \
     if (!__ptr->elems) { \
         free(__ptr); \
         return NULL; \
     } \
-    __ptr->capacity = DEFAULT_QUEUE_CAPACITY; \
+    __ptr->capacity = __n_elems; \
     __ptr->front = 0; \
     __ptr->back = 0; \
     __ptr->size = 0; \
@@ -45,18 +45,15 @@ struct QueueSt
 } while (false)
 
 /**
- * Macro to grow the queue to __size capacity
+ * Macro to double queue capacity
  */
 #define QUEUE_GROW(__ptr) ARRAY_GROW(__ptr)
 
-#define QUEUE_COMPACT(__ptr) do { \
-    if (__ptr->front < __ptr->back) { \
-        memmove(__ptr->elems, __ptr->elems + __ptr->front, sizeof(elem_t) * __ptr->size); \
-    } else { \
-        memmove(__ptr->elems + __ptr->back, \
-                __ptr->elems + __ptr->front, \
-                sizeof(elem_t) * (__ptr->capacity - __ptr->front)); \
-    } \
+/**
+ * Macro to shift entire queue to the left of the elems array
+ */
+#define QUEUE_SHIFT(__ptr) do { \
+    memmove(__ptr->elems, __ptr->elems + __ptr->front, sizeof(elem_t) * __ptr->size); \
     __ptr->front = 0; \
     __ptr->back = __ptr->size; \
 } while (false)
@@ -68,7 +65,7 @@ struct QueueSt
 inline Queue queue__empty_copy_disabled(void)
 {
     Queue q = NULL;
-    QUEUE_INIT(q, NULL, NULL);
+    QUEUE_INIT(q, NULL, NULL, DEFAULT_QUEUE_CAPACITY);
 
     return q;
 }
@@ -78,7 +75,7 @@ inline Queue queue__empty_copy_enabled(const copy_operator_t copy_op, const dele
     if (!copy_op || !delete_op) return NULL;
 
     Queue q = NULL;
-    QUEUE_INIT(q, copy_op, delete_op);
+    QUEUE_INIT(q, copy_op, delete_op, DEFAULT_QUEUE_CAPACITY);
 
     return q;
 }
@@ -88,16 +85,13 @@ char queue__enqueue(const Queue q, const elem_t element)
     if (!q) return FAILURE;
 
     // Adjust capacity if necessary
-    if (q->size == q->capacity) {
+    if (q->back == q->capacity) {
         QUEUE_GROW(q);
-
-        q->back = q->front + q->size;
-        memmove(q->elems + q->size, q->elems, sizeof(elem_t) * q->front);
     }
 
     q->elems[q->back] = q->operator_copy ? q->operator_copy(element) : element;
     q->size++;
-    q->back = (q->size != q->capacity && q->back + 1 == q->capacity) ? 0 : q->back + 1;
+    q->back++;
 
     return SUCCESS;
 }
@@ -115,12 +109,17 @@ char queue__dequeue(const Queue q, elem_t *front)
         }
     }
 
-    q->front = (q->front + 1 == q->capacity) ? 0 : q->front + 1;
     q->size--;
+    q->front++;
+
+    if (q->front == q->back) {
+        q->front = 0;
+        q->back = 0;
+    }
 
     new_capacity = q->capacity>>1;
     if (q->size < new_capacity && new_capacity >= DEFAULT_QUEUE_CAPACITY) {
-        QUEUE_COMPACT(q);
+        QUEUE_SHIFT(q);
         ARRAY_SHRINK(q, new_capacity);
     }
 
@@ -138,12 +137,9 @@ char queue__front(const Queue q, elem_t *front)
 
 char queue__back(const Queue q, elem_t *back)
 {
-    size_t index;
     if (!q || !q->size || !back) return FAILURE;
 
-    index = q->back ? q->back - 1 : q->capacity - 1;
-
-    *back = q->operator_copy ? q->operator_copy(q->elems[index]) : q->elems[index];
+    *back = q->operator_copy ? q->operator_copy(q->elems[q->back - 1]) : q->elems[q->back - 1];
 
     return SUCCESS;
 }
@@ -165,27 +161,27 @@ inline size_t queue__size(const Queue q)
 
 Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t size)
 {
-    char new_queue = false;
+    elem_t *realloc_res = NULL;
     if (!A) return NULL;
 
     if (!q) {
-        new_queue = true;
-        QUEUE_INIT(q, NULL, NULL);
-        if (!q) return NULL;
+        QUEUE_INIT(q, NULL, NULL, n_elems);
+    } else {
+        QUEUE_SHIFT(q);
+        realloc_res = realloc(q->elems, sizeof(elem_t) * (q->size + n_elems));
+        if (!realloc_res) return NULL;
+
+        q->elems = realloc_res;
+        q->capacity = q->size + n_elems;
     }
 
     for (size_t i = 0; i < n_elems; i++) {
-        if (queue__enqueue(q, A) < 0) goto error;
+        q->elems[q->size + i] = q->operator_copy ? q->operator_copy(A) : A;
         PTR_INCREMENT(A, size);
     }
 
-    return q;
-
-error:
-    if (new_queue) {
-        queue__free(q);
-        return NULL;
-    }
+    q->size += n_elems;
+    q->back = q->size;
 
     return q;
 }
@@ -198,20 +194,9 @@ elem_t *queue__to_array(const Queue q)
     if (!res) return NULL;
 
     size_t k = 0;
-    if (q->front < q->back) {
-        for (size_t i = q->front; i < q->back; i++) {
-            res[k] = q->operator_copy ? q->operator_copy(q->elems[i]) : q->elems[i];
-            k++;
-        }
-    } else {
-        for (size_t i = q->front; i < q->capacity; i++) {
-            res[k] = q->operator_copy ? q->operator_copy(q->elems[i]) : q->elems[i];
-            k++;
-        }
-        for (size_t i = 0; i < q->back; i++) {
-            res[k] = q->operator_copy ? q->operator_copy(q->elems[i]) : q->elems[i];
-            k++;
-        }
+    for (size_t i = q->front; i < q->back; i++) {
+        res[k] = q->operator_copy ? q->operator_copy(q->elems[i]) : q->elems[i];
+        k++;
     }
 
     return res;
@@ -221,10 +206,6 @@ inline void queue__sort(const Queue q, const compare_func_t f)
 {
     if (!q || q->size < 2) return;
 
-    if (q->back <= q->front) {
-        QUEUE_COMPACT(q);
-    }
-
     qsort(q->elems + q->front, q->size, sizeof(elem_t), f);
 }
 
@@ -233,12 +214,7 @@ void queue__shuffle(const Queue q)
     size_t a, b;
     if (!q || q->size < 2) return;
 
-    if (q->front < q->back) {
-        ARRAY_SHUFFLE(q->elems, q->front, q->back);
-    } else {
-        ARRAY_SHUFFLE(q->elems, q->front, q->capacity);
-        ARRAY_SHUFFLE(q->elems, 0, q->back);
-    }
+    ARRAY_SHUFFLE(q->elems, q->front, q->back);
 }
 
 void queue__foreach(const Queue q, const applying_func_t f, void *user_data)
@@ -247,17 +223,8 @@ void queue__foreach(const Queue q, const applying_func_t f, void *user_data)
     if (!q || !q->size) return;
 
     if (q->operator_copy && q->operator_delete) {
-        if (q->front < q->back) {
-            for (size_t i = q->front; i < q->back; i++) {
-                f(q->elems[i], user_data);
-            }
-        } else {
-            for (size_t i = q->front; i < q->capacity; i++) {
-                f(q->elems[i], user_data);
-            }
-            for (size_t i = 0; i < q->back; i++) {
-                f(q->elems[i], user_data);
-            }
+        for (size_t i = q->front; i < q->back; i++) {
+            f(q->elems[i], user_data);
         }
     }
     /* If the same element is more than 1 time in the queue,
@@ -265,46 +232,16 @@ void queue__foreach(const Queue q, const applying_func_t f, void *user_data)
     */
     else{
         repeated = false;
-        if (q->front < q->back) {
-            for (size_t i = q->front; i < q->back; i++) {
-                for (size_t j = q->front; j < i && !repeated; j++) {
-                    if (q->elems[i] == q->elems[j]) {
-                        repeated = true;
-                    }
+        for (size_t i = q->front; i < q->back; i++) {
+            for (size_t j = q->front; j < i && !repeated; j++) {
+                if (q->elems[i] == q->elems[j]) {
+                    repeated = true;
                 }
-                if (!repeated) {
-                    f(q->elems[i], user_data);
-                }
-                repeated = false;
             }
-        } else {
-            for (size_t i = q->front; i < q->capacity; i++) {
-                for (size_t j = q->front; j < i && !repeated; j++) {
-                    if (q->elems[i] == q->elems[j]) {
-                        repeated = true;
-                    }
-                }
-                if (!repeated) {
-                    f(q->elems[i], user_data);
-                }
-                repeated = false;
+            if (!repeated) {
+                f(q->elems[i], user_data);
             }
-            for (size_t i = 0; i < q->back; i++) {
-                for (size_t j = q->front; j < q->capacity && !repeated; j++) {
-                    if (q->elems[i] == q->elems[j]) {
-                        repeated = true;
-                    }
-                }
-                for (size_t j = q->front; j < i && !repeated; j++) {
-                    if (q->elems[i] == q->elems[j]) {
-                        repeated = true;
-                    }
-                }
-                if (!repeated) {
-                    f(q->elems[i], user_data);
-                }
-                repeated = false;
-            }
+            repeated = false;
         }
     }
 }
@@ -313,10 +250,6 @@ void queue__clean_NULL(const Queue q)
 {
     size_t k;
     if (!q) return;
-
-    if (q->back < q->front) {
-        QUEUE_COMPACT(q);
-    }
 
     ARRAY_CLEAN_NULL(q->elems, q->front, q->back);
 
@@ -328,10 +261,7 @@ void queue__clear(const Queue q)
 {
     if (!q) return;
 
-    if (q->operator_delete) {
-        queue__foreach(q, (applying_func_t)(void *)q->operator_delete, NULL);
-    }
-
+    FREE_ELEMS(q, q->front, q->back);
     ARRAY_SHRINK(q, DEFAULT_QUEUE_CAPACITY);
 
     q->front = 0;
@@ -343,9 +273,7 @@ void queue__free(const Queue q)
 {
     if (!q) return;
 
-    if (q->operator_delete) {
-        queue__foreach(q, (applying_func_t)(void *)q->operator_delete, NULL);
-    }
+    FREE_ELEMS(q, q->front, q->back);
 
     free(q->elems);
     free(q);
@@ -354,6 +282,7 @@ void queue__free(const Queue q)
 void queue__debug(const Queue q, void (*debug_op) (elem_t))
 {
     setvbuf (stdout, NULL, _IONBF, 0);
+
     printf("\n");
     if (!q) {
         printf("\tInvalid queue (NULL)");
@@ -366,47 +295,12 @@ void queue__debug(const Queue q, void (*debug_op) (elem_t))
                                                                                                                          , q->capacity
                                                                                                                          , q->front
                                                                                                                          , q->back);
-        printf("In queue order: { ");
-        if (q->size) {
-            if (q->front < q->back) {
-                for (size_t i = q->front; i < q->back; i++) {
-                    debug_op(q->elems[i]);
-                }
+        printf("{ ");
+        for (size_t i = 0; i < q->capacity; i++) {
+            if (q->front < i && i < q->back) {
+                debug_op(q->elems[i]);
             } else {
-                for (size_t i = q->front; i < q->capacity; i++) {
-                    debug_op(q->elems[i]);
-                }
-                for (size_t i = 0; i < q->back; i++) {
-                    debug_op(q->elems[i]);
-                }
-            }
-        }
-        printf("}\n\tIn elems order: { ");
-        if (!q->size) {
-            for (size_t i = 0; i < q->capacity; i++) {
                 printf("_ ");
-            }
-        } else {
-            if (q->front < q->back) {
-                for (size_t i = 0; i < q->front; i++) {
-                    printf("_ ");
-                }
-                for (size_t i = q->front; i < q->back; i++) {
-                    debug_op(q->elems[i]);
-                }
-                for (size_t i = q->back; i < q->capacity; i++) {
-                    printf("_ ");
-                }
-            } else {
-                for (size_t i = 0; i < q->back; i++) {
-                    debug_op(q->elems[i]);
-                }
-                for (size_t i = q->back; i < q->front; i++) {
-                    printf("_ ");
-                }
-                for (size_t i = q->front; i < q->capacity; i++) {
-                    debug_op(q->elems[i]);
-                }
             }
         }
         printf("}");

@@ -26,20 +26,19 @@ struct StackSt
 /**
  * Macro to allocate all memory used by the stack
  */
-#define STACK_INIT(__ptr, __copy_op, __delete_op) \
-    do { \
-        __ptr = malloc(sizeof(struct StackSt)); \
-        if (!__ptr) return NULL; \
-        __ptr->elems = malloc(sizeof(elem_t) * DEFAULT_STACK_CAPACITY); \
-        if (!__ptr->elems) { \
-            free(__ptr); \
-            return NULL; \
-        } \
-        __ptr->capacity = DEFAULT_STACK_CAPACITY; \
-        __ptr->size = 0; \
-        __ptr->operator_copy = __copy_op; \
-        __ptr->operator_delete = __delete_op; \
-    } while (false)
+#define STACK_INIT(__ptr, __copy_op, __delete_op) do { \
+    __ptr = malloc(sizeof(struct StackSt)); \
+    if (!__ptr) return NULL; \
+    __ptr->elems = malloc(sizeof(elem_t) * DEFAULT_STACK_CAPACITY); \
+    if (!__ptr->elems) { \
+        free(__ptr); \
+        return NULL; \
+    } \
+    __ptr->capacity = DEFAULT_STACK_CAPACITY; \
+    __ptr->size = 0; \
+    __ptr->operator_copy = __copy_op; \
+    __ptr->operator_delete = __delete_op; \
+} while (false)
 
 /**
  * Macro to grow the queue to __size capacity
@@ -73,7 +72,7 @@ char stack__push(const Stack s, const elem_t element)
     if (!s) return FAILURE;
 
     // Adjust capacity if necessary
-    if (s->size == s->capacity || !s->elems) {
+    if (s->size == s->capacity) {
         STACK_GROW(s);
     }
 
@@ -86,7 +85,7 @@ char stack__push(const Stack s, const elem_t element)
 char stack__pop(const Stack s, elem_t *top)
 {
     size_t new_capacity;
-    if (!s || !s->elems || !s->size) return FAILURE;
+    if (!s || !s->size) return FAILURE;
 
     if (top) {
         *top = s->elems[s->size-1];
@@ -108,7 +107,7 @@ char stack__pop(const Stack s, elem_t *top)
 
 char stack__top(const Stack s, elem_t *top)
 {
-    if (!s || !s->elems || !s->size || !top) return FAILURE;
+    if (!s || !s->size || !top) return FAILURE;
 
     *top = s->operator_copy ? s->operator_copy(s->elems[s->size-1]) : s->elems[s->size-1];
 
@@ -161,7 +160,7 @@ error:
 
 elem_t *stack__to_array(const Stack s)
 {
-    if (!s || !s->elems || !s->size) return NULL;
+    if (!s || !s->size) return NULL;
 
     elem_t *res = malloc(sizeof(elem_t) * s->size);
     if (!res) return NULL;
@@ -175,7 +174,7 @@ elem_t *stack__to_array(const Stack s)
 
 inline void stack__sort(const Stack s, const compare_func_t f)
 {
-    if (!s || !s->elems || s->size < 2) return;
+    if (!s || s->size < 2) return;
 
     qsort(s->elems, s->size, sizeof(elem_t), f);
 }
@@ -183,7 +182,7 @@ inline void stack__sort(const Stack s, const compare_func_t f)
 void stack__shuffle(const Stack s)
 {
     size_t a, b;
-    if (!s || !s->elems || s->size < 2) return;
+    if (!s || s->size < 2) return;
 
     ARRAY_SHUFFLE(s->elems, 0, s->size);
 }
@@ -191,7 +190,7 @@ void stack__shuffle(const Stack s)
 void stack__foreach(const Stack s, const applying_func_t f, void *user_data)
 {
     char repeated;
-    if (!s || !s->elems || !s->size) return;
+    if (!s || !s->size) return;
 
     if (s->operator_copy && s->operator_delete) {
         for (size_t i = 0; i < s->size; i++) {
@@ -220,7 +219,7 @@ void stack__foreach(const Stack s, const applying_func_t f, void *user_data)
 void stack__clean_NULL(Stack s)
 {
     size_t k;
-    if (!s || !s->elems) return;
+    if (!s) return;
 
     ARRAY_CLEAN_NULL(s->elems, 0, s->size);
 
@@ -232,10 +231,8 @@ void stack__clear(const Stack s)
     if (!s) return;
 
     FREE_ELEMS(s, 0, s->size);
+    ARRAY_SHRINK(s, DEFAULT_STACK_CAPACITY);
 
-    free(s->elems);
-    s->elems = malloc(sizeof(elem_t) * DEFAULT_STACK_CAPACITY);
-    s->capacity = DEFAULT_STACK_CAPACITY;
     s->size = 0;
 }
 
@@ -254,7 +251,7 @@ void stack__debug(const Stack s, void (*debug_op) (elem_t))
     setvbuf (stdout, NULL, _IONBF, 0);
 
     printf("\n");
-    if (!s || !s->elems) {
+    if (!s) {
         printf("\tInvalid stack (NULL)");
     } else if (!debug_op) {
         printf("\tInvalid degug operator (NULL)");

@@ -38,7 +38,7 @@
  */
 #define ARRAY_GROW(__ptr) do { \
     elem_t *realloc_res = NULL; \
-    size_t new_capacity = __ptr->elems ? __ptr->capacity<<1 : 1; \
+    size_t new_capacity = __ptr->capacity<<1; \
     do { \
         realloc_res = realloc(__ptr->elems, sizeof(elem_t) * new_capacity); \
         if (!realloc_res) { \

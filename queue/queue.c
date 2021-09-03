@@ -88,7 +88,7 @@ char queue__enqueue(const Queue q, const elem_t element)
     if (!q) return FAILURE;
 
     // Adjust capacity if necessary
-    if (q->size == q->capacity || !q->elems) {
+    if (q->size == q->capacity) {
         QUEUE_GROW(q);
 
         q->back = q->front + q->size;
@@ -105,7 +105,7 @@ char queue__enqueue(const Queue q, const elem_t element)
 char queue__dequeue(const Queue q, elem_t *front)
 {
     size_t new_capacity;
-    if (!q || !q->elems || !q->size) return FAILURE;
+    if (!q || !q->size) return FAILURE;
 
     if (front) {
         *front = q->elems[q->front];
@@ -129,7 +129,7 @@ char queue__dequeue(const Queue q, elem_t *front)
 
 char queue__front(const Queue q, elem_t *front)
 {
-    if (!q || !q->elems || !q->size || !front) return FAILURE;
+    if (!q || !q->size || !front) return FAILURE;
 
     *front = q->operator_copy ? q->operator_copy(q->elems[q->front]) : q->elems[q->front];
 
@@ -139,7 +139,7 @@ char queue__front(const Queue q, elem_t *front)
 char queue__back(const Queue q, elem_t *back)
 {
     size_t index;
-    if (!q || !q->elems || !q->size || !back) return FAILURE;
+    if (!q || !q->size || !back) return FAILURE;
 
     index = q->back ? q->back - 1 : q->capacity - 1;
 
@@ -192,7 +192,7 @@ error:
 
 elem_t *queue__to_array(const Queue q)
 {
-    if (!q || !q->elems || !q->size) return NULL;
+    if (!q || !q->size) return NULL;
 
     elem_t *res = malloc(sizeof(elem_t) * q->size);
     if (!res) return NULL;
@@ -219,7 +219,7 @@ elem_t *queue__to_array(const Queue q)
 
 inline void queue__sort(const Queue q, const compare_func_t f)
 {
-    if (!q || !q->elems || q->size < 2) return;
+    if (!q || q->size < 2) return;
 
     if (q->back <= q->front) {
         QUEUE_COMPACT(q);
@@ -231,7 +231,7 @@ inline void queue__sort(const Queue q, const compare_func_t f)
 void queue__shuffle(const Queue q)
 {
     size_t a, b;
-    if (!q || !q->elems || q->size < 2) return;
+    if (!q || q->size < 2) return;
 
     if (q->front < q->back) {
         ARRAY_SHUFFLE(q->elems, q->front, q->back);
@@ -244,7 +244,7 @@ void queue__shuffle(const Queue q)
 void queue__foreach(const Queue q, const applying_func_t f, void *user_data)
 {
     char repeated;
-    if (!q || !q->elems || !q->size) return;
+    if (!q || !q->size) return;
 
     if (q->operator_copy && q->operator_delete) {
         if (q->front < q->back) {
@@ -312,7 +312,7 @@ void queue__foreach(const Queue q, const applying_func_t f, void *user_data)
 void queue__clean_NULL(const Queue q)
 {
     size_t k;
-    if (!q || !q->elems) return;
+    if (!q) return;
 
     if (q->back < q->front) {
         QUEUE_COMPACT(q);
@@ -332,9 +332,8 @@ void queue__clear(const Queue q)
         queue__foreach(q, (applying_func_t)(void *)q->operator_delete, NULL);
     }
 
-    free(q->elems);
-    q->elems = malloc(sizeof(elem_t) * DEFAULT_QUEUE_CAPACITY);
-    q->capacity = DEFAULT_QUEUE_CAPACITY;
+    ARRAY_SHRINK(q, DEFAULT_QUEUE_CAPACITY);
+
     q->front = 0;
     q->back = 0;
     q->size = 0;
@@ -356,7 +355,7 @@ void queue__debug(const Queue q, void (*debug_op) (elem_t))
 {
     setvbuf (stdout, NULL, _IONBF, 0);
     printf("\n");
-    if (!q || !q->elems) {
+    if (!q) {
         printf("\tInvalid queue (NULL)");
     } else if (!debug_op) {
         printf("\tInvalid degug operator (NULL)");

@@ -29,12 +29,12 @@ struct StackSt
 #define STACK_INIT(__ptr, __copy_op, __delete_op, __n_elems) do { \
     __ptr = malloc(sizeof(struct StackSt)); \
     if (!__ptr) return NULL; \
-    __ptr->elems = malloc(sizeof(elem_t) * __n_elems); \
+    __ptr->elems = malloc(sizeof(elem_t) * (__n_elems)); \
     if (!__ptr->elems) { \
         free(__ptr); \
         return NULL; \
     } \
-    __ptr->capacity = __n_elems; \
+    __ptr->capacity = (__n_elems); \
     __ptr->size = 0; \
     __ptr->operator_copy = __copy_op; \
     __ptr->operator_delete = __delete_op; \
@@ -94,7 +94,7 @@ char stack__pop(const Stack s, elem_t *top)
 
     new_capacity = s->capacity>>1;
     if (s->size < new_capacity && new_capacity >= DEFAULT_STACK_CAPACITY) {
-        ARRAY_SHRINK(s, new_capacity);
+        ARRAY_RESIZE(s, new_capacity, FAILURE);
     }
 
     return SUCCESS;
@@ -131,7 +131,7 @@ Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t siz
     if (!s) {
         STACK_INIT(s, NULL, NULL, n_elems);
     } else {
-        ARRAY_RESIZE(s, n_elems);
+        ARRAY_RESIZE(s, s->size + n_elems, NULL);
     }
 
     for (size_t i = 0; i < n_elems; i++) {
@@ -167,7 +167,6 @@ inline void stack__sort(const Stack s, const compare_func_t f)
 
 void stack__shuffle(const Stack s)
 {
-    size_t a, b;
     if (!s || s->size < 2) return;
 
     ARRAY_SHUFFLE(s->elems, 0, s->size);
@@ -214,7 +213,7 @@ void stack__clear(const Stack s)
     if (!s) return;
 
     FREE_ELEMS(s, 0, s->size);
-    ARRAY_SHRINK(s, DEFAULT_STACK_CAPACITY);
+    ARRAY_RESIZE(s, DEFAULT_STACK_CAPACITY,);
 
     s->size = 0;
 }

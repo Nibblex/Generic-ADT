@@ -31,12 +31,12 @@ struct QueueSt
 #define QUEUE_INIT(__ptr, __copy_op, __delete_op, __n_elems) do { \
     __ptr = malloc(sizeof(struct QueueSt)); \
     if (!__ptr) return NULL; \
-    __ptr->elems = malloc(sizeof(elem_t) * __n_elems); \
+    __ptr->elems = malloc(sizeof(elem_t) * (__n_elems)); \
     if (!__ptr->elems) { \
         free(__ptr); \
         return NULL; \
     } \
-    __ptr->capacity = __n_elems; \
+    __ptr->capacity = (__n_elems); \
     __ptr->front = 0; \
     __ptr->back = 0; \
     __ptr->size = 0; \
@@ -47,11 +47,10 @@ struct QueueSt
 /**
  * Macro to shift entire queue to the left of the elems array
  */
-#define QUEUE_SHIFT(__ptr) do { \
+#define QUEUE_SHIFT(__ptr) \
     memmove(__ptr->elems, __ptr->elems + __ptr->front, sizeof(elem_t) * __ptr->size); \
     __ptr->front = 0; \
-    __ptr->back = __ptr->size; \
-} while (false)
+    __ptr->back = __ptr->size
 
 ///////////////////////////////////////////////////////////////////////////////
 ///     QUEUE FUNCTIONS TO EXPORT
@@ -115,7 +114,7 @@ char queue__dequeue(const Queue q, elem_t *front)
     new_capacity = q->capacity>>1;
     if (q->size < new_capacity && new_capacity >= DEFAULT_QUEUE_CAPACITY) {
         QUEUE_SHIFT(q);
-        ARRAY_SHRINK(q, new_capacity);
+        ARRAY_RESIZE(q, new_capacity, FAILURE);
     }
 
     return SUCCESS;
@@ -162,7 +161,7 @@ Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t siz
         QUEUE_INIT(q, NULL, NULL, n_elems);
     } else {
         QUEUE_SHIFT(q);
-        ARRAY_RESIZE(q, n_elems);
+        ARRAY_RESIZE(q, q->size + n_elems, NULL);
     }
 
     for (size_t i = 0; i < n_elems; i++) {
@@ -201,7 +200,6 @@ inline void queue__sort(const Queue q, const compare_func_t f)
 
 void queue__shuffle(const Queue q)
 {
-    size_t a, b;
     if (!q || q->size < 2) return;
 
     ARRAY_SHUFFLE(q->elems, q->front, q->back);
@@ -250,7 +248,7 @@ void queue__clear(const Queue q)
     if (!q) return;
 
     FREE_ELEMS(q, q->front, q->back);
-    ARRAY_SHRINK(q, DEFAULT_QUEUE_CAPACITY);
+    ARRAY_RESIZE(q, DEFAULT_QUEUE_CAPACITY,);
 
     q->front = 0;
     q->back = 0;

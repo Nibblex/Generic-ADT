@@ -162,7 +162,7 @@ Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t siz
         QUEUE_INIT(q, NULL, NULL, n_elems);
     } else {
         QUEUE_SHIFT(q);
-        ARRAY_GROW_BY(q, n_elems);
+        ARRAY_RESIZE(q, n_elems);
     }
 
     for (size_t i = 0; i < n_elems; i++) {
@@ -238,12 +238,10 @@ void queue__foreach(const Queue q, const applying_func_t f, void *user_data)
 
 void queue__clean_NULL(const Queue q)
 {
-    size_t k;
     if (!q) return;
 
-    ARRAY_CLEAN_NULL(q->elems, q->front, q->back);
+    CLEAN_NULL_ELEMS(q, q->front, q->back);
 
-    q->size = k;
     q->back = q->front + q->size;
 }
 

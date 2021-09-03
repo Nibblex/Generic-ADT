@@ -131,7 +131,7 @@ Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t siz
     if (!s) {
         STACK_INIT(s, NULL, NULL, n_elems);
     } else {
-        ARRAY_GROW_BY(s, n_elems);
+        ARRAY_RESIZE(s, n_elems);
     }
 
     for (size_t i = 0; i < n_elems; i++) {
@@ -204,12 +204,9 @@ void stack__foreach(const Stack s, const applying_func_t f, void *user_data)
 
 void stack__clean_NULL(Stack s)
 {
-    size_t k;
     if (!s) return;
 
-    ARRAY_CLEAN_NULL(s->elems, 0, s->size);
-
-    s->size = k;
+    CLEAN_NULL_ELEMS(s, 0, s->size);
 }
 
 void stack__clear(const Stack s)

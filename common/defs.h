@@ -30,7 +30,7 @@
     __ptr2 = __temp; \
 } while (false)
 
-#define ARRAY_GROW_BY(__ptr, __n_elems) do { \
+#define ARRAY_RESIZE(__ptr, __n_elems) do { \
     elem_t *realloc_res = realloc(__ptr->elems, sizeof(elem_t) * (__ptr->size + __n_elems)); \
     if (!realloc_res) return NULL; \
     __ptr->elems = realloc_res; \
@@ -79,15 +79,15 @@
 /**
  * Macro to clean NULL elements in array from __start to __end
  */
-#define ARRAY_CLEAN_NULL(__ptr, __start, __end) do { \
-    k = 0; \
+#define CLEAN_NULL_ELEMS(__ptr, __start, __end) \
+    size_t k = 0; \
     for (size_t i = (__start); i < (__end); i++) { \
-        if (__ptr[i]) { \
-            __ptr[k] = __ptr[i]; \
+        if (__ptr->elems[i]) { \
+            __ptr->elems[k] = __ptr->elems[i]; \
             k++; \
         } \
     } \
-} while (false)
+    __ptr->size = k
 
 /**
  * Macro to free internal memory used by elements in the structure

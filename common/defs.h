@@ -18,19 +18,16 @@
  * Macro to pointer swap
  */
 #define PTR_SWAP(__ptr1, __ptr2) do { \
-    elem_t __temp = (__ptr1); \
-    (__ptr1) = (__ptr2); \
-    (__ptr2) = __temp; \
+    elem_t __temp = __ptr1; \
+    __ptr1 = __ptr2; \
+    __ptr2 = __temp; \
 } while (false)
 
 /**
  * Macro to pointer increment by __size bytes
  */
 #define PTR_INCREMENT(__ptr, __size) do { \
-    size_t __temp; \
-    __temp = (long unsigned int)(__ptr); \
-    __temp += (__size); \
-    (__ptr) = (void *)__temp; \
+    __ptr = (void *)((size_t)__ptr + (__size)); \
 } while (false)
 
 /**

@@ -158,6 +158,15 @@ elem_t *stack__to_array(const Stack s)
     return res;
 }
 
+void stack__revert(const Stack s)
+{
+    if (!s || s->size < 2) return;
+
+    for (size_t i = 0, j = s->size - 1; i < j; i++, j--) {
+        PTR_SWAP(s->elems[i], s->elems[j]);
+    }
+}
+
 inline void stack__sort(const Stack s, const compare_func_t f)
 {
     if (!s || s->size < 2) return;

@@ -518,6 +518,55 @@ static bool test_stack__foreach_on_non_empty_stack(char debug)
     return result;
 }
 
+static bool test_stack__revert_on_empty_stack(char debug) {
+    printf("%s... ", __func__);
+
+    bool result;
+    STACK_CREATE(s, t);
+
+    stack__revert(s);
+    stack__revert(t);
+
+    result = (stack__is_empty(s) && stack__is_empty(t)) ? TEST_SUCCESS : TEST_FAILURE;
+
+    STACK_DEBUG_i32(s, t, "\n\tStacks after revert:");
+
+    STACK_FREE(s, t, NULL, NULL);
+    return result;
+}
+
+static bool test_stack__revert_on_non_empty_stack(char debug)
+{
+    printf("%s... ", __func__);
+
+    bool result;
+    elem_t *A = NULL;
+    Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+
+    u32 N = 8;
+    STACK_PUSH_u32(N, s, NULL);
+
+    STACK_DEBUG_i32(s, NULL, "\n\tStacks before revert:");
+
+    stack__revert(s);
+
+    A = stack__to_array(s);
+
+    result = TEST_SUCCESS;
+    for (u32 i = 0; i < N; i++) {
+        result |= *(int *)A[i] != (int)(N-i-1);
+    }
+
+    STACK_DEBUG_i32(s, NULL, "\n\tStacks after revert:");
+
+    for (u32 i = 0; i < N; i++) {
+        free(A[i]);
+    }
+    free(A);
+    STACK_FREE(s, NULL, NULL, NULL);
+    return result;
+}
+
 static bool test_stack__sort_on_empty_stack(char debug)
 {
     printf("%s... ", __func__);
@@ -650,6 +699,8 @@ int main(void)
     print_test_result(test_stack__to_array_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__foreach_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__foreach_on_non_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__revert_on_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__revert_on_non_empty_stack(true), &nb_success, &nb_tests);
     print_test_result(test_stack__sort_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__sort_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__shuffle_on_empty_stack(false), &nb_success, &nb_tests);

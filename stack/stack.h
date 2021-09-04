@@ -124,6 +124,14 @@ elem_t *stack__to_array(const Stack s);
 
 
 /**
+ * @brief Revert the stack
+ * @note Complexity: O(n)
+ * @param s The stack
+ */
+void stack__revert(const Stack s);
+
+
+/**
  * @brief Uses qsort to sort the stack elements using the comparison criteria given by the received compare function
  * @note Complexity: O(n*log(n))
  * @param s The stack

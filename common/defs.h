@@ -44,11 +44,11 @@
 } while (false)
 
 #define ARRAY_SHUFFLE(__ptr, __start, __end) do { \
-    size_t a, b; \
+    size_t __a, __b; \
     for (size_t i = (__start); i < (__end); i++) { \
-        a = ((__start) + (size_t)(rand() % (int)((__start) + (__end)))); \
-        b = ((__start) + (size_t)(rand() % (int)((__start) + (__end)))); \
-        PTR_SWAP(__ptr[a], __ptr[b]); \
+        __a = ((__start) + (size_t)(rand() % (int)((__start) + (__end)))); \
+        __b = ((__start) + (size_t)(rand() % (int)((__start) + (__end)))); \
+        PTR_SWAP(__ptr[__a], __ptr[__b]); \
     } \
 } while (false)
 

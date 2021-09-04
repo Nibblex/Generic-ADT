@@ -106,15 +106,10 @@ char queue__dequeue(const Queue q, elem_t *front)
     q->size--;
     q->front++;
 
-    if (q->front == q->back) {
-        q->front = 0;
-        q->back = 0;
-    }
-
     new_capacity = q->capacity>>1;
     if (q->size < new_capacity && new_capacity >= DEFAULT_QUEUE_CAPACITY) {
         QUEUE_SHIFT(q);
-        ARRAY_RESIZE(q, new_capacity, FAILURE);
+        ARRAY_RESIZE(q, new_capacity, SUCCESS);
     }
 
     return SUCCESS;

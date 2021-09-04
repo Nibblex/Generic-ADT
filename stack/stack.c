@@ -94,7 +94,7 @@ char stack__pop(const Stack s, elem_t *top)
 
     new_capacity = s->capacity>>1;
     if (s->size < new_capacity && new_capacity >= DEFAULT_STACK_CAPACITY) {
-        ARRAY_RESIZE(s, new_capacity, FAILURE);
+        ARRAY_RESIZE(s, new_capacity, SUCCESS);
     }
 
     return SUCCESS;

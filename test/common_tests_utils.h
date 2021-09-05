@@ -7,10 +7,10 @@
 #include <time.h>
 
 #ifndef TEST_SUCCESS
-#define TEST_SUCCESS 0
+#define TEST_SUCCESS 1
 #endif
 #ifndef TEST_FAILURE
-#define TEST_FAILURE 1
+#define TEST_FAILURE 0
 #endif
 
 #define ADD_u32(F, N, A, B) do { \

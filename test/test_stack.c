@@ -29,7 +29,7 @@ static bool __name(char debug) \
     bool result = TEST_SUCCESS; \
     STACK_CREATE(s, t); \
     __expr \
-    bool __empty_assertion = stack__is_empty(s) && stack__is_empty(t); \
+    bool __empty_assertion = stack__is_empty(s) == 1 && stack__is_empty(t) == 1; \
     STACK_DEBUG_i32(s, t, "\n\tStacks after shuffle:"); \
     STACK_FREE(s, t, NULL, NULL); \
     return result && __empty_assertion; \
@@ -164,8 +164,7 @@ static bool test_stack__push_on_non_empty_stack(char debug)
 
 TEST_ON_EMPTY_STACK (
     test_stack__pop_on_empty_stack,
-    stack__pop(s, NULL);
-    stack__pop(t, NULL);
+    result = stack__pop(s, NULL) == -1 && stack__pop(t, NULL) == -1;
 )
 
 static bool test_stack__pop_on_non_empty_stack(char debug)
@@ -293,8 +292,7 @@ static bool test_stack__clear_on_non_empty_stack(char debug)
 
 TEST_ON_EMPTY_STACK (
     test_stack__top_on_empty_stack,
-    stack__top(s, NULL);
-    stack__top(t, NULL);
+    result = stack__top(s, NULL) == -1 && stack__top(t, NULL) == -1;
 )
 
 static bool test_stack__top_on_non_empty_stack(char debug)
@@ -368,8 +366,7 @@ static int test_stack__from_array(char debug)
 
 TEST_ON_EMPTY_STACK (
     test_stack__to_array_on_empty_stack,
-    stack__to_array(s);
-    stack__to_array(t);
+    result = stack__to_array(s) == NULL && stack__to_array(t) == NULL;
 )
 
 static bool test_stack__to_array_on_non_empty_stack(char debug)

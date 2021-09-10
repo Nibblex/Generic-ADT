@@ -29,7 +29,7 @@ static bool __name(char debug) \
     bool result = TEST_SUCCESS; \
     QUEUE_CREATE(q, w); \
     __expr \
-    bool __empty_assertion = queue__is_empty(q) && queue__is_empty(w); \
+    bool __empty_assertion = queue__is_empty(q) == 1 && queue__is_empty(w) == 1; \
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after shuffle:"); \
     QUEUE_FREE(q, w, NULL, NULL); \
     return result && __empty_assertion; \
@@ -164,8 +164,7 @@ static bool test_queue__enqueue_on_non_empty_queue(char debug)
 
 TEST_ON_EMPTY_QUEUE (
     test_queue__dequeue_on_empty_queue,
-    queue__dequeue(q, NULL);
-    queue__dequeue(w, NULL);
+    result = queue__dequeue(q, NULL) == -1 && queue__dequeue(w, NULL) == -1;
 )
 
 static bool test_queue__dequeue_on_non_empty_queue(char debug)
@@ -293,8 +292,7 @@ static bool test_queue__clear_on_non_empty_queue(char debug)
 
 TEST_ON_EMPTY_QUEUE (
     test_queue__front_on_empty_queue,
-    queue__front(q, NULL);
-    queue__front(w, NULL);
+    result = queue__front(q, NULL) == -1 && queue__front(w, NULL) == -1;
 )
 
 static bool test_queue__front_on_non_empty_queue(char debug)
@@ -331,8 +329,7 @@ static bool test_queue__front_on_non_empty_queue(char debug)
 
 TEST_ON_EMPTY_QUEUE (
     test_queue__back_on_empty_queue,
-    queue__back(q, NULL);
-    queue__back(w, NULL);
+    result = queue__back(q, NULL) == -1 && queue__back(w, NULL) == -1;
 )
 
 static bool test_queue__back_on_non_empty_queue(char debug)
@@ -406,8 +403,7 @@ static bool test_queue__from_array(char debug)
 
 TEST_ON_EMPTY_QUEUE (
     test_queue__to_array_on_empty_queue,
-    queue__to_array(q);
-    queue__to_array(w);
+    result = queue__to_array(q) == NULL && queue__to_array(w) == NULL;
 )
 
 static bool test_queue__to_array_on_non_empty_queue(char debug)

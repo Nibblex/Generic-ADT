@@ -80,7 +80,7 @@ char queue__enqueue(const Queue q, const elem_t element)
 
     // Adjust capacity if necessary
     if (q->back == q->capacity) {
-        ARRAY_GROW(q);
+        if (ENSURE_CAPACITY(q) < 0) return FAILURE;
     }
 
     q->elems[q->back] = q->operator_copy ? q->operator_copy(element) : element;
@@ -109,7 +109,7 @@ char queue__dequeue(const Queue q, elem_t *front)
     new_capacity = q->capacity>>1;
     if (q->size < new_capacity && new_capacity >= DEFAULT_QUEUE_CAPACITY) {
         QUEUE_SHIFT(q);
-        ARRAY_RESIZE(q, new_capacity, SUCCESS);
+        ARRAY_RESIZE(q, new_capacity);
     }
 
     return SUCCESS;
@@ -156,7 +156,7 @@ Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t siz
         QUEUE_INIT(q, NULL, NULL, n_elems);
     } else {
         QUEUE_SHIFT(q);
-        ARRAY_RESIZE(q, q->size + n_elems, NULL);
+        if (ARRAY_RESIZE(q, q->size + n_elems) < 0) return NULL;
     }
 
     for (size_t i = 0; i < n_elems; i++) {
@@ -243,7 +243,7 @@ void queue__clear(const Queue q)
     if (!q) return;
 
     FREE_ELEMS(q, q->front, q->back);
-    ARRAY_RESIZE(q, DEFAULT_QUEUE_CAPACITY,);
+    ARRAY_RESIZE(q, DEFAULT_QUEUE_CAPACITY);
 
     q->front = 0;
     q->back = 0;

@@ -68,7 +68,7 @@ char stack__push(const Stack s, const elem_t element)
 
     // Adjust capacity if necessary
     if (s->size == s->capacity) {
-        ARRAY_GROW(s);
+        if (ENSURE_CAPACITY(s) < 0) return FAILURE;
     }
 
     s->elems[s->size] = s->operator_copy ? s->operator_copy(element) : element;
@@ -94,7 +94,7 @@ char stack__pop(const Stack s, elem_t *top)
 
     new_capacity = s->capacity>>1;
     if (s->size < new_capacity && new_capacity >= DEFAULT_STACK_CAPACITY) {
-        ARRAY_RESIZE(s, new_capacity, SUCCESS);
+        ARRAY_RESIZE(s, new_capacity);
     }
 
     return SUCCESS;
@@ -131,7 +131,7 @@ Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t siz
     if (!s) {
         STACK_INIT(s, NULL, NULL, n_elems);
     } else {
-        ARRAY_RESIZE(s, s->size + n_elems, NULL);
+        if (ARRAY_RESIZE(s, s->size + n_elems) < 0) return NULL;
     }
 
     for (size_t i = 0; i < n_elems; i++) {
@@ -222,7 +222,7 @@ void stack__clear(const Stack s)
     if (!s) return;
 
     FREE_ELEMS(s, 0, s->size);
-    ARRAY_RESIZE(s, DEFAULT_STACK_CAPACITY,);
+    ARRAY_RESIZE(s, DEFAULT_STACK_CAPACITY);
 
     s->size = 0;
 }

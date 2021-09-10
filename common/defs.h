@@ -1,6 +1,8 @@
 #ifndef __DEFS_H__
 #define __DEFS_H__
 
+#include <limits.h>
+
 #ifndef SUCCESS
 #define SUCCESS 0
 #endif
@@ -14,7 +16,6 @@
 #define false 0
 #endif
 
-
 #define PTR_INCREMENT(__ptr, __size) \
     __ptr = (void *)((size_t)__ptr + (__size))
 
@@ -23,25 +24,29 @@
     __ptr1 = __ptr2; \
     __ptr2 = __temp
 
-#define ARRAY_RESIZE(__ptr, __n_elems, __fail) \
-    elem_t *realloc_res = realloc(__ptr->elems, sizeof(elem_t) * (__n_elems)); \
-    if (!realloc_res) return __fail; \
-    __ptr->elems = realloc_res; \
-    __ptr->capacity = (__n_elems)
+#define ARRAY_RESIZE(__ptr, __new_capacity) \
+({ \
+    char __result_res = FAILURE; \
+    elem_t *__realloc_res = realloc(__ptr->elems, sizeof(elem_t) * (__new_capacity)); \
+    if (__realloc_res) { \
+        __ptr->elems = __realloc_res; \
+        __ptr->capacity = (__new_capacity); \
+        __result_res = SUCCESS; \
+    } \
+    __result_res; \
+})
 
-#define ARRAY_GROW(__ptr) do { \
-    elem_t *realloc_res = NULL; \
-    size_t new_capacity = __ptr->capacity<<1; \
-    do { \
-        realloc_res = realloc(__ptr->elems, sizeof(elem_t) * new_capacity); \
-        if (!realloc_res) { \
-            new_capacity = (new_capacity + __ptr->capacity)>>1; \
-        } \
-    } while (!realloc_res); \
-    if (new_capacity == __ptr->capacity) return FAILURE; \
-    __ptr->elems = realloc_res; \
-    __ptr->capacity = new_capacity; \
-} while (false)
+#define ENSURE_CAPACITY(__ptr) \
+({ \
+    char __result_ens = FAILURE; \
+    size_t __capacity = __ptr->capacity; \
+    size_t __offset = (__capacity < LONG_MAX) ? __capacity \
+                                              : ULONG_MAX - __capacity; \
+    while (__offset && (__result_ens = ARRAY_RESIZE(__ptr, __capacity + __offset))) { \
+        __offset = __offset>>1; \
+    } \
+    __result_ens; \
+})
 
 #define ARRAY_SHUFFLE(__ptr, __start, __end) do { \
     size_t __a, __b; \

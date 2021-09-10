@@ -11,7 +11,7 @@ COM_DIR = common
 ADT_DIRS = $(STA_DIR) $(QUE_DIR)
 
 CC = gcc
-CFLAGS = -Wall -Werror -Wextra -Wpedantic -std=c99 -Wstrict-prototypes -Wmissing-prototypes -fPIC\
+CFLAGS = -Wall -Werror -Wextra -std=c99 -Wstrict-prototypes -Wmissing-prototypes -fPIC\
 		 -Wunreachable-code -Wconversion -Wmissing-declarations -Wno-unused-parameter -Wshadow -Wbad-function-cast -O3 -g
 CPPFLAGS	= -I ${TST_DIR}
 

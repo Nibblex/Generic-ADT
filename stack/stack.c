@@ -24,23 +24,31 @@ struct StackSt
 ///     STACK MACRO UTILITARIES
 ///////////////////////////////////////////////////////////////////////////////
 
+static inline elem_t id(elem_t e) {
+    return e;
+}
+
 /**
  * Macro to allocate all memory used by the stack
  */
-#define STACK_INIT(__ptr, __copy_op, __delete_op, __n_elems) do { \
-    __ptr = malloc(sizeof(struct StackSt)); \
-    if (!__ptr) return NULL; \
-    __ptr->elems = malloc(sizeof(elem_t) * (__n_elems)); \
-    if (!__ptr->elems) { \
-        free(__ptr); \
-        return NULL; \
+#define STACK_INIT(__copy_op, __delete_op, __n_elems) \
+({ \
+    Stack __ptr = malloc(sizeof(struct StackSt)); \
+    if (__ptr) { \
+        __ptr->elems = malloc(sizeof(elem_t) * (__n_elems)); \
+        if (__ptr->elems) { \
+            __ptr->capacity = (__n_elems); \
+            __ptr->size = 0; \
+            __ptr->copy_enabled = __copy_op ? true : false; \
+            __ptr->operator_copy = __copy_op ? __copy_op : id; \
+            __ptr->operator_delete = __delete_op; \
+        } else { \
+            free(__ptr); \
+            __ptr = NULL; \
+        } \
     } \
-    __ptr->capacity = (__n_elems); \
-    __ptr->size = 0; \
-    __ptr->copy_enabled = __copy_op ? true : false; \
-    __ptr->operator_copy = __copy_op; \
-    __ptr->operator_delete = __delete_op; \
-} while (false)
+    __ptr; \
+})
 
 ///////////////////////////////////////////////////////////////////////////////
 ///     STACK FUNCTIONS TO EXPORT
@@ -48,20 +56,14 @@ struct StackSt
 
 inline Stack stack__empty_copy_disabled(void)
 {
-    Stack s = NULL;
-    STACK_INIT(s, NULL, NULL, DEFAULT_STACK_CAPACITY);
-
-    return s;
+    return STACK_INIT(NULL, NULL, DEFAULT_STACK_CAPACITY);
 }
 
 inline Stack stack__empty_copy_enabled(const copy_operator_t copy_op, const delete_operator_t delete_op)
 {
     if (!copy_op || !delete_op) return NULL;
 
-    Stack s = NULL;
-    STACK_INIT(s, copy_op, delete_op, DEFAULT_STACK_CAPACITY);
-
-    return s;
+    return STACK_INIT(copy_op, delete_op, DEFAULT_STACK_CAPACITY);
 }
 
 char stack__push(const Stack s, const elem_t element)
@@ -73,7 +75,7 @@ char stack__push(const Stack s, const elem_t element)
         if (ENSURE_CAPACITY(s) < 0) return FAILURE;
     }
 
-    s->elems[s->size] = s->copy_enabled ? s->operator_copy(element) : element;
+    s->elems[s->size] = s->operator_copy(element);
     s->size++;
 
     return SUCCESS;
@@ -106,7 +108,7 @@ char stack__top(const Stack s, elem_t *top)
 {
     if (!s || !s->size || !top) return FAILURE;
 
-    *top = s->copy_enabled ? s->operator_copy(s->elems[s->size-1]) : s->elems[s->size-1];
+    *top = s->operator_copy(s->elems[s->size-1]);
 
     return SUCCESS;
 }
@@ -131,13 +133,13 @@ Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t siz
     if (!A) return NULL;
 
     if (!s) {
-        STACK_INIT(s, NULL, NULL, n_elems);
+        if (!(s = STACK_INIT(NULL, NULL, n_elems))) return NULL;
     } else {
         if (ARRAY_RESIZE(s, s->size + n_elems) < 0) return NULL;
     }
 
     for (size_t i = 0; i < n_elems; i++) {
-        s->elems[s->size + i] = s->copy_enabled ? s->operator_copy(A) : A;
+        s->elems[s->size + i] = s->operator_copy(A);
         PTR_INCREMENT(A, size);
     }
 

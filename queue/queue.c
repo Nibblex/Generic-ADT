@@ -26,25 +26,33 @@ struct QueueSt
 ///     QUEUE MACRO UTILITARIES
 ///////////////////////////////////////////////////////////////////////////////
 
+static inline elem_t id(elem_t e) {
+    return e;
+}
+
 /**
  * Macro to allocate all memory used by the queue
  */
-#define QUEUE_INIT(__ptr, __copy_op, __delete_op, __n_elems) do { \
-    __ptr = malloc(sizeof(struct QueueSt)); \
-    if (!__ptr) return NULL; \
-    __ptr->elems = malloc(sizeof(elem_t) * (__n_elems)); \
-    if (!__ptr->elems) { \
-        free(__ptr); \
-        return NULL; \
+#define QUEUE_INIT(__copy_op, __delete_op, __n_elems) \
+({ \
+    Queue __ptr = malloc(sizeof(struct QueueSt)); \
+    if (__ptr) { \
+        __ptr->elems = malloc(sizeof(elem_t) * (__n_elems)); \
+        if (__ptr->elems) { \
+            __ptr->capacity = (__n_elems); \
+            __ptr->front = 0; \
+            __ptr->back = 0; \
+            __ptr->size = 0; \
+            __ptr->copy_enabled = __copy_op ? true : false; \
+            __ptr->operator_copy = __copy_op ? __copy_op : id; \
+            __ptr->operator_delete = __delete_op; \
+        } else { \
+            free(__ptr); \
+            __ptr = NULL; \
+        } \
     } \
-    __ptr->capacity = (__n_elems); \
-    __ptr->front = 0; \
-    __ptr->back = 0; \
-    __ptr->size = 0; \
-    __ptr->copy_enabled = __copy_op ? true : false; \
-    __ptr->operator_copy = __copy_op; \
-    __ptr->operator_delete = __delete_op; \
-} while (false)
+    __ptr; \
+})
 
 /**
  * Macro to shift entire queue to the left of the elems array
@@ -60,20 +68,14 @@ struct QueueSt
 
 inline Queue queue__empty_copy_disabled(void)
 {
-    Queue q = NULL;
-    QUEUE_INIT(q, NULL, NULL, DEFAULT_QUEUE_CAPACITY);
-
-    return q;
+    return QUEUE_INIT(NULL, NULL, DEFAULT_QUEUE_CAPACITY);
 }
 
 inline Queue queue__empty_copy_enabled(const copy_operator_t copy_op, const delete_operator_t delete_op)
 {
     if (!copy_op || !delete_op) return NULL;
 
-    Queue q = NULL;
-    QUEUE_INIT(q, copy_op, delete_op, DEFAULT_QUEUE_CAPACITY);
-
-    return q;
+    return QUEUE_INIT(copy_op, delete_op, DEFAULT_QUEUE_CAPACITY);
 }
 
 char queue__enqueue(const Queue q, const elem_t element)
@@ -85,7 +87,7 @@ char queue__enqueue(const Queue q, const elem_t element)
         if (ENSURE_CAPACITY(q) < 0) return FAILURE;
     }
 
-    q->elems[q->back] = q->copy_enabled ? q->operator_copy(element) : element;
+    q->elems[q->back] = q->operator_copy(element);
     q->size++;
     q->back++;
 
@@ -121,7 +123,7 @@ char queue__front(const Queue q, elem_t *front)
 {
     if (!q || !q->size || !front) return FAILURE;
 
-    *front = q->copy_enabled ? q->operator_copy(q->elems[q->front]) : q->elems[q->front];
+    *front = q->operator_copy(q->elems[q->front]);
 
     return SUCCESS;
 }
@@ -130,7 +132,7 @@ char queue__back(const Queue q, elem_t *back)
 {
     if (!q || !q->size || !back) return FAILURE;
 
-    *back = q->copy_enabled ? q->operator_copy(q->elems[q->back - 1]) : q->elems[q->back - 1];
+    *back = q->operator_copy(q->elems[q->back - 1]);
 
     return SUCCESS;
 }
@@ -155,14 +157,14 @@ Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t siz
     if (!A) return NULL;
 
     if (!q) {
-        QUEUE_INIT(q, NULL, NULL, n_elems);
+        if (!(q = QUEUE_INIT(NULL, NULL, n_elems))) return NULL;
     } else {
         QUEUE_SHIFT(q);
         if (ARRAY_RESIZE(q, q->size + n_elems) < 0) return NULL;
     }
 
     for (size_t i = 0; i < n_elems; i++) {
-        q->elems[q->size + i] = q->copy_enabled ? q->operator_copy(A) : A;
+        q->elems[q->size + i] = q->operator_copy(A);
         PTR_INCREMENT(A, size);
     }
 

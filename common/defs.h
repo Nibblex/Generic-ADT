@@ -58,10 +58,11 @@
 } while (false)
 
 #define CLEAN_NULL_ELEMS(__ptr, __start, __end) \
+    elem_t *__elems = __ptr->elems; \
     size_t k = 0; \
     for (size_t i = (__start); i < (__end); i++) { \
-        if (__ptr->elems[i]) { \
-            __ptr->elems[k] = __ptr->elems[i]; \
+        if (__elems[i]) { \
+            __elems[k] = __elems[i]; \
             k++; \
         } \
     } \

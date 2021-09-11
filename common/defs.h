@@ -68,7 +68,7 @@
     __ptr->size = k
 
 #define FREE_ELEMS(__ptr, __start, __end) do { \
-    if (__ptr->operator_delete && __ptr->elems) { \
+    if (__ptr->copy_enabled) { \
         for (size_t i = (__start); i < (__end); i++) { \
             __ptr->operator_delete(__ptr->elems[i]); \
         } \

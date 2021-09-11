@@ -15,6 +15,7 @@ struct StackSt
     elem_t *elems;
     size_t capacity;
     size_t size;
+    char copy_enabled;
     copy_operator_t operator_copy;
     delete_operator_t operator_delete;
 };
@@ -36,6 +37,7 @@ struct StackSt
     } \
     __ptr->capacity = (__n_elems); \
     __ptr->size = 0; \
+    __ptr->copy_enabled = __copy_op ? true : false; \
     __ptr->operator_copy = __copy_op; \
     __ptr->operator_delete = __delete_op; \
 } while (false)
@@ -71,7 +73,7 @@ char stack__push(const Stack s, const elem_t element)
         if (ENSURE_CAPACITY(s) < 0) return FAILURE;
     }
 
-    s->elems[s->size] = s->operator_copy ? s->operator_copy(element) : element;
+    s->elems[s->size] = s->copy_enabled ? s->operator_copy(element) : element;
     s->size++;
 
     return SUCCESS;
@@ -104,14 +106,14 @@ char stack__top(const Stack s, elem_t *top)
 {
     if (!s || !s->size || !top) return FAILURE;
 
-    *top = s->operator_copy ? s->operator_copy(s->elems[s->size-1]) : s->elems[s->size-1];
+    *top = s->copy_enabled ? s->operator_copy(s->elems[s->size-1]) : s->elems[s->size-1];
 
     return SUCCESS;
 }
 
 inline char stack__is_copy_enabled(const Stack s)
 {
-    return !s ? FAILURE : s->operator_copy && s->operator_delete;
+    return !s ? FAILURE : s->copy_enabled;
 }
 
 inline char stack__is_empty(const Stack s)
@@ -135,7 +137,7 @@ Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t siz
     }
 
     for (size_t i = 0; i < n_elems; i++) {
-        s->elems[s->size + i] = s->operator_copy ? s->operator_copy(A) : A;
+        s->elems[s->size + i] = s->copy_enabled ? s->operator_copy(A) : A;
         PTR_INCREMENT(A, size);
     }
 
@@ -151,8 +153,12 @@ elem_t *stack__to_array(const Stack s)
     elem_t *res = malloc(sizeof(elem_t) * s->size);
     if (!res) return NULL;
 
-    for (size_t i = 0; i < s->size; i++) {
-        res[i] = s->operator_copy ? s->operator_copy(s->elems[i]) : s->elems[i];
+    if (s->copy_enabled) {
+        for (size_t i = 0; i < s->size; i++) {
+            res[i] = s->operator_copy(s->elems[i]);
+        }
+    } else {
+        memcpy(res, s->elems, sizeof(elem_t) * s->size);
     }
 
     return res;
@@ -186,7 +192,7 @@ void stack__foreach(const Stack s, const applying_func_t f, void *user_data)
     char repeated;
     if (!s || !s->size) return;
 
-    if (s->operator_copy && s->operator_delete) {
+    if (s->copy_enabled) {
         for (size_t i = 0; i < s->size; i++) {
             f(s->elems[i], user_data);
         }

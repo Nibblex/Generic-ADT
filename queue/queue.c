@@ -17,6 +17,7 @@ struct QueueSt
     size_t front;
     size_t back;
     size_t size;
+    char copy_enabled;
     copy_operator_t operator_copy;
     delete_operator_t operator_delete;
 };
@@ -40,6 +41,7 @@ struct QueueSt
     __ptr->front = 0; \
     __ptr->back = 0; \
     __ptr->size = 0; \
+    __ptr->copy_enabled = __copy_op ? true : false; \
     __ptr->operator_copy = __copy_op; \
     __ptr->operator_delete = __delete_op; \
 } while (false)
@@ -83,7 +85,7 @@ char queue__enqueue(const Queue q, const elem_t element)
         if (ENSURE_CAPACITY(q) < 0) return FAILURE;
     }
 
-    q->elems[q->back] = q->operator_copy ? q->operator_copy(element) : element;
+    q->elems[q->back] = q->copy_enabled ? q->operator_copy(element) : element;
     q->size++;
     q->back++;
 
@@ -119,7 +121,7 @@ char queue__front(const Queue q, elem_t *front)
 {
     if (!q || !q->size || !front) return FAILURE;
 
-    *front = q->operator_copy ? q->operator_copy(q->elems[q->front]) : q->elems[q->front];
+    *front = q->copy_enabled ? q->operator_copy(q->elems[q->front]) : q->elems[q->front];
 
     return SUCCESS;
 }
@@ -128,14 +130,14 @@ char queue__back(const Queue q, elem_t *back)
 {
     if (!q || !q->size || !back) return FAILURE;
 
-    *back = q->operator_copy ? q->operator_copy(q->elems[q->back - 1]) : q->elems[q->back - 1];
+    *back = q->copy_enabled ? q->operator_copy(q->elems[q->back - 1]) : q->elems[q->back - 1];
 
     return SUCCESS;
 }
 
 inline char queue__is_copy_enabled(const Queue q)
 {
-    return !q ? FAILURE : q->operator_copy && q->operator_delete;
+    return !q ? FAILURE : q->copy_enabled;
 }
 
 inline char queue__is_empty(const Queue q)
@@ -160,7 +162,7 @@ Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t siz
     }
 
     for (size_t i = 0; i < n_elems; i++) {
-        q->elems[q->size + i] = q->operator_copy ? q->operator_copy(A) : A;
+        q->elems[q->size + i] = q->copy_enabled ? q->operator_copy(A) : A;
         PTR_INCREMENT(A, size);
     }
 
@@ -178,9 +180,13 @@ elem_t *queue__to_array(const Queue q)
     if (!res) return NULL;
 
     size_t k = 0;
-    for (size_t i = q->front; i < q->back; i++) {
-        res[k] = q->operator_copy ? q->operator_copy(q->elems[i]) : q->elems[i];
-        k++;
+    if (q->copy_enabled) {
+        for (size_t i = q->front; i < q->back; i++) {
+            res[k] = q->operator_copy(q->elems[i]);
+            k++;
+        }
+    } else {
+        memcpy(res, q->elems + q->front, sizeof(elem_t) * q->size);
     }
 
     return res;
@@ -205,7 +211,7 @@ void queue__foreach(const Queue q, const applying_func_t f, void *user_data)
     char repeated;
     if (!q || !q->size) return;
 
-    if (q->operator_copy && q->operator_delete) {
+    if (q->copy_enabled) {
         for (size_t i = q->front; i < q->back; i++) {
             f(q->elems[i], user_data);
         }

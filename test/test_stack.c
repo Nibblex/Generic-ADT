@@ -327,7 +327,7 @@ static bool test_stack__top_on_non_empty_stack(char debug)
     return result;
 }
 
-static int test_stack__from_array(char debug)
+static bool test_stack__from_array(char debug)
 {
     printf("%s... ", __func__);
 
@@ -536,7 +536,7 @@ TEST_ON_EMPTY_STACK (
     stack__shuffle(t);
 )
 
-static int test_stack__shuffle_on_non_empty_stack(char debug)
+static bool test_stack__shuffle_on_non_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 

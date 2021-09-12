@@ -488,12 +488,12 @@ static bool test_stack__foreach_on_non_empty_stack(char debug)
 }
 
 TEST_ON_EMPTY_STACK (
-    test_stack__revert_on_empty_stack,
-    stack__revert(s);
-    stack__revert(t);
+    test_stack__reverse_on_empty_stack,
+    stack__reverse(s);
+    stack__reverse(t);
 )
 
-static bool test_stack__revert_on_non_empty_stack(char debug)
+static bool test_stack__reverse_on_non_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
@@ -506,7 +506,7 @@ static bool test_stack__revert_on_non_empty_stack(char debug)
 
     STACK_DEBUG_i32(s, NULL, "\n\tStacks before revert:");
 
-    stack__revert(s);
+    stack__reverse(s);
 
     A = stack__dump(s);
 
@@ -516,44 +516,6 @@ static bool test_stack__revert_on_non_empty_stack(char debug)
     }
 
     STACK_DEBUG_i32(s, NULL, "\n\tStacks after revert:");
-
-    for (u32 i = 0; i < N; i++) {
-        free(A[i]);
-    }
-    free(A);
-    STACK_FREE(s, NULL, NULL, NULL);
-    return result;
-}
-
-TEST_ON_EMPTY_STACK (
-    test_stack__sort_on_empty_stack,
-    stack__sort(s, operator_compare);
-    stack__sort(t, operator_compare);
-)
-
-static bool test_stack__sort_on_non_empty_stack(char debug)
-{
-    printf("%s... ", __func__);
-
-    bool result;
-    elem_t *A = NULL;
-    Stack s = stack__empty_copy_enabled(operator_copy, operator_delete);
-
-    u32 N = 8;
-    STACK_PUSH_i32_RAND(N, s, NULL);
-
-    STACK_DEBUG_i32(s, NULL, "\n\tStacks before sort:");
-
-    stack__sort(s, operator_compare);
-
-    A = stack__dump(s);
-
-    result = TEST_SUCCESS;
-    for (u32 i = 0; i < N - 1; i++) {
-        result |= *(int *)A[i] > *(int *)A[i+1];
-    }
-
-    STACK_DEBUG_i32(s, NULL, "\n\tStacks after sort:");
 
     for (u32 i = 0; i < N; i++) {
         free(A[i]);
@@ -601,6 +563,44 @@ static bool test_stack__shuffle_on_non_empty_stack(char debug)
     return result;
 }
 
+TEST_ON_EMPTY_STACK (
+    test_stack__sort_on_empty_stack,
+    stack__sort(s, operator_compare);
+    stack__sort(t, operator_compare);
+)
+
+static bool test_stack__sort_on_non_empty_stack(char debug)
+{
+    printf("%s... ", __func__);
+
+    bool result;
+    elem_t *A = NULL;
+    Stack s = stack__empty_copy_enabled(operator_copy, operator_delete);
+
+    u32 N = 8;
+    STACK_PUSH_i32_RAND(N, s, NULL);
+
+    STACK_DEBUG_i32(s, NULL, "\n\tStacks before sort:");
+
+    stack__sort(s, operator_compare);
+
+    A = stack__dump(s);
+
+    result = TEST_SUCCESS;
+    for (u32 i = 0; i < N - 1; i++) {
+        result |= *(int *)A[i] > *(int *)A[i+1];
+    }
+
+    STACK_DEBUG_i32(s, NULL, "\n\tStacks after sort:");
+
+    for (u32 i = 0; i < N; i++) {
+        free(A[i]);
+    }
+    free(A);
+    STACK_FREE(s, NULL, NULL, NULL);
+    return result;
+}
+
 
 int main(void)
 {
@@ -635,12 +635,12 @@ int main(void)
     print_test_result(test_stack__to_array_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__foreach_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__foreach_on_non_empty_stack(false), &nb_success, &nb_tests);
-    print_test_result(test_stack__revert_on_empty_stack(false), &nb_success, &nb_tests);
-    print_test_result(test_stack__revert_on_non_empty_stack(false), &nb_success, &nb_tests);
-    print_test_result(test_stack__sort_on_empty_stack(false), &nb_success, &nb_tests);
-    print_test_result(test_stack__sort_on_non_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__reverse_on_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__reverse_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__shuffle_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__shuffle_on_non_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__sort_on_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__sort_on_non_empty_stack(false), &nb_success, &nb_tests);
 
     print_test_summary(nb_success, nb_tests);
 

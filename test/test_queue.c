@@ -525,44 +525,6 @@ static bool test_queue__foreach_on_non_empty_queue(char debug)
 }
 
 TEST_ON_EMPTY_QUEUE (
-    test_queue__sort_on_empty_queue,
-    queue__sort(q, operator_compare);
-    queue__sort(w, operator_compare);
-)
-
-static bool test_queue__sort_on_non_empty_queue(char debug)
-{
-    printf("%s... ", __func__);
-
-    bool result;
-    elem_t *A = NULL;
-    Queue q = queue__empty_copy_enabled(operator_copy, operator_delete);
-
-    u32 N = 8;
-    QUEUE_ENQUEUE_i32_RAND(N, q, NULL);
-
-    QUEUE_DEBUG_i32(q, NULL, "\n\tQueues before sort:");
-
-    queue__sort(q, operator_compare);
-
-    A = queue__dump(q);
-
-    result = TEST_SUCCESS;
-    for (u32 i = 0; i < N - 1; i++) {
-        result |= *(int *)A[i] > *(int *)A[i+1];
-    }
-
-    QUEUE_DEBUG_i32(q, NULL, "\n\tQueues after sort:");
-
-    for (u32 i = 0; i < N; i++) {
-        free(A[i]);
-    }
-    free(A);
-    QUEUE_FREE(q, NULL, NULL, NULL);
-    return result;
-}
-
-TEST_ON_EMPTY_QUEUE (
     test_queue__shuffle_on_empty_queue,
     queue__shuffle(q);
     queue__shuffle(w);
@@ -591,6 +553,44 @@ static bool test_queue__shuffle_on_non_empty_queue(char debug)
     }
 
     QUEUE_DEBUG_i32(q, NULL, "\n\tQueue after shuffle:");
+
+    for (u32 i = 0; i < N; i++) {
+        free(A[i]);
+    }
+    free(A);
+    QUEUE_FREE(q, NULL, NULL, NULL);
+    return result;
+}
+
+TEST_ON_EMPTY_QUEUE (
+    test_queue__sort_on_empty_queue,
+    queue__sort(q, operator_compare);
+    queue__sort(w, operator_compare);
+)
+
+static bool test_queue__sort_on_non_empty_queue(char debug)
+{
+    printf("%s... ", __func__);
+
+    bool result;
+    elem_t *A = NULL;
+    Queue q = queue__empty_copy_enabled(operator_copy, operator_delete);
+
+    u32 N = 8;
+    QUEUE_ENQUEUE_i32_RAND(N, q, NULL);
+
+    QUEUE_DEBUG_i32(q, NULL, "\n\tQueues before sort:");
+
+    queue__sort(q, operator_compare);
+
+    A = queue__dump(q);
+
+    result = TEST_SUCCESS;
+    for (u32 i = 0; i < N - 1; i++) {
+        result |= *(int *)A[i] > *(int *)A[i+1];
+    }
+
+    QUEUE_DEBUG_i32(q, NULL, "\n\tQueues after sort:");
 
     for (u32 i = 0; i < N; i++) {
         free(A[i]);
@@ -636,10 +636,10 @@ int main(void)
     print_test_result(test_queue__to_array_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__foreach_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__foreach_on_non_empty_queue(false), &nb_success, &nb_tests);
-    print_test_result(test_queue__sort_on_empty_queue(false), &nb_success, &nb_tests);
-    print_test_result(test_queue__sort_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__shuffle_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__shuffle_on_non_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__sort_on_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__sort_on_non_empty_queue(false), &nb_success, &nb_tests);
 
     print_test_summary(nb_success, nb_tests);
 

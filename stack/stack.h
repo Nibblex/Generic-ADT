@@ -41,6 +41,33 @@ Stack stack__empty_copy_enabled(const copy_operator_t copy_op, const delete_oper
 
 
 /**
+ * @brief Checks if the stack has the copy operator enabled
+ * @note Complexity: O(1)
+ * @param s The stack
+ * @return 1 if the stack has copy enabled, 0 if not, -1 on failure
+ */
+char stack__is_copy_enabled(const Stack s);
+
+
+/**
+ * @brief Checks if the stack is empty
+ * @note Complexity: O(1)
+ * @param s The stack
+ * @return 1 if the stack is empty, 0 if not, -1 on failure
+ */
+char stack__is_empty(const Stack s);
+
+
+/**
+ * @brief Number of elements in the stack
+ * @note Complexity: O(1)
+ * @param s The stack
+ * @return a size_t number corresponding to the current stack size on success, -1 on failure
+ */
+size_t stack__size(const Stack s);
+
+
+/**
  * @brief Adds an element in the stack
  * @note Complexity: O(1)
  * @param s The stack
@@ -70,33 +97,6 @@ char stack__pop(const Stack s, elem_t *top);
  * @return 0 on success, -1 on failure
  */
 char stack__top(const Stack s, elem_t *top);
-
-
-/**
- * @brief Checks if the stack has the copy operator enabled
- * @note Complexity: O(1)
- * @param s The stack
- * @return 1 if the stack has copy enabled, 0 if not, -1 on failure
- */
-char stack__is_copy_enabled(const Stack s);
-
-
-/**
- * @brief Checks if the stack is empty
- * @note Complexity: O(1)
- * @param s The stack
- * @return 1 if the stack is empty, 0 if not, -1 on failure
- */
-char stack__is_empty(const Stack s);
-
-
-/**
- * @brief Number of elements in the stack
- * @note Complexity: O(1)
- * @param s The stack
- * @return a size_t number corresponding to the current stack size on success, -1 on failure
- */
-size_t stack__size(const Stack s);
 
 
 /**
@@ -138,7 +138,15 @@ elem_t *stack__to_array(const Stack s);
  * @note Complexity: O(n)
  * @param s The stack
  */
-void stack__revert(const Stack s);
+void stack__reverse(const Stack s);
+
+
+/**
+ * @brief Randomly shuffles the stack
+ * @note Complexity: O(n)
+ * @param s The stack
+ */
+void stack__shuffle(const Stack s);
 
 
 /**
@@ -148,14 +156,6 @@ void stack__revert(const Stack s);
  * @param f The compare function
  */
 void stack__sort(const Stack s, const compare_func_t f);
-
-
-/**
- * @brief Randomly shuffles the stack
- * @note Complexity: O(n)
- * @param s The stack
- */
-void stack__shuffle(const Stack s);
 
 
 /**

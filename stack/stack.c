@@ -66,6 +66,21 @@ inline Stack stack__empty_copy_enabled(const copy_operator_t copy_op, const dele
     return STACK_INIT(copy_op, delete_op, DEFAULT_STACK_CAPACITY);
 }
 
+inline char stack__is_copy_enabled(const Stack s)
+{
+    return !s ? FAILURE : s->copy_enabled;
+}
+
+inline char stack__is_empty(const Stack s)
+{
+    return !s ? FAILURE : !s->size;
+}
+
+inline size_t stack__size(const Stack s)
+{
+    return !s ? (size_t)FAILURE : s->size;
+}
+
 char stack__push(const Stack s, const elem_t element)
 {
     if (!s) return FAILURE;
@@ -111,21 +126,6 @@ char stack__top(const Stack s, elem_t *top)
     *top = s->operator_copy(s->elems[s->size-1]);
 
     return SUCCESS;
-}
-
-inline char stack__is_copy_enabled(const Stack s)
-{
-    return !s ? FAILURE : s->copy_enabled;
-}
-
-inline char stack__is_empty(const Stack s)
-{
-    return !s ? FAILURE : !s->size;
-}
-
-size_t stack__size(const Stack s)
-{
-    return !s ? (size_t)FAILURE : s->size;
 }
 
 Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t size)
@@ -181,7 +181,7 @@ elem_t *stack__to_array(const Stack s)
     return res;
 }
 
-void stack__revert(const Stack s)
+void stack__reverse(const Stack s)
 {
     if (!s || s->size < 2) return;
 
@@ -190,18 +190,18 @@ void stack__revert(const Stack s)
     }
 }
 
-inline void stack__sort(const Stack s, const compare_func_t f)
-{
-    if (!s || s->size < 2) return;
-
-    qsort(s->elems, s->size, sizeof(elem_t), f);
-}
-
 void stack__shuffle(const Stack s)
 {
     if (!s || s->size < 2) return;
 
     ARRAY_SHUFFLE(s->elems, 0, s->size);
+}
+
+inline void stack__sort(const Stack s, const compare_func_t f)
+{
+    if (!s || s->size < 2) return;
+
+    qsort(s->elems, s->size, sizeof(elem_t), f);
 }
 
 void stack__foreach(const Stack s, const applying_func_t f, void *user_data)

@@ -78,6 +78,21 @@ inline Queue queue__empty_copy_enabled(const copy_operator_t copy_op, const dele
     return QUEUE_INIT(copy_op, delete_op, DEFAULT_QUEUE_CAPACITY);
 }
 
+inline char queue__is_copy_enabled(const Queue q)
+{
+    return !q ? FAILURE : q->copy_enabled;
+}
+
+inline char queue__is_empty(const Queue q)
+{
+    return !q ? FAILURE : !q->size;
+}
+
+inline size_t queue__size(const Queue q)
+{
+    return !q ? (size_t)FAILURE : q->size;
+}
+
 char queue__enqueue(const Queue q, const elem_t element)
 {
     if (!q) return FAILURE;
@@ -135,21 +150,6 @@ char queue__back(const Queue q, elem_t *back)
     *back = q->operator_copy(q->elems[q->back - 1]);
 
     return SUCCESS;
-}
-
-inline char queue__is_copy_enabled(const Queue q)
-{
-    return !q ? FAILURE : q->copy_enabled;
-}
-
-inline char queue__is_empty(const Queue q)
-{
-    return !q ? FAILURE : !q->size;
-}
-
-inline size_t queue__size(const Queue q)
-{
-    return !q ? (size_t)FAILURE : q->size;
 }
 
 Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t size)
@@ -211,18 +211,18 @@ elem_t *queue__to_array(const Queue q)
     return res;
 }
 
-inline void queue__sort(const Queue q, const compare_func_t f)
-{
-    if (!q || q->size < 2) return;
-
-    qsort(q->elems + q->front, q->size, sizeof(elem_t), f);
-}
-
 void queue__shuffle(const Queue q)
 {
     if (!q || q->size < 2) return;
 
     ARRAY_SHUFFLE(q->elems, q->front, q->back);
+}
+
+inline void queue__sort(const Queue q, const compare_func_t f)
+{
+    if (!q || q->size < 2) return;
+
+    qsort(q->elems + q->front, q->size, sizeof(elem_t), f);
 }
 
 void queue__foreach(const Queue q, const applying_func_t f, void *user_data)

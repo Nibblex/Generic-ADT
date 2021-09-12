@@ -41,6 +41,33 @@ Queue queue__empty_copy_enabled(const copy_operator_t copy_op, const delete_oper
 
 
 /**
+ * @brief Checks if the queue has the copy operator enabled
+ * @note Complexity: O(1)
+ * @param q The queue
+ * @return 1 if the queue has copy enabled, 0 if not, -1 on failure
+ */
+char queue__is_copy_enabled(const Queue q);
+
+
+/**
+ * @brief Checks if the queue is empty
+ * @note Complexity: O(1)
+ * @param q The queue
+ * @return 1 if the queue is empty, 0 if not, -1 on failure
+ */
+char queue__is_empty(const Queue q);
+
+
+/**
+ * @brief Number of elements in the queue
+ * @note Complexity: O(1)
+ * @param q The queue
+ * @return an unsigned integer corresponding to the number of elements in the queue
+ */
+size_t queue__size(const Queue q);
+
+
+/**
  * @brief Adds an element in the queue
  * @note Complexity: O(1)
  * @param q The queue
@@ -84,33 +111,6 @@ char queue__back(const Queue q, elem_t *back);
 
 
 /**
- * @brief Checks if the queue has the copy operator enabled
- * @note Complexity: O(1)
- * @param q The queue
- * @return 1 if the queue has copy enabled, 0 if not, -1 on failure
- */
-char queue__is_copy_enabled(const Queue q);
-
-
-/**
- * @brief Checks if the queue is empty
- * @note Complexity: O(1)
- * @param q The queue
- * @return 1 if the queue is empty, 0 if not, -1 on failure
- */
-char queue__is_empty(const Queue q);
-
-
-/**
- * @brief Number of elements in the queue
- * @note Complexity: O(1)
- * @param q The queue
- * @return an unsigned integer corresponding to the number of elements in the queue
- */
-size_t queue__size(const Queue q);
-
-
-/**
  * @brief Enqueues the first 'n_elems' elements of the given array in the queue
  * @details If q == NULL creates a new queue with copy disabled by default
  * @details If A == NULL returns the queue unaltered
@@ -145,20 +145,20 @@ elem_t *queue__to_array(const Queue q);
 
 
 /**
+ * @brief Randomly shuffles the queue
+ * @note Complexity: O(n)
+ * @param q The queue
+ * */
+void queue__shuffle(const Queue q);
+
+
+/**
  * @brief Uses qsort to sort the queue elements using the comparison criteria given by the received compare function
  * @note Complexity: O(n*log(n))
  * @param q The queue
  * @param f The compare function
  */
 void queue__sort(const Queue q, const compare_func_t f);
-
-
-/**
- * @brief Randomly shuffles the queue
- * @note Complexity: O(n)
- * @param q The queue
- * */
-void queue__shuffle(const Queue q);
 
 
 /**

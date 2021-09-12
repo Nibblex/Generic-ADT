@@ -245,7 +245,7 @@ void stack__free(const Stack s)
     free(s);
 }
 
-void stack__debug(const Stack s, void (*debug_op) (elem_t))
+void stack__debug(const Stack s, const debug_operator_t debug_op)
 {
     setvbuf (stdout, NULL, _IONBF, 0);
 

@@ -4,7 +4,7 @@
 
 #define QUEUE_CREATE(A, B) \
     Queue A = NULL, B = NULL; \
-    A = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete); \
+    A = queue__empty_copy_enabled(operator_copy, operator_delete); \
     B = queue__empty_copy_disabled()
 
 #define QUEUE_ENQUEUE_u32(N, A, B) \
@@ -59,7 +59,7 @@ static bool test_queue__empty_copy_enabled(char debug)
     printf("%s... ", __func__);
 
     bool result;
-    Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+    Queue q = queue__empty_copy_enabled(operator_copy, operator_delete);
 
     result = q ? TEST_SUCCESS : TEST_FAILURE;
 
@@ -443,8 +443,8 @@ static bool test_queue__to_array_on_non_empty_queue(char debug)
 TEST_ON_EMPTY_QUEUE (
     test_queue__foreach_on_empty_queue,
     int value = 1;
-    queue__foreach(q, (applying_func_t) plus_op, &value);
-    queue__foreach(w, (applying_func_t) plus_op, &value);
+    queue__foreach(q, plus_op, &value);
+    queue__foreach(w, plus_op, &value);
 )
 
 static bool test_queue__foreach_on_non_empty_queue(char debug)
@@ -466,8 +466,8 @@ static bool test_queue__foreach_on_non_empty_queue(char debug)
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues before foreach:");
 
-    queue__foreach(q, (applying_func_t) plus_op, &value);
-    queue__foreach(w, (applying_func_t) plus_op, &value);
+    queue__foreach(q, plus_op, &value);
+    queue__foreach(w, plus_op, &value);
 
     C = queue__to_array(q);
     D = queue__to_array(w);
@@ -503,7 +503,7 @@ static bool test_queue__sort_on_non_empty_queue(char debug)
 
     bool result;
     elem_t *A = NULL;
-    Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+    Queue q = queue__empty_copy_enabled(operator_copy, operator_delete);
 
     u32 N = 8;
     QUEUE_ENQUEUE_i32_RAND(N, q, NULL);
@@ -541,7 +541,7 @@ static bool test_queue__shuffle_on_non_empty_queue(char debug)
 
     bool result;
     elem_t *A = NULL;
-    Queue q = queue__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+    Queue q = queue__empty_copy_enabled(operator_copy, operator_delete);
 
     u32 N = 8;
     QUEUE_ENQUEUE_u32(N, q, NULL);

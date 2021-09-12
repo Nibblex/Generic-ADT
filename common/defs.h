@@ -101,4 +101,9 @@ typedef void (*applying_func_t)(elem_t, void *);
  */
 typedef int (*compare_func_t)(const void *, const void *);
 
+/**
+ * Function pointer for element print
+ */
+typedef void (*debug_operator_t)(elem_t);
+
 #endif

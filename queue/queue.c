@@ -268,7 +268,7 @@ void queue__free(const Queue q)
     free(q);
 }
 
-void queue__debug(const Queue q, void (*debug_op) (elem_t))
+void queue__debug(const Queue q, const debug_operator_t debug_op)
 {
     setvbuf (stdout, NULL, _IONBF, 0);
 

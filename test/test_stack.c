@@ -4,7 +4,7 @@
 
 #define STACK_CREATE(A, B) \
     Stack A = NULL, B = NULL; \
-    A = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete); \
+    A = stack__empty_copy_enabled(operator_copy, operator_delete); \
     B = stack__empty_copy_disabled()
 
 #define STACK_PUSH_u32(N, A, B) \
@@ -59,7 +59,7 @@ static bool test_stack__empty_copy_enabled(char debug)
     printf("%s... ", __func__);
 
     bool result;
-    Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+    Stack s = stack__empty_copy_enabled(operator_copy, operator_delete);
 
     result = s ? TEST_SUCCESS : TEST_FAILURE;
 
@@ -406,8 +406,8 @@ static bool test_stack__to_array_on_non_empty_stack(char debug)
 TEST_ON_EMPTY_STACK (
     test_stack__foreach_on_empty_stack,
     int value = 1;
-    stack__foreach(s, (applying_func_t) plus_op, &value);
-    stack__foreach(t, (applying_func_t) plus_op, &value);
+    stack__foreach(s, plus_op, &value);
+    stack__foreach(t, plus_op, &value);
 )
 
 static bool test_stack__foreach_on_non_empty_stack(char debug)
@@ -429,8 +429,8 @@ static bool test_stack__foreach_on_non_empty_stack(char debug)
 
     STACK_DEBUG_i32(s, t, "\n\tStacks before foreach:");
 
-    stack__foreach(s, (applying_func_t) plus_op, &value);
-    stack__foreach(t, (applying_func_t) plus_op, &value);
+    stack__foreach(s, plus_op, &value);
+    stack__foreach(t, plus_op, &value);
 
     C = stack__to_array(s);
     D = stack__to_array(t);
@@ -466,7 +466,7 @@ static bool test_stack__revert_on_non_empty_stack(char debug)
 
     bool result;
     elem_t *A = NULL;
-    Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+    Stack s = stack__empty_copy_enabled(operator_copy, operator_delete);
 
     u32 N = 8;
     STACK_PUSH_u32(N, s, NULL);
@@ -504,7 +504,7 @@ static bool test_stack__sort_on_non_empty_stack(char debug)
 
     bool result;
     elem_t *A = NULL;
-    Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+    Stack s = stack__empty_copy_enabled(operator_copy, operator_delete);
 
     u32 N = 8;
     STACK_PUSH_i32_RAND(N, s, NULL);
@@ -542,7 +542,7 @@ static int test_stack__shuffle_on_non_empty_stack(char debug)
 
     bool result;
     elem_t *A = NULL;
-    Stack s = stack__empty_copy_enabled((copy_operator_t)operator_copy, (delete_operator_t)operator_delete);
+    Stack s = stack__empty_copy_enabled(operator_copy, operator_delete);
 
     u32 N = 8;
     STACK_PUSH_u32(N, s, NULL);

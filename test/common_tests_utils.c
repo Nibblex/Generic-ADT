@@ -30,18 +30,18 @@ void print_test_summary(int nb_success, int nb_tests)
 ///     OPERATOR FUNCTIONS FOR INT
 ///////////////////////////////////////////////////////////////////////////////
 
-void *operator_copy(const int *p_value)
+void *operator_copy(void *p_value)
 {
     if (p_value == NULL)
         return NULL;
 
     int *new_int = malloc(sizeof(int));
     if (new_int == NULL) return NULL;
-    *new_int = *p_value;
+    *new_int = *(int*)p_value;
     return new_int;
 }
 
-void operator_delete(int *p_value)
+void operator_delete(void *p_value)
 {
     free(p_value);
 }
@@ -91,7 +91,7 @@ void operator_debug_char(const char *p_value)
     }
 }
 
-void plus_op(int *v, void *user_data)
+void plus_op(void *v, void *user_data)
 {
-    *v += *(int *)user_data;
+    *(int*)v += *(int *)user_data;
 }

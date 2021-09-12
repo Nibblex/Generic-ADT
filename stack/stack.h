@@ -190,7 +190,7 @@ void stack__free(const Stack s);
  * @param s The stack
  * @param debug_op The debug operator
  */
-void stack__debug(const Stack s, void (*debug_op) (elem_t));
+void stack__debug(const Stack s, const debug_operator_t debug_op);
 
 
 #endif

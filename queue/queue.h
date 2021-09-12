@@ -193,7 +193,7 @@ void queue__free(const Queue q);
  * @param q The queue
  * @param debug_op debug operator
  */
-void queue__debug(const Queue q, void (*debug_op) (elem_t));
+void queue__debug(const Queue q, const debug_operator_t debug_op);
 
 
 #endif

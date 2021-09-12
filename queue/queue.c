@@ -174,6 +174,23 @@ Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t siz
     return q;
 }
 
+elem_t *queue__dump(const Queue q)
+{
+    if (!q || !q->size) return NULL;
+
+    elem_t *res = malloc(sizeof(elem_t) * q->size);
+    if (!res) return NULL;
+
+    memcpy(res, q->elems + q->front, sizeof(elem_t) * q->size);
+    ARRAY_RESIZE(q, DEFAULT_QUEUE_CAPACITY);
+
+    q->front = 0;
+    q->back = 0;
+    q->size = 0;
+
+    return res;
+}
+
 elem_t *queue__to_array(const Queue q)
 {
     if (!q || !q->size) return NULL;

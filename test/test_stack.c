@@ -365,6 +365,45 @@ static bool test_stack__from_array(char debug)
 }
 
 TEST_ON_EMPTY_STACK (
+    test_stack__dump_on_empty_stack,
+    result = stack__dump(s) == NULL && stack__dump(t) == NULL;
+)
+
+static bool test_stack__dump_on_non_empty_stack(char debug)
+{
+    printf("%s... ", __func__);
+
+    bool result;
+    int **A = NULL;
+    int **B = NULL;
+    STACK_CREATE(s, t);
+
+    u32 N = 5;
+    STACK_PUSH_u32(N, s, t);
+
+    STACK_DEBUG_i32(s, t, "\n\tStacks before dump:");
+
+    A = (int **)stack__dump(s);
+    B = (int **)stack__dump(t);
+
+    result = (stack__is_empty(s) && stack__is_empty(t)) ? TEST_SUCCESS : TEST_FAILURE;
+
+    for (u32 i = 0; i < N; i++) {
+        result |= *A[i] != (int)i || *B[i] != (int)N;
+    }
+
+    STACK_DEBUG_i32(s, t, "\n\tStacks after dump:");
+
+    for (u32 i = 0; i < N; i++) {
+        free(A[i]);
+    }
+    free(A);
+    free(B);
+    STACK_FREE(s, t, NULL, NULL);
+    return result;
+}
+
+TEST_ON_EMPTY_STACK (
     test_stack__to_array_on_empty_stack,
     result = stack__to_array(s) == NULL && stack__to_array(t) == NULL;
 )
@@ -596,6 +635,8 @@ int main(void)
     print_test_result(test_stack__top_on_non_empty_stack(false), &nb_success, &nb_tests);
 
     print_test_result(test_stack__from_array(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__dump_on_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__dump_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__to_array_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__to_array_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__foreach_on_empty_stack(false), &nb_success, &nb_tests);

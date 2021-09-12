@@ -114,7 +114,17 @@ Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t siz
 
 
 /**
- * @brief Retrieves a copy of all items in a stack stored in array
+ * @brief Dump all elements of the stack into an array
+ * @details The array must be manually freed by user afterward, the stack is empty after use of this function
+ * @note Complexity: O(n)
+ * @param s The stack
+ * @return a pointer to dynamically allocated array which contains all the elements from the given stack on success, NULL on failure
+ */
+elem_t *stack__dump(const Stack s);
+
+
+/**
+ * @brief Retrieves a copy of all elements of the stack into an array
  * @details The array must be manually freed by user afterward
  * @note Complexity: O(n)
  * @param s The stack

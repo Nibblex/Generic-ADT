@@ -125,6 +125,16 @@ Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t siz
 
 
 /**
+ * @brief Dump all elements of the queue into an array
+ * @details The array must be manually freed by user afterward, the queue is empty after use of this function
+ * @note Complexity: O(n)
+ * @param q The queue
+ * @return a pointer to dynamically allocated array which contains all the elements from the given queue on success, NULL on failure
+ */
+elem_t *queue__dump(const Queue q);
+
+
+/**
  * @brief Retrieves a copy of all items in a queue stored in array
  * @details The array must be manually freed by user afterward
  * @note Complexity: O(n)

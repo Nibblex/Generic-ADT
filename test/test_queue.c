@@ -402,6 +402,45 @@ static bool test_queue__from_array(char debug)
 }
 
 TEST_ON_EMPTY_QUEUE (
+    test_queue__dump_on_empty_queue,
+    result = queue__dump(q) == NULL && queue__dump(w) == NULL;
+)
+
+static bool test_queue__dump_on_non_empty_queue(char debug)
+{
+    printf("%s... ", __func__);
+
+    bool result;
+    int **A = NULL;
+    int **B = NULL;
+    QUEUE_CREATE(q, w);
+
+    u32 N = 5;
+    QUEUE_ENQUEUE_u32(N, q, w);
+
+    QUEUE_DEBUG_i32(q, w, "\n\tQueues before dump:");
+
+    A = (int **)queue__dump(q);
+    B = (int **)queue__dump(w);
+
+    result = (queue__is_empty(q) && queue__is_empty(w)) ? TEST_SUCCESS : TEST_FAILURE;
+
+    for (u32 i = 0; i < N; i++) {
+        result |= *A[i] != (int)i || *B[i] != (int)N;
+    }
+
+    QUEUE_DEBUG_i32(q, w, "\n\tQueues after dump:");
+
+    for (u32 i = 0; i < N; i++) {
+        free(A[i]);
+    }
+    free(A);
+    free(B);
+    QUEUE_FREE(q, w, NULL, NULL);
+    return result;
+}
+
+TEST_ON_EMPTY_QUEUE (
     test_queue__to_array_on_empty_queue,
     result = queue__to_array(q) == NULL && queue__to_array(w) == NULL;
 )
@@ -597,6 +636,8 @@ int main(void)
     print_test_result(test_queue__back_on_non_empty_queue(false), &nb_success, &nb_tests);
 
     print_test_result(test_queue__from_array(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__dump_on_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__dump_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__to_array_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__to_array_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__foreach_on_empty_queue(false), &nb_success, &nb_tests);

@@ -148,6 +148,21 @@ Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t siz
     return s;
 }
 
+elem_t *stack__dump(const Stack s)
+{
+    if (!s || !s->size) return NULL;
+
+    elem_t *res = malloc(sizeof(elem_t) * s->size);
+    if (!res) return NULL;
+
+    memcpy(res, s->elems, sizeof(elem_t) * s->size);
+    ARRAY_RESIZE(s, DEFAULT_STACK_CAPACITY);
+
+    s->size = 0;
+
+    return res;
+}
+
 elem_t *stack__to_array(const Stack s)
 {
     if (!s || !s->size) return NULL;

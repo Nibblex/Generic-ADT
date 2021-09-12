@@ -291,11 +291,11 @@ static bool test_stack__clear_on_non_empty_stack(char debug)
 }
 
 TEST_ON_EMPTY_STACK (
-    test_stack__top_on_empty_stack,
-    result = stack__top(s, NULL) == -1 && stack__top(t, NULL) == -1;
+    test_stack__peek_top_on_empty_stack,
+    result = stack__peek_top(s, NULL) == -1 && stack__peek_top(t, NULL) == -1;
 )
 
-static bool test_stack__top_on_non_empty_stack(char debug)
+static bool test_stack__peek_top_on_non_empty_stack(char debug)
 {
     printf("%s... ", __func__);
 
@@ -311,18 +311,63 @@ static bool test_stack__top_on_non_empty_stack(char debug)
     stack__push(s, &value2);
     stack__push(t, &value2);
 
-    STACK_DEBUG_i32(s, t, "\n\tStacks before top:");
+    STACK_DEBUG_i32(s, t, "\n\tStacks before peek_top:");
 
-    result = (!stack__top(s, &top_s)
-           && !stack__top(t, &top_t)
+    result = (!stack__peek_top(s, &top_s)
+           && !stack__peek_top(t, &top_t)
            && !stack__is_empty(s)
            && !stack__is_empty(t)
            && *(int *)top_s == 7
            && *(int *)top_t == 7) ? TEST_SUCCESS : TEST_FAILURE;
 
-    STACK_DEBUG_i32(s, t, "\n\tStacks after top:");
+    STACK_DEBUG_i32(s, t, "\n\tStacks after peek_top:");
 
     free(top_s);
+    STACK_FREE(s, t, NULL, NULL);
+    return result;
+}
+
+TEST_ON_EMPTY_STACK (
+    test_stack__peek_nth_on_empty_stack,
+    result = stack__peek_nth(s, NULL, 0) == -1 && stack__peek_nth(t, NULL, 0) == -1;
+)
+
+static bool test_stack__peek_nth_on_non_empty_stack(char debug)
+{
+    printf("%s... ", __func__);
+
+    bool result;
+    int value1 = 5;
+    int value2 = 7;
+    elem_t nth_s = NULL;
+    elem_t nth_t = NULL;
+    STACK_CREATE(s, t);
+
+    stack__push(s, &value1);
+    stack__push(t, &value1);
+    stack__push(s, &value2);
+    stack__push(t, &value2);
+
+    STACK_DEBUG_i32(s, t, "\n\tStacks before peek_nth:");
+
+    result = (!stack__peek_nth(s, &nth_s, 0)
+           && !stack__peek_nth(t, &nth_t, 0)
+           && !stack__is_empty(s)
+           && !stack__is_empty(t)
+           && *(int *)nth_s == 5
+           && *(int *)nth_t == 5) ? TEST_SUCCESS : TEST_FAILURE;
+    free(nth_s);
+
+    result &= (!stack__peek_nth(s, &nth_s, 1)
+            && !stack__peek_nth(t, &nth_t, 1)
+            && !stack__is_empty(s)
+            && !stack__is_empty(t)
+            && *(int *)nth_s == 7
+            && *(int *)nth_t == 7) ? TEST_SUCCESS : TEST_FAILURE;
+    free(nth_s);
+
+    STACK_DEBUG_i32(s, t, "\n\tStacks after peek_nth:");
+
     STACK_FREE(s, t, NULL, NULL);
     return result;
 }
@@ -625,8 +670,10 @@ int main(void)
     print_test_result(test_stack__clean_NULL_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__clear_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__clear_on_non_empty_stack(false), &nb_success, &nb_tests);
-    print_test_result(test_stack__top_on_empty_stack(false), &nb_success, &nb_tests);
-    print_test_result(test_stack__top_on_non_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__peek_top_on_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__peek_top_on_non_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__peek_nth_on_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__peek_nth_on_non_empty_stack(false), &nb_success, &nb_tests);
 
     print_test_result(test_stack__from_array(false), &nb_success, &nb_tests);
     print_test_result(test_stack__dump_on_empty_stack(false), &nb_success, &nb_tests);

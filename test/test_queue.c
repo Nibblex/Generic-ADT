@@ -291,11 +291,11 @@ static bool test_queue__clear_on_non_empty_queue(char debug)
 }
 
 TEST_ON_EMPTY_QUEUE (
-    test_queue__front_on_empty_queue,
-    result = queue__front(q, NULL) == -1 && queue__front(w, NULL) == -1;
+    test_queue__peek_front_on_empty_queue,
+    result = queue__peek_front(q, NULL) == -1 && queue__peek_front(w, NULL) == -1;
 )
 
-static bool test_queue__front_on_non_empty_queue(char debug)
+static bool test_queue__peek_front_on_non_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
@@ -311,16 +311,16 @@ static bool test_queue__front_on_non_empty_queue(char debug)
     queue__enqueue(q, &value2);
     queue__enqueue(w, &value2);
 
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues before front:");
+    QUEUE_DEBUG_i32(q, w, "\n\tQueues before peek_front:");
 
-    result = (!queue__front(q, &front_q)
-           && !queue__front(w, &front_w)
+    result = (!queue__peek_front(q, &front_q)
+           && !queue__peek_front(w, &front_w)
            && !queue__is_empty(q)
            && !queue__is_empty(w)
            && *(int *)front_q == 5
            && *(int *)front_w == 5) ? TEST_SUCCESS : TEST_FAILURE;
 
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues after front:");
+    QUEUE_DEBUG_i32(q, w, "\n\tQueues after peek_front:");
 
     free(front_q);
     QUEUE_FREE(q, w, NULL, NULL);
@@ -328,11 +328,11 @@ static bool test_queue__front_on_non_empty_queue(char debug)
 }
 
 TEST_ON_EMPTY_QUEUE (
-    test_queue__back_on_empty_queue,
-    result = queue__back(q, NULL) == -1 && queue__back(w, NULL) == -1;
+    test_queue__peek_back_on_empty_queue,
+    result = queue__peek_back(q, NULL) == -1 && queue__peek_back(w, NULL) == -1;
 )
 
-static bool test_queue__back_on_non_empty_queue(char debug)
+static bool test_queue__peek_back_on_non_empty_queue(char debug)
 {
     printf("%s... ", __func__);
 
@@ -348,18 +348,63 @@ static bool test_queue__back_on_non_empty_queue(char debug)
     queue__enqueue(q, &value2);
     queue__enqueue(w, &value2);
 
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues before back:");
+    QUEUE_DEBUG_i32(q, w, "\n\tQueues before peek_back:");
 
-    result = (!queue__back(q, &back_q)
-           && !queue__back(w, &back_w)
+    result = (!queue__peek_back(q, &back_q)
+           && !queue__peek_back(w, &back_w)
            && !queue__is_empty(q)
            && !queue__is_empty(w)
            && *(int *)back_q == 7
            && *(int *)back_w == 7) ? TEST_SUCCESS : TEST_FAILURE;
 
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues after back:");
+    QUEUE_DEBUG_i32(q, w, "\n\tQueues after peek_back:");
 
     free(back_q);
+    QUEUE_FREE(q, w, NULL, NULL);
+    return result;
+}
+
+TEST_ON_EMPTY_QUEUE (
+    test_queue__peek_nth_on_empty_queue,
+    result = queue__peek_nth(q, NULL, 0) == -1 && queue__peek_nth(w, NULL, 0) == -1;
+)
+
+static bool test_queue__peek_nth_on_non_empty_queue(char debug)
+{
+    printf("%s... ", __func__);
+
+    bool result;
+    int value1 = 5;
+    int value2 = 7;
+    elem_t nth_s = NULL;
+    elem_t nth_t = NULL;
+    QUEUE_CREATE(q, w);
+
+    queue__enqueue(q, &value1);
+    queue__enqueue(w, &value1);
+    queue__enqueue(q, &value2);
+    queue__enqueue(w, &value2);
+
+    QUEUE_DEBUG_i32(q, w, "\n\tQueues before peek_nth:");
+
+    result = (!queue__peek_nth(q, &nth_s, 0)
+           && !queue__peek_nth(w, &nth_t, 0)
+           && !queue__is_empty(q)
+           && !queue__is_empty(w)
+           && *(int *)nth_s == 5
+           && *(int *)nth_t == 5) ? TEST_SUCCESS : TEST_FAILURE;
+    free(nth_s);
+
+    result &= (!queue__peek_nth(q, &nth_s, 1)
+            && !queue__peek_nth(w, &nth_t, 1)
+            && !queue__is_empty(q)
+            && !queue__is_empty(w)
+            && *(int *)nth_s == 7
+            && *(int *)nth_t == 7) ? TEST_SUCCESS : TEST_FAILURE;
+    free(nth_s);
+
+    QUEUE_DEBUG_i32(q, w, "\n\tQueues after peek_nth:");
+
     QUEUE_FREE(q, w, NULL, NULL);
     return result;
 }
@@ -624,10 +669,12 @@ int main(void)
     print_test_result(test_queue__clean_NULL_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__clear_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__clear_on_non_empty_queue(false), &nb_success, &nb_tests);
-    print_test_result(test_queue__front_on_empty_queue(false), &nb_success, &nb_tests);
-    print_test_result(test_queue__front_on_non_empty_queue(false), &nb_success, &nb_tests);
-    print_test_result(test_queue__back_on_empty_queue(false), &nb_success, &nb_tests);
-    print_test_result(test_queue__back_on_non_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__peek_front_on_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__peek_front_on_non_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__peek_back_on_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__peek_back_on_non_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__peek_nth_on_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__peek_nth_on_non_empty_queue(false), &nb_success, &nb_tests);
 
     print_test_result(test_queue__from_array(false), &nb_success, &nb_tests);
     print_test_result(test_queue__dump_on_empty_queue(false), &nb_success, &nb_tests);

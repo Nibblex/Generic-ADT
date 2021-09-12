@@ -134,7 +134,7 @@ char queue__dequeue(const Queue q, elem_t *front)
     return SUCCESS;
 }
 
-char queue__front(const Queue q, elem_t *front)
+char queue__peek_front(const Queue q, elem_t *front)
 {
     if (!q || !q->size || !front) return FAILURE;
 
@@ -143,11 +143,20 @@ char queue__front(const Queue q, elem_t *front)
     return SUCCESS;
 }
 
-char queue__back(const Queue q, elem_t *back)
+char queue__peek_back(const Queue q, elem_t *back)
 {
     if (!q || !q->size || !back) return FAILURE;
 
     *back = q->operator_copy(q->elems[q->back - 1]);
+
+    return SUCCESS;
+}
+
+char queue__peek_nth(const Queue q, elem_t *nth, size_t i)
+{
+    if (!q || !q->size || !nth || i >= q->size) return FAILURE;
+
+    *nth = q->operator_copy(q->elems[i]);
 
     return SUCCESS;
 }
@@ -218,11 +227,11 @@ void queue__shuffle(const Queue q)
     ARRAY_SHUFFLE(q->elems, q->front, q->back);
 }
 
-inline void queue__sort(const Queue q, const compare_func_t f)
+inline void queue__sort(const Queue q, const compare_func_t compare_op)
 {
     if (!q || q->size < 2) return;
 
-    qsort(q->elems + q->front, q->size, sizeof(elem_t), f);
+    qsort(q->elems + q->front, q->size, sizeof(elem_t), compare_op);
 }
 
 void queue__foreach(const Queue q, const applying_func_t f, void *user_data)

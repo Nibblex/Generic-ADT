@@ -119,11 +119,20 @@ char stack__pop(const Stack s, elem_t *top)
     return SUCCESS;
 }
 
-char stack__top(const Stack s, elem_t *top)
+char stack__peek_top(const Stack s, elem_t *top)
 {
     if (!s || !s->size || !top) return FAILURE;
 
     *top = s->operator_copy(s->elems[s->size-1]);
+
+    return SUCCESS;
+}
+
+char stack__peek_nth(const Stack s, elem_t *nth, size_t i)
+{
+    if (!s || !s->size || !nth || i >= s->size) return FAILURE;
+
+    *nth = s->operator_copy(s->elems[i]);
 
     return SUCCESS;
 }
@@ -197,11 +206,11 @@ void stack__shuffle(const Stack s)
     ARRAY_SHUFFLE(s->elems, 0, s->size);
 }
 
-inline void stack__sort(const Stack s, const compare_func_t f)
+inline void stack__sort(const Stack s, const compare_func_t compare_op)
 {
     if (!s || s->size < 2) return;
 
-    qsort(s->elems, s->size, sizeof(elem_t), f);
+    qsort(s->elems, s->size, sizeof(elem_t), compare_op);
 }
 
 void stack__foreach(const Stack s, const applying_func_t f, void *user_data)

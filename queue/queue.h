@@ -15,7 +15,7 @@
  * void (*delete_op)(elem_t)
  * void (*debug_op)(elem_t)
  *
- * 2) 'queue__front', 'queue__back' and 'queue__dequeue' return a dynamically allocated pointer to an element of
+ * 2) 'queue__peek_front', 'queue__peek_back', 'queue_peek_nth' and 'queue__dequeue' return a dynamically allocated pointer to an element of
  * the queue in order to make it survive independently of the queue life cycle.
  * The user has to manually free the return pointer after usage.
  */
@@ -78,11 +78,11 @@ char queue__enqueue(const Queue q, const elem_t element);
 
 
 /**
- * @brief Retrieve a copy of the top element (similar to 'queue__front' but the element is removed of the queue)
+ * @brief Retrieve a copy of the front element (similar to 'queue__peek_front' but the element is removed of the queue)
  * @details The element is stored in 'front' variable and must be manually freed by user afterward
  * @note Complexity: O(1)
  * @param q The queue
- * @param top pointer to storage variable
+ * @param front pointer to storage variable
  * @return 0 on success, -1 on failure
  */
 char queue__dequeue(const Queue q, elem_t *front);
@@ -96,7 +96,7 @@ char queue__dequeue(const Queue q, elem_t *front);
  * @param front pointer to storage variable
  * @return 0 on success, -1 on failure
  */
-char queue__front(const Queue q, elem_t *front);
+char queue__peek_front(const Queue q, elem_t *front);
 
 
 /**
@@ -107,7 +107,19 @@ char queue__front(const Queue q, elem_t *front);
  * @param back pointer to storage variable
  * @return 0 on success, -1 on failure
  */
-char queue__back(const Queue q, elem_t *back);
+char queue__peek_back(const Queue q, elem_t *back);
+
+
+/**
+ * @brief Retrieve the element at i position of the queue without removing it
+ * @details The element is stored in 'top' variable and must be manually freed by user afterward
+ * @note Complexity: O(1)
+ * @param q The queue
+ * @param nth pointer to storage variable
+ * @param i position
+ * @return 0 on success, -1 on failure
+ */
+char queue__peek_nth(const Queue q, elem_t *nth, size_t i);
 
 
 /**
@@ -156,9 +168,9 @@ void queue__shuffle(const Queue q);
  * @brief Uses qsort to sort the queue elements using the comparison criteria given by the received compare function
  * @note Complexity: O(n*log(n))
  * @param q The queue
- * @param f The compare function
+ * @param compare_op The compare function
  */
-void queue__sort(const Queue q, const compare_func_t f);
+void queue__sort(const Queue q, const compare_func_t compare_op);
 
 
 /**

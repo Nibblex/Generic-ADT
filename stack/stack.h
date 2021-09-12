@@ -15,7 +15,7 @@
  * void (*delete_op)(elem_t)
  * void (*debug_op)(elem_t)
  *
- * 2) 'stack__top' and 'stack__pop' return a dynamically allocated pointer to an element in the
+ * 2) 'stack__peek_top' and 'stack__pop' return a dynamically allocated pointer to an element in the
  * the stack in order to make it survive independently of the stack life cycle.
  * The user has to manually free the return pointer after usage.
  */
@@ -78,7 +78,7 @@ char stack__push(const Stack s, const elem_t element);
 
 
 /**
- * @brief Retrieve a copy of the top element (similar to 'stack__top' but the element is removed of the stack)
+ * @brief Retrieve a copy of the top element (similar to 'stack__peek_top' but the element is removed of the stack)
  * @details The element is stored in 'top' variable and must be manually freed by user afterward
  * @note Complexity: O(1)
  * @param s The stack
@@ -96,7 +96,19 @@ char stack__pop(const Stack s, elem_t *top);
  * @param top pointer to storage variable
  * @return 0 on success, -1 on failure
  */
-char stack__top(const Stack s, elem_t *top);
+char stack__peek_top(const Stack s, elem_t *top);
+
+
+/**
+ * @brief Retrieve the element at i position of the stack without removing it
+ * @details The element is stored in 'top' variable and must be manually freed by user afterward
+ * @note Complexity: O(1)
+ * @param s The stack
+ * @param nth pointer to storage variable
+ * @param i position
+ * @return 0 on success, -1 on failure
+ */
+char stack__peek_nth(const Stack s, elem_t *nth, size_t i);
 
 
 /**
@@ -153,9 +165,9 @@ void stack__shuffle(const Stack s);
  * @brief Uses qsort to sort the stack elements using the comparison criteria given by the received compare function
  * @note Complexity: O(n*log(n))
  * @param s The stack
- * @param f The compare function
+ * @param compare_op The compare function
  */
-void stack__sort(const Stack s, const compare_func_t f);
+void stack__sort(const Stack s, const compare_func_t compare_op);
 
 
 /**

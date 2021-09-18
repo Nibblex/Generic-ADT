@@ -48,10 +48,12 @@ static bool __name(char debug) \
     QUEUE_DEBUG_i32(q, w, "\n\tQueues before:"); \
     __expr \
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after:"); \
-    for (u32 i = 0; i < N; i++) { \
-        free(A[i]); \
+    if (A) { \
+        for (u32 i = 0; i < N; i++) { \
+            free(A[i]); \
+        } \
+        free(A); \
     } \
-    free(A); \
     free(B); \
     QUEUE_FREE(q, w, NULL, NULL); \
     return result; \
@@ -104,49 +106,22 @@ static bool test_queue__is_copy_enabled(void)
     return result;
 }
 
-static bool test_queue__size(void)
-{
-    printf("%s... ", __func__);
-
-    bool result;
-    QUEUE_CREATE(q, w);
-
-    u32 N = 8;
-    QUEUE_ENQUEUE_u32(N, q, w);
-
+/* SIZE */
+TEST_ON_NON_EMPTY_QUEUE(
+    test_queue__size,
     result = (queue__size(q) == N && queue__size(w) == N) ? TEST_SUCCESS : TEST_FAILURE;
+)
 
-    QUEUE_FREE(q, w, NULL, NULL);
-    return result;
-}
+/* IS_EMPTY */
+TEST_ON_EMPTY_QUEUE(
+    test_queue__is_empty_on_empty_queue,
+    ;
+)
 
-static bool test_queue__is_empty_on_empty_queue(void)
-{
-    printf("%s... ", __func__);
-
-    bool result;
-    QUEUE_CREATE(q, w);
-
-    result = (queue__is_empty(q) && queue__is_empty(w)) ? TEST_SUCCESS : TEST_FAILURE;
-
-    QUEUE_FREE(q, w, NULL, NULL);
-    return result;
-}
-
-static bool test_queue__is_empty_on_non_empty_queue(void)
-{
-    printf("%s... ", __func__);
-
-    bool result;
-    QUEUE_CREATE(q, w);
-
-    QUEUE_ENQUEUE_u32(1, q, w);
-
+TEST_ON_NON_EMPTY_QUEUE(
+    test_queue__is_empty_on_non_empty_queue,
     result = (!queue__is_empty(q) && !queue__is_empty(w)) ? TEST_SUCCESS : TEST_FAILURE;
-
-    QUEUE_FREE(q, w, NULL, NULL);
-    return result;
-}
+)
 
 static bool test_queue__enqueue_on_empty_queue(char debug)
 {
@@ -284,33 +259,20 @@ static bool test_queue__clean_NULL_on_non_empty_queue(char debug)
     return result;
 }
 
+/* CLEAR */
 TEST_ON_EMPTY_QUEUE (
     test_queue__clear_on_empty_queue,
     queue__clear(q);
     queue__clear(w);
 )
 
-static bool test_queue__clear_on_non_empty_queue(char debug)
-{
-    printf("%s... ", __func__);
-
-    bool result;
-    QUEUE_CREATE(q, w);
-
-    QUEUE_ENQUEUE_u32(5, q, w);
-
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues before clear:");
-
+TEST_ON_NON_EMPTY_QUEUE (
+    test_queue__clear_on_non_empty_queue,
     queue__clear(q);
     queue__clear(w);
 
     result = (queue__is_empty(q) && queue__is_empty(w)) ? TEST_SUCCESS : TEST_FAILURE;
-
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues after clear:");
-
-    QUEUE_FREE(q, w, NULL, NULL);
-    return result;
-}
+)
 
 TEST_ON_EMPTY_QUEUE (
     test_queue__peek_front_on_empty_queue,
@@ -591,9 +553,9 @@ int main(void)
     print_test_result(test_queue__empty_copy_disabled(false), &nb_success, &nb_tests);
     print_test_result(test_queue__empty_copy_enabled(false), &nb_success, &nb_tests);
     print_test_result(test_queue__is_copy_enabled(), &nb_success, &nb_tests);
-    print_test_result(test_queue__size(), &nb_success, &nb_tests);
-    print_test_result(test_queue__is_empty_on_empty_queue(), &nb_success, &nb_tests);
-    print_test_result(test_queue__is_empty_on_non_empty_queue(), &nb_success, &nb_tests);
+    print_test_result(test_queue__size(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__is_empty_on_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__is_empty_on_non_empty_queue(false), &nb_success, &nb_tests);
 
     print_test_result(test_queue__enqueue_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__enqueue_on_non_empty_queue(false), &nb_success, &nb_tests);

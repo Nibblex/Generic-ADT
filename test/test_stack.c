@@ -126,41 +126,11 @@ TEST_ON_NON_EMPTY_STACK(
     result = (!stack__is_empty(s) && !stack__is_empty(t)) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
-static bool test_stack__push_on_empty_stack(char debug)
-{
-    printf("%s... ", __func__);
-
-    bool result;
-    STACK_CREATE(s, t);
-
-    result = (!stack__push(s, NULL)
-           && !stack__push(t, NULL)
-           && stack__size(s) == 1
-           && stack__size(t) == 1) ? TEST_SUCCESS : TEST_FAILURE;
-
-    STACK_DEBUG_i32(s, t, "\n\tStacks after push:");
-
-    STACK_FREE(s, t, NULL, NULL);
-    return result;
-}
-
-static bool test_stack__push_on_non_empty_stack(char debug)
-{
-    printf("%s... ", __func__);
-
-    bool result;
-    STACK_CREATE(s, t);
-
-    u32 N = 8;
-    STACK_PUSH_u32(N, s, t);
-
+/* PUSH */
+TEST_ON_NON_EMPTY_STACK(
+    test_stack__push, false,
     result = (stack__size(s) == N && stack__size(t) == N) ? TEST_SUCCESS : TEST_FAILURE;
-
-    STACK_DEBUG_i32(s, t, "\n\tStacks after push:");
-
-    STACK_FREE(s, t, NULL, NULL);
-    return result;
-}
+)
 
 /* POP */
 TEST_ON_EMPTY_STACK(
@@ -505,8 +475,7 @@ int main(void)
     print_test_result(test_stack__is_empty_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__is_empty_on_non_empty_stack(false), &nb_success, &nb_tests);
 
-    print_test_result(test_stack__push_on_empty_stack(false), &nb_success, &nb_tests);
-    print_test_result(test_stack__push_on_non_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__push(false), &nb_success, &nb_tests);
     print_test_result(test_stack__pop_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__pop_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__push_and_pop_on_multiple_elements(false), &nb_success, &nb_tests);

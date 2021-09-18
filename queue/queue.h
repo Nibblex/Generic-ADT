@@ -157,6 +157,14 @@ elem_t *queue__to_array(const Queue q);
 
 
 /**
+ * @brief Revert the queue
+ * @note Complexity: O(n)
+ * @param s The queue
+ */
+void queue__reverse(const Queue q);
+
+
+/**
  * @brief Randomly shuffles the queue
  * @note Complexity: O(n)
  * @param q The queue

@@ -431,6 +431,7 @@ static bool test_stack__from_array(char debug)
     return result;
 }
 
+/* DUMP */
 TEST_ON_EMPTY_STACK (
     test_stack__dump_on_empty_stack,
     result = (stack__dump(s) == NULL && stack__dump(t) == NULL) ? TEST_SUCCESS : TEST_FAILURE;
@@ -448,6 +449,7 @@ TEST_ON_NON_EMPTY_STACK (
     }
 )
 
+/* TO_ARRAY */
 TEST_ON_EMPTY_STACK (
     test_stack__to_array_on_empty_stack,
     result = (stack__to_array(s) == NULL && stack__to_array(t) == NULL) ? TEST_SUCCESS : TEST_FAILURE;
@@ -465,6 +467,7 @@ TEST_ON_NON_EMPTY_STACK (
     }
 )
 
+/* FOREACH */
 TEST_ON_EMPTY_STACK (
     test_stack__foreach_on_empty_stack,
     int value = 1;
@@ -487,6 +490,7 @@ TEST_ON_NON_EMPTY_STACK (
     }
 )
 
+/* REVERSE */
 TEST_ON_EMPTY_STACK (
     test_stack__reverse_on_empty_stack,
     stack__reverse(s);
@@ -504,6 +508,7 @@ TEST_ON_NON_EMPTY_STACK (
     }
 )
 
+/* SHUFFLE */
 TEST_ON_EMPTY_STACK (
     test_stack__shuffle_on_empty_stack,
     stack__shuffle(s);
@@ -521,6 +526,7 @@ TEST_ON_NON_EMPTY_STACK (
     }
 )
 
+/* SORT */
 TEST_ON_EMPTY_STACK (
     test_stack__sort_on_empty_stack,
     stack__sort(s, operator_compare);

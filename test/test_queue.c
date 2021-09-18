@@ -468,6 +468,7 @@ static bool test_queue__from_array(char debug)
     return result;
 }
 
+/* DUMP */
 TEST_ON_EMPTY_QUEUE (
     test_queue__dump_on_empty_queue,
     result = (queue__dump(q) == NULL && queue__dump(w) == NULL) ? TEST_SUCCESS : TEST_FAILURE;
@@ -485,6 +486,7 @@ TEST_ON_NON_EMPTY_QUEUE (
     }
 )
 
+/* TO_ARRAY*/
 TEST_ON_EMPTY_QUEUE (
     test_queue__to_array_on_empty_queue,
     result = (queue__to_array(q) == NULL && queue__to_array(w) == NULL) ? TEST_SUCCESS : TEST_FAILURE;
@@ -502,6 +504,7 @@ TEST_ON_NON_EMPTY_QUEUE (
     }
 )
 
+/* FOREACH */
 TEST_ON_EMPTY_QUEUE (
     test_queue__foreach_on_empty_queue,
     int value = 1;
@@ -524,6 +527,25 @@ TEST_ON_NON_EMPTY_QUEUE (
     }
 )
 
+/* REVERSE */
+TEST_ON_EMPTY_QUEUE (
+    test_queue__reverse_on_empty_queue,
+    queue__reverse(q);
+    queue__reverse(w);
+)
+
+TEST_ON_NON_EMPTY_QUEUE (
+    test_queue__reverse_on_non_empty_queue,
+    queue__reverse(q);
+    A = queue__to_array(q);
+
+    result = TEST_SUCCESS;
+    for (u32 i = 0; i < N; i++) {
+        result |= *(int *)A[i] != (int)(N-i-1);
+    }
+)
+
+/* SHUFFLE */
 TEST_ON_EMPTY_QUEUE (
     test_queue__shuffle_on_empty_queue,
     queue__shuffle(q);
@@ -541,6 +563,7 @@ TEST_ON_NON_EMPTY_QUEUE (
     }
 )
 
+/* SORT */
 TEST_ON_EMPTY_QUEUE (
     test_queue__sort_on_empty_queue,
     queue__sort(q, operator_compare);
@@ -596,6 +619,8 @@ int main(void)
     print_test_result(test_queue__to_array_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__foreach_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__foreach_on_non_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__reverse_on_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__reverse_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__shuffle_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__shuffle_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__sort_on_empty_queue(false), &nb_success, &nb_tests);

@@ -220,6 +220,15 @@ elem_t *queue__to_array(const Queue q)
     return res;
 }
 
+void queue__reverse(const Queue q)
+{
+    if (!q || q->size < 2) return;
+
+    for (size_t i = q->front, j = q->back - 1; i < j; i++, j--) {
+        PTR_SWAP(q->elems[i], q->elems[j]);
+    }
+}
+
 void queue__shuffle(const Queue q)
 {
     if (!q || q->size < 2) return;

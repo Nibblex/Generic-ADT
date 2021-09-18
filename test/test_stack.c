@@ -110,7 +110,7 @@ static bool test_stack__is_copy_enabled(void)
 }
 
 /* SIZE */
-TEST_ON_NON_EMPTY_STACK(
+TEST_ON_NON_EMPTY_STACK (
     test_stack__size, true,
     result = (stack__size(s) == N && stack__size(t) == N) ? TEST_SUCCESS : TEST_FAILURE;
 )
@@ -121,13 +121,13 @@ TEST_ON_EMPTY_STACK(
     ;
 )
 
-TEST_ON_NON_EMPTY_STACK(
+TEST_ON_NON_EMPTY_STACK (
     test_stack__is_empty_on_non_empty_stack, true,
     result = (!stack__is_empty(s) && !stack__is_empty(t)) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
 /* PUSH */
-TEST_ON_NON_EMPTY_STACK(
+TEST_ON_NON_EMPTY_STACK (
     test_stack__push, false,
     result = (stack__size(s) == N && stack__size(t) == N) ? TEST_SUCCESS : TEST_FAILURE;
 )
@@ -138,7 +138,7 @@ TEST_ON_EMPTY_STACK(
     result = (stack__pop(s, NULL) == -1 && stack__pop(t, NULL) == -1) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
-TEST_ON_NON_EMPTY_STACK(
+TEST_ON_NON_EMPTY_STACK (
     test_stack__pop_on_non_empty_stack, false,
     elem_t top_s = NULL;
     elem_t top_t = NULL;
@@ -152,38 +152,6 @@ TEST_ON_NON_EMPTY_STACK(
         free(top_s);
     }
 )
-
-static bool test_stack__push_and_pop_on_multiple_elements(char debug)
-{
-    printf("%s... ", __func__);
-
-    bool result;
-    STACK_CREATE(s, t);
-
-    STACK_PUSH_u32(60, s, t);
-
-    result = (stack__size(s) == 60 && stack__size(t) == 60) ? TEST_SUCCESS : TEST_FAILURE;
-
-    STACK_DEBUG_i32(s, t, "\nAdded 60 elements, expected capacity of 64 and size of 60\n");
-
-    for (u32 i = 0; i < 40; i++) {
-        stack__pop(s, NULL);
-        stack__pop(t, NULL);
-    }
-
-    result |= stack__size(s) != 20 || stack__size(t) != 20;
-
-    STACK_DEBUG_i32(s, t, "\nRemoved 40 elements, expected capacity of 32 and size of 20\n");
-
-    STACK_PUSH_u32(20, s, t);
-
-    result |= stack__size(s) != 40 || stack__size(t) != 40;
-
-    STACK_DEBUG_i32(s, t, "\nAdded 20 elements, expected capacity of 64 and size of 40\n");
-
-    STACK_FREE(s, t, NULL, NULL);
-    return result;
-}
 
 TEST_ON_EMPTY_STACK (
     test_stack__clean_NULL_on_empty_stack,
@@ -478,7 +446,6 @@ int main(void)
     print_test_result(test_stack__push(false), &nb_success, &nb_tests);
     print_test_result(test_stack__pop_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__pop_on_non_empty_stack(false), &nb_success, &nb_tests);
-    print_test_result(test_stack__push_and_pop_on_multiple_elements(false), &nb_success, &nb_tests);
 
     print_test_result(test_stack__clean_NULL_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__clean_NULL_on_non_empty_stack(false), &nb_success, &nb_tests);

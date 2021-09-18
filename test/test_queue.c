@@ -164,7 +164,7 @@ static bool test_queue__enqueue_on_non_empty_queue(char debug)
 
 TEST_ON_EMPTY_QUEUE (
     test_queue__dequeue_on_empty_queue,
-    result = queue__dequeue(q, NULL) == -1 && queue__dequeue(w, NULL) == -1;
+    result = (queue__dequeue(q, NULL) == -1 && queue__dequeue(w, NULL) == -1) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
 static bool test_queue__dequeue_on_non_empty_queue(char debug)
@@ -292,7 +292,7 @@ static bool test_queue__clear_on_non_empty_queue(char debug)
 
 TEST_ON_EMPTY_QUEUE (
     test_queue__peek_front_on_empty_queue,
-    result = queue__peek_front(q, NULL) == -1 && queue__peek_front(w, NULL) == -1;
+    result = (queue__peek_front(q, NULL) == -1 && queue__peek_front(w, NULL) == -1) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
 static bool test_queue__peek_front_on_non_empty_queue(char debug)
@@ -329,7 +329,7 @@ static bool test_queue__peek_front_on_non_empty_queue(char debug)
 
 TEST_ON_EMPTY_QUEUE (
     test_queue__peek_back_on_empty_queue,
-    result = queue__peek_back(q, NULL) == -1 && queue__peek_back(w, NULL) == -1;
+    result = (queue__peek_back(q, NULL) == -1 && queue__peek_back(w, NULL) == -1) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
 static bool test_queue__peek_back_on_non_empty_queue(char debug)
@@ -366,7 +366,7 @@ static bool test_queue__peek_back_on_non_empty_queue(char debug)
 
 TEST_ON_EMPTY_QUEUE (
     test_queue__peek_nth_on_empty_queue,
-    result = queue__peek_nth(q, NULL, 0) == -1 && queue__peek_nth(w, NULL, 0) == -1;
+    result = (queue__peek_nth(q, NULL, 0) == -1 && queue__peek_nth(w, NULL, 0) == -1) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
 static bool test_queue__peek_nth_on_non_empty_queue(char debug)
@@ -432,7 +432,7 @@ static bool test_queue__from_array(char debug)
            && queue__size(q_int) == 5
            && queue__size(w_int) == 5) ? TEST_SUCCESS : TEST_FAILURE;
 
-    D = queue__dump(w_int);
+    D = queue__to_array(w_int);
 
     for (u32 i = 0; i < 5; i++) {
         result |= C[i] != *(int *)D[i];
@@ -448,7 +448,7 @@ static bool test_queue__from_array(char debug)
 
 TEST_ON_EMPTY_QUEUE (
     test_queue__dump_on_empty_queue,
-    result = queue__dump(q) == NULL && queue__dump(w) == NULL;
+    result = (queue__dump(q) == NULL && queue__dump(w) == NULL) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
 static bool test_queue__dump_on_non_empty_queue(char debug)
@@ -456,8 +456,7 @@ static bool test_queue__dump_on_non_empty_queue(char debug)
     printf("%s... ", __func__);
 
     bool result;
-    int **A = NULL;
-    int **B = NULL;
+    int **A = NULL, **B = NULL;
     QUEUE_CREATE(q, w);
 
     u32 N = 5;
@@ -487,7 +486,7 @@ static bool test_queue__dump_on_non_empty_queue(char debug)
 
 TEST_ON_EMPTY_QUEUE (
     test_queue__to_array_on_empty_queue,
-    result = queue__to_array(q) == NULL && queue__to_array(w) == NULL;
+    result = (queue__to_array(q) == NULL && queue__to_array(w) == NULL) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
 static bool test_queue__to_array_on_non_empty_queue(char debug)
@@ -495,8 +494,7 @@ static bool test_queue__to_array_on_non_empty_queue(char debug)
     printf("%s... ", __func__);
 
     bool result;
-    int **A = NULL;
-    int **B = NULL;
+    int **A = NULL, **B = NULL;
     QUEUE_CREATE(q, w);
 
     u32 N = 5;
@@ -536,26 +534,24 @@ static bool test_queue__foreach_on_non_empty_queue(char debug)
     printf("%s... ", __func__);
 
     bool result;
-    int value = 1;
-    int array[8] = {-5, 0, 2, 7, 11, 1, 3, 10};
     elem_t *A = NULL, *B = NULL;
     QUEUE_CREATE(q, w);
 
-    u32 N = 8;
-    queue__from_array(q, array, N, sizeof(int));
-    queue__from_array(w, array, N, sizeof(int));
+    u32 N = 5;
+    QUEUE_ENQUEUE_u32(N, q, w);
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues before foreach:");
 
+    u32 value = 1;
     queue__foreach(q, plus_op, &value);
     queue__foreach(w, plus_op, &value);
 
-    A = queue__dump(q);
-    B = queue__dump(w);
+    A = queue__to_array(q);
+    B = queue__to_array(w);
 
     result = TEST_SUCCESS;
     for (u32 i = 0; i < N; i++) {
-        result |= array[i] + value != *(int *)A[i] || array[i] != *(int *)B[i];
+        result |= i + value == *(u32 *)A[i] && N<<1 == *(u32 *)B[i];
     }
 
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after foreach:");
@@ -590,7 +586,7 @@ static bool test_queue__shuffle_on_non_empty_queue(char debug)
 
     queue__shuffle(q);
 
-    A = queue__dump(q);
+    A = queue__to_array(q);
 
     result = TEST_FAILURE;
     for (u32 i = 0; i < N; i++) {
@@ -628,7 +624,7 @@ static bool test_queue__sort_on_non_empty_queue(char debug)
 
     queue__sort(q, operator_compare);
 
-    A = queue__dump(q);
+    A = queue__to_array(q);
 
     result = TEST_SUCCESS;
     for (u32 i = 0; i < N - 1; i++) {

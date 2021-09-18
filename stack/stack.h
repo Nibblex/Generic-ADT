@@ -108,7 +108,7 @@ char stack__peek_top(const Stack s, elem_t *top);
  * @param i position
  * @return 0 on success, -1 on failure
  */
-char stack__peek_nth(const Stack s, elem_t *nth, size_t i);
+char stack__peek_nth(const Stack s, elem_t *nth, const size_t i);
 
 
 /**

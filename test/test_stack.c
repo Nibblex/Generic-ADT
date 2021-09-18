@@ -164,7 +164,7 @@ static bool test_stack__push_on_non_empty_stack(char debug)
 
 TEST_ON_EMPTY_STACK (
     test_stack__pop_on_empty_stack,
-    result = stack__pop(s, NULL) == -1 && stack__pop(t, NULL) == -1;
+    result = (stack__pop(s, NULL) == -1 && stack__pop(t, NULL) == -1) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
 static bool test_stack__pop_on_non_empty_stack(char debug)
@@ -292,7 +292,7 @@ static bool test_stack__clear_on_non_empty_stack(char debug)
 
 TEST_ON_EMPTY_STACK (
     test_stack__peek_top_on_empty_stack,
-    result = stack__peek_top(s, NULL) == -1 && stack__peek_top(t, NULL) == -1;
+    result = (stack__peek_top(s, NULL) == -1 && stack__peek_top(t, NULL) == -1) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
 static bool test_stack__peek_top_on_non_empty_stack(char debug)
@@ -329,7 +329,7 @@ static bool test_stack__peek_top_on_non_empty_stack(char debug)
 
 TEST_ON_EMPTY_STACK (
     test_stack__peek_nth_on_empty_stack,
-    result = stack__peek_nth(s, NULL, 0) == -1 && stack__peek_nth(t, NULL, 0) == -1;
+    result = (stack__peek_nth(s, NULL, 0) == -1 && stack__peek_nth(t, NULL, 0) == -1) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
 static bool test_stack__peek_nth_on_non_empty_stack(char debug)
@@ -395,7 +395,7 @@ static bool test_stack__from_array(char debug)
            && stack__size(s_int) == 5
            && stack__size(t_int) == 5) ? TEST_SUCCESS : TEST_FAILURE;
 
-    D = stack__dump(t_int);
+    D = stack__to_array(t_int);
 
     for (u32 i = 0; i < 5; i++) {
         result |= C[i] != *(int *)D[i];
@@ -411,7 +411,7 @@ static bool test_stack__from_array(char debug)
 
 TEST_ON_EMPTY_STACK (
     test_stack__dump_on_empty_stack,
-    result = stack__dump(s) == NULL && stack__dump(t) == NULL;
+    result = (stack__dump(s) == NULL && stack__dump(t) == NULL) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
 static bool test_stack__dump_on_non_empty_stack(char debug)
@@ -419,8 +419,7 @@ static bool test_stack__dump_on_non_empty_stack(char debug)
     printf("%s... ", __func__);
 
     bool result;
-    int **A = NULL;
-    int **B = NULL;
+    int **A = NULL, **B = NULL;
     STACK_CREATE(s, t);
 
     u32 N = 5;
@@ -450,7 +449,7 @@ static bool test_stack__dump_on_non_empty_stack(char debug)
 
 TEST_ON_EMPTY_STACK (
     test_stack__to_array_on_empty_stack,
-    result = stack__to_array(s) == NULL && stack__to_array(t) == NULL;
+    result = (stack__to_array(s) == NULL && stack__to_array(t) == NULL) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
 static bool test_stack__to_array_on_non_empty_stack(char debug)
@@ -458,8 +457,7 @@ static bool test_stack__to_array_on_non_empty_stack(char debug)
     printf("%s... ", __func__);
 
     bool result;
-    int **A = NULL;
-    int **B = NULL;
+    int **A = NULL, **B = NULL;
     STACK_CREATE(s, t);
 
     u32 N = 5;
@@ -499,26 +497,24 @@ static bool test_stack__foreach_on_non_empty_stack(char debug)
     printf("%s... ", __func__);
 
     bool result;
-    int value = 1;
-    int array[8] = {-5, 0, 2, 7, 11, 1, 3, 10};
     elem_t *A = NULL, *B = NULL;
     STACK_CREATE(s, t);
 
-    u32 N = 8;
-    stack__from_array(s, array, N, sizeof(int));
-    stack__from_array(t, array, N, sizeof(int));
+    u32 N = 5;
+    STACK_PUSH_u32(N, s, t);
 
     STACK_DEBUG_i32(s, t, "\n\tStacks before foreach:");
 
+    u32 value = 1;
     stack__foreach(s, plus_op, &value);
     stack__foreach(t, plus_op, &value);
 
-    A = stack__dump(s);
-    B = stack__dump(t);
+    A = stack__to_array(s);
+    B = stack__to_array(t);
 
     result = TEST_SUCCESS;
     for (u32 i = 0; i < N; i++) {
-        result |= array[i] + value != *(int *)A[i] || array[i] != *(int *)B[i];
+        result |= i + value == *(u32 *)A[i] && N<<1 == *(u32 *)B[i];
     }
 
     STACK_DEBUG_i32(s, t, "\n\tStacks after foreach:");
@@ -553,7 +549,7 @@ static bool test_stack__reverse_on_non_empty_stack(char debug)
 
     stack__reverse(s);
 
-    A = stack__dump(s);
+    A = stack__to_array(s);
 
     result = TEST_SUCCESS;
     for (u32 i = 0; i < N; i++) {
@@ -591,7 +587,7 @@ static bool test_stack__shuffle_on_non_empty_stack(char debug)
 
     stack__shuffle(s);
 
-    A = stack__dump(s);
+    A = stack__to_array(s);
 
     result = TEST_FAILURE;
     for (u32 i = 0; i < N; i++) {
@@ -629,7 +625,7 @@ static bool test_stack__sort_on_non_empty_stack(char debug)
 
     stack__sort(s, operator_compare);
 
-    A = stack__dump(s);
+    A = stack__to_array(s);
 
     result = TEST_SUCCESS;
     for (u32 i = 0; i < N - 1; i++) {

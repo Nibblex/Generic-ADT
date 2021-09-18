@@ -152,7 +152,7 @@ char queue__peek_back(const Queue q, elem_t *back)
     return SUCCESS;
 }
 
-char queue__peek_nth(const Queue q, elem_t *nth, size_t i)
+char queue__peek_nth(const Queue q, elem_t *nth, const size_t i)
 {
     if (!q || !q->size || !nth || i >= q->size) return FAILURE;
 

@@ -128,7 +128,7 @@ char stack__peek_top(const Stack s, elem_t *top)
     return SUCCESS;
 }
 
-char stack__peek_nth(const Stack s, elem_t *nth, size_t i)
+char stack__peek_nth(const Stack s, elem_t *nth, const size_t i)
 {
     if (!s || !s->size || !nth || i >= s->size) return FAILURE;
 

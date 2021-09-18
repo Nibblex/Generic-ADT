@@ -119,7 +119,7 @@ char queue__peek_back(const Queue q, elem_t *back);
  * @param i position
  * @return 0 on success, -1 on failure
  */
-char queue__peek_nth(const Queue q, elem_t *nth, size_t i);
+char queue__peek_nth(const Queue q, elem_t *nth, const size_t i);
 
 
 /**

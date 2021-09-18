@@ -35,16 +35,19 @@ static bool __name(char debug) \
     return result && __empty_assertion; \
 }
 
-#define TEST_ON_NON_EMPTY_QUEUE(__name, __expr) \
+#define TEST_ON_NON_EMPTY_QUEUE(__name, __rand, __expr) \
 static bool __name(char debug) \
 { \
     printf("%s... ", __func__); \
-    bool result; \
+    bool result = TEST_SUCCESS; \
     elem_t *A = NULL, *B = NULL; \
-    Queue q = queue__empty_copy_enabled(operator_copy, operator_delete); \
-    Queue w = queue__empty_copy_disabled(); \
+    QUEUE_CREATE(q, w); \
     u32 N = 8; \
-    QUEUE_ENQUEUE_i32_RAND(N, q, w); \
+    if (__rand) { \
+        QUEUE_ENQUEUE_i32_RAND(N, q, w); \
+    } else { \
+        QUEUE_ENQUEUE_u32(N, q, w); \
+    } \
     QUEUE_DEBUG_i32(q, w, "\n\tQueues before:"); \
     __expr \
     QUEUE_DEBUG_i32(q, w, "\n\tQueues after:"); \
@@ -108,7 +111,7 @@ static bool test_queue__is_copy_enabled(void)
 
 /* SIZE */
 TEST_ON_NON_EMPTY_QUEUE(
-    test_queue__size,
+    test_queue__size, true,
     result = (queue__size(q) == N && queue__size(w) == N) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
@@ -119,7 +122,7 @@ TEST_ON_EMPTY_QUEUE(
 )
 
 TEST_ON_NON_EMPTY_QUEUE(
-    test_queue__is_empty_on_non_empty_queue,
+    test_queue__is_empty_on_non_empty_queue, true,
     result = (!queue__is_empty(q) && !queue__is_empty(w)) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
@@ -159,41 +162,26 @@ static bool test_queue__enqueue_on_non_empty_queue(char debug)
     return result;
 }
 
+/* DEQUEUE */
 TEST_ON_EMPTY_QUEUE (
     test_queue__dequeue_on_empty_queue,
     result = (queue__dequeue(q, NULL) == -1 && queue__dequeue(w, NULL) == -1) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
-static bool test_queue__dequeue_on_non_empty_queue(char debug)
-{
-    printf("%s... ", __func__);
-
-    bool result;
+TEST_ON_NON_EMPTY_QUEUE(
+    test_queue__dequeue_on_non_empty_queue, false,
     elem_t front_q = NULL;
     elem_t front_w = NULL;
-    QUEUE_CREATE(q, w);
-
-    u32 N = 8;
-    QUEUE_ENQUEUE_u32(N, q, w);
-
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues before dequeue:");
-
-    result = TEST_SUCCESS;
     for (u32 i = 0; i < N; i++) {
         result |= queue__dequeue(q, &front_q)
                || queue__dequeue(w, &front_w)
                || queue__size(q) != N-i-1
                || queue__size(w) != N-i-1
-               || *(u32 *)front_q != i
+               || *(u32 *)front_q != N-i-1
                || *(u32 *)front_w != N;
         free(front_q);
     }
-
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues after dequeue:");
-
-    QUEUE_FREE(q, w, NULL, NULL);
-    return result;
-}
+)
 
 static bool test_queue__enqueue_and_dequeue_on_multiple_elements(char debug)
 {
@@ -267,7 +255,7 @@ TEST_ON_EMPTY_QUEUE (
 )
 
 TEST_ON_NON_EMPTY_QUEUE (
-    test_queue__clear_on_non_empty_queue,
+    test_queue__clear_on_non_empty_queue, true,
     queue__clear(q);
     queue__clear(w);
 
@@ -437,7 +425,7 @@ TEST_ON_EMPTY_QUEUE (
 )
 
 TEST_ON_NON_EMPTY_QUEUE (
-    test_queue__dump_on_non_empty_queue,
+    test_queue__dump_on_non_empty_queue, true,
     A = queue__dump(q);
     B = queue__dump(w);
 
@@ -455,7 +443,7 @@ TEST_ON_EMPTY_QUEUE (
 )
 
 TEST_ON_NON_EMPTY_QUEUE (
-    test_queue__to_array_on_non_empty_queue,
+    test_queue__to_array_on_non_empty_queue, true,
     A = queue__to_array(q);
     B = queue__to_array(w);
 
@@ -475,7 +463,7 @@ TEST_ON_EMPTY_QUEUE (
 )
 
 TEST_ON_NON_EMPTY_QUEUE (
-    test_queue__foreach_on_non_empty_queue,
+    test_queue__foreach_on_non_empty_queue, true,
     u32 value = 1;
     queue__foreach(q, plus_op, &value);
     queue__foreach(w, plus_op, &value);
@@ -483,7 +471,6 @@ TEST_ON_NON_EMPTY_QUEUE (
     A = queue__to_array(q);
     B = queue__to_array(w);
 
-    result = TEST_SUCCESS;
     for (u32 i = 0; i < N; i++) {
         result |= i + value == *(u32 *)A[i] && N<<1 == *(u32 *)B[i];
     }
@@ -497,11 +484,10 @@ TEST_ON_EMPTY_QUEUE (
 )
 
 TEST_ON_NON_EMPTY_QUEUE (
-    test_queue__reverse_on_non_empty_queue,
+    test_queue__reverse_on_non_empty_queue, true,
     queue__reverse(q);
     A = queue__to_array(q);
 
-    result = TEST_SUCCESS;
     for (u32 i = 0; i < N; i++) {
         result |= *(int *)A[i] != (int)(N-i-1);
     }
@@ -515,7 +501,7 @@ TEST_ON_EMPTY_QUEUE (
 )
 
 TEST_ON_NON_EMPTY_QUEUE (
-    test_queue__shuffle_on_non_empty_queue,
+    test_queue__shuffle_on_non_empty_queue, true,
     queue__shuffle(q);
     A = queue__to_array(q);
 
@@ -533,11 +519,10 @@ TEST_ON_EMPTY_QUEUE (
 )
 
 TEST_ON_NON_EMPTY_QUEUE (
-    test_queue__sort_on_non_empty_queue,
+    test_queue__sort_on_non_empty_queue, true,
     queue__sort(q, operator_compare);
     A = queue__to_array(q);
 
-    result = TEST_SUCCESS;
     for (u32 i = 0; i < N - 1; i++) {
         result |= *(int *)A[i] > *(int *)A[i+1];
     }

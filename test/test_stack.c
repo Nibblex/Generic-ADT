@@ -16,8 +16,8 @@
 #define STACK_DEBUG_char(A, B, C) \
     DEBUG_char(stack__debug, A, B, C)
 
-#define STACK_DEBUG_i32(A, B, C) \
-    DEBUG_i32(stack__debug, A, B, C)
+#define STACK_DEBUG_u32(A, B, C) \
+    DEBUG_u32(stack__debug, A, B, C)
 
 #define STACK_FREE(A, B, C, D) \
     FREE(stack__free, A, B, C, D)
@@ -30,7 +30,7 @@ static bool __name(char debug) \
     STACK_CREATE(s, t); \
     __expr \
     bool __empty_assertion = stack__is_empty(s) == 1 && stack__is_empty(t) == 1; \
-    STACK_DEBUG_i32(s, t, "\n\tStacks after:"); \
+    STACK_DEBUG_u32(s, t, "\n\tStacks after:"); \
     STACK_FREE(s, t, NULL, NULL); \
     return result && __empty_assertion; \
 }
@@ -52,9 +52,9 @@ static bool __name(char debug) \
     } else { \
         STACK_PUSH_u32(N, elems, s, t); \
     } \
-    STACK_DEBUG_i32(s, t, "\n\tStacks before:"); \
+    STACK_DEBUG_u32(s, t, "\n\tStacks before:"); \
     __expr \
-    STACK_DEBUG_i32(s, t, "\n\tStacks after:"); \
+    STACK_DEBUG_u32(s, t, "\n\tStacks after:"); \
     if (A) { \
         for (u32 i = 0; i < N; i++) { \
             free(A[i]); \
@@ -158,53 +158,6 @@ TEST_ON_NON_EMPTY_STACK (
     }
 )
 
-TEST_ON_EMPTY_STACK (
-    test_stack__clean_NULL_on_empty_stack,
-    stack__clean_NULL(s);
-    stack__clean_NULL(t);
-)
-
-static bool test_stack__clean_NULL_on_non_empty_stack(char debug)
-{
-    printf("%s... ", __func__);
-
-    bool result;
-    STACK_CREATE(s, t);
-
-    u32 N = 8;
-    for (u32 i = 0; i < N; i++) {
-        stack__push(s, !(i%2) ? &i : NULL);
-        stack__push(t, !(i%2) ? &i : NULL);
-    }
-
-    STACK_DEBUG_i32(s, t, "\n\tStacks before clean_NULL:");
-
-    stack__clean_NULL(s);
-    stack__clean_NULL(t);
-
-    result = (stack__size(s) == N>>1 && stack__size(t) == N>>1) ? TEST_SUCCESS : TEST_FAILURE;
-
-    STACK_DEBUG_i32(s, t, "\n\tStacks after clean_NULL:");
-
-    STACK_FREE(s, t, NULL, NULL);
-    return result;
-}
-
-/* CLEAR */
-TEST_ON_EMPTY_STACK (
-    test_stack__clear_on_empty_stack,
-    stack__clear(s);
-    stack__clear(t);
-)
-
-TEST_ON_NON_EMPTY_STACK (
-    test_stack__clear_on_non_empty_stack, true,
-    stack__clear(s);
-    stack__clear(t);
-
-    result = (stack__is_empty(s) && stack__is_empty(t)) ? TEST_SUCCESS : TEST_FAILURE;
-)
-
 /* PEEK_TOP */
 TEST_ON_EMPTY_STACK (
     test_stack__peek_top_on_empty_stack,
@@ -273,7 +226,7 @@ static bool test_stack__from_array(char debug)
     }
 
     STACK_DEBUG_char(s_char, t_char, "\n\tStacks after from_array:");
-    STACK_DEBUG_i32(s_int, t_int, " ");
+    STACK_DEBUG_u32(s_int, t_int, " ");
 
     free(D);
     STACK_FREE(s_char, t_char, s_int, t_int);
@@ -314,6 +267,53 @@ TEST_ON_NON_EMPTY_STACK (
     for (u32 i = 0; i < N; i++) {
         result |= *(u32 *)A[i] != i || *(u32 *)B[i] != N;
     }
+)
+
+TEST_ON_EMPTY_STACK (
+    test_stack__clean_NULL_on_empty_stack,
+    stack__clean_NULL(s);
+    stack__clean_NULL(t);
+)
+
+static bool test_stack__clean_NULL_on_non_empty_stack(char debug)
+{
+    printf("%s... ", __func__);
+
+    bool result;
+    STACK_CREATE(s, t);
+
+    u32 N = 8;
+    for (u32 i = 0; i < N; i++) {
+        stack__push(s, !(i%2) ? &i : NULL);
+        stack__push(t, !(i%2) ? &i : NULL);
+    }
+
+    STACK_DEBUG_u32(s, t, "\n\tStacks before clean_NULL:");
+
+    stack__clean_NULL(s);
+    stack__clean_NULL(t);
+
+    result = (stack__size(s) == N>>1 && stack__size(t) == N>>1) ? TEST_SUCCESS : TEST_FAILURE;
+
+    STACK_DEBUG_u32(s, t, "\n\tStacks after clean_NULL:");
+
+    STACK_FREE(s, t, NULL, NULL);
+    return result;
+}
+
+/* CLEAR */
+TEST_ON_EMPTY_STACK (
+    test_stack__clear_on_empty_stack,
+    stack__clear(s);
+    stack__clear(t);
+)
+
+TEST_ON_NON_EMPTY_STACK (
+    test_stack__clear_on_non_empty_stack, true,
+    stack__clear(s);
+    stack__clear(t);
+
+    result = (stack__is_empty(s) && stack__is_empty(t)) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
 /* FOREACH */
@@ -407,11 +407,6 @@ int main(void)
     print_test_result(test_stack__push(false), &nb_success, &nb_tests);
     print_test_result(test_stack__pop_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__pop_on_non_empty_stack(false), &nb_success, &nb_tests);
-
-    print_test_result(test_stack__clean_NULL_on_empty_stack(false), &nb_success, &nb_tests);
-    print_test_result(test_stack__clean_NULL_on_non_empty_stack(false), &nb_success, &nb_tests);
-    print_test_result(test_stack__clear_on_empty_stack(false), &nb_success, &nb_tests);
-    print_test_result(test_stack__clear_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__peek_top_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__peek_top_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__peek_nth_on_empty_stack(false), &nb_success, &nb_tests);
@@ -422,6 +417,11 @@ int main(void)
     print_test_result(test_stack__dump_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__to_array_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__to_array_on_non_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__clean_NULL_on_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__clean_NULL_on_non_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__clear_on_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__clear_on_non_empty_stack(false), &nb_success, &nb_tests);
+
     print_test_result(test_stack__foreach_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__foreach_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__reverse_on_empty_stack(false), &nb_success, &nb_tests);

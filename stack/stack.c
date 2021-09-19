@@ -213,33 +213,12 @@ inline void stack__sort(const Stack s, const compare_func_t compare_op)
     qsort(s->elems, s->size, sizeof(elem_t), compare_op);
 }
 
-void stack__foreach(const Stack s, const applying_func_t f, void *user_data)
+void stack__foreach(const Stack s, const applying_func_t func, void *user_data)
 {
     char repeated;
     if (!s || !s->size) return;
 
-    if (s->copy_enabled) {
-        for (size_t i = 0; i < s->size; i++) {
-            f(s->elems[i], user_data);
-        }
-    }
-    /* If the same element is more than 1 time in the stack,
-    this is necessary in order to prevent multiple application of f on this element.
-    */
-    else {
-        repeated = false;
-        for (size_t i = 0; i < s->size; i++) {
-            for (size_t j = 0; j < i && !repeated; j++) {
-                if (s->elems[i] == s->elems[j]) {
-                    repeated = true;
-                }
-            }
-            if (!repeated) {
-                f(s->elems[i], user_data);
-            }
-            repeated = false;
-        }
-    }
+    ARRAY_FOREACH(s, func, user_data);
 }
 
 void stack__clean_NULL(Stack s)

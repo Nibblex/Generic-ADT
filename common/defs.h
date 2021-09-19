@@ -48,6 +48,27 @@
     __result_ens; \
 })
 
+#define ARRAY_FOREACH(__ptr, __func, __user_data) do { \
+    if (__ptr->copy_enabled) { \
+        for (size_t i = 0; i < __ptr->size; i++) { \
+            __func(__ptr->elems[i], __user_data); \
+        } \
+    } else { \
+        repeated = false; \
+        for (size_t i = 0; i < __ptr->size; i++) { \
+            for (size_t j = 0; j < i && !repeated; j++) { \
+                if (__ptr->elems[i] == __ptr->elems[j]) { \
+                    repeated = true; \
+                } \
+            } \
+            if (!repeated) { \
+                __func(__ptr->elems[i], __user_data); \
+            } \
+            repeated = false; \
+        } \
+    } \
+} while(false)
+
 #define ARRAY_SHUFFLE(__ptr, __start, __end) do { \
     size_t __a, __b; \
     for (size_t i = (__start); i < (__end); i++) { \

@@ -37,11 +37,11 @@
     } \
 } while (false)
 
-#define DEBUG_i32(F, A, B, C) do { \
+#define DEBUG_u32(F, A, B, C) do { \
     if (debug) { \
         printf(C); \
-        F(A, (void (*)(elem_t))operator_debug_i32); \
-        F(B, (void (*)(elem_t))operator_debug_i32); \
+        F(A, (void (*)(elem_t))operator_debug_u32); \
+        F(B, (void (*)(elem_t))operator_debug_u32); \
     } \
 } while (false)
 

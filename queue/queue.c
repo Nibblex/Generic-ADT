@@ -243,33 +243,12 @@ inline void queue__sort(const Queue q, const compare_func_t compare_op)
     qsort(q->elems + q->front, q->size, sizeof(elem_t), compare_op);
 }
 
-void queue__foreach(const Queue q, const applying_func_t f, void *user_data)
+void queue__foreach(const Queue q, const applying_func_t func, void *user_data)
 {
     char repeated;
     if (!q || !q->size) return;
 
-    if (q->copy_enabled) {
-        for (size_t i = q->front; i < q->back; i++) {
-            f(q->elems[i], user_data);
-        }
-    }
-    /* If the same element is more than 1 time in the queue,
-    this is necessary in order to prevent multiple application of f on this element.
-    */
-    else{
-        repeated = false;
-        for (size_t i = q->front; i < q->back; i++) {
-            for (size_t j = q->front; j < i && !repeated; j++) {
-                if (q->elems[i] == q->elems[j]) {
-                    repeated = true;
-                }
-            }
-            if (!repeated) {
-                f(q->elems[i], user_data);
-            }
-            repeated = false;
-        }
-    }
+    ARRAY_FOREACH(q, func, user_data);
 }
 
 void queue__clean_NULL(const Queue q)

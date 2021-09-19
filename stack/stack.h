@@ -177,7 +177,7 @@ void stack__sort(const Stack s, const compare_func_t compare_op);
  * @param f The applying function
  * @param user_data Optional data to be used as an additional argument of the application function
  */
-void stack__foreach(const Stack s, const applying_func_t f, void *user_data);
+void stack__foreach(const Stack s, const applying_func_t func, void *user_data);
 
 
 /**

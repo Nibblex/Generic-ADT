@@ -188,7 +188,7 @@ void queue__sort(const Queue q, const compare_func_t compare_op);
  * @param f The applying function
  * @param user_data Optional data to be used as an additional argument of the application function
  */
-void queue__foreach(const Queue q, const applying_func_t f, void *user_data);
+void queue__foreach(const Queue q, const applying_func_t func, void *user_data);
 
 
 /**

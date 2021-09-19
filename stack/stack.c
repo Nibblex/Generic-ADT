@@ -215,10 +215,9 @@ inline void stack__sort(const Stack s, const compare_func_t compare_op)
 
 void stack__foreach(const Stack s, const applying_func_t func, void *user_data)
 {
-    char repeated;
     if (!s || !s->size) return;
 
-    ARRAY_FOREACH(s, func, user_data, 0, s->size);
+    ARRAY_FOREACH(s->elems, func, user_data, 0, s->size, s->copy_enabled);
 }
 
 void stack__clean_NULL(Stack s)

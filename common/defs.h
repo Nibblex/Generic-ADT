@@ -48,23 +48,24 @@
     __result_ens; \
 })
 
-#define ARRAY_FOREACH(__ptr, __func, __user_data, __start, __end) do { \
-    if (__ptr->copy_enabled) { \
+#define ARRAY_FOREACH(__ptr, __func, __user_data, __start, __end, __copy_enabled) do { \
+    char __repeated; \
+    if (__copy_enabled) { \
         for (size_t i = (__start); i < (__end); i++) { \
-            __func(__ptr->elems[i], __user_data); \
+            __func(__ptr[i], __user_data); \
         } \
     } else { \
-        repeated = false; \
-        for (size_t i = 0; i < __ptr->size; i++) { \
-            for (size_t j = (__start); j < i && !repeated; j++) { \
-                if (__ptr->elems[i] == __ptr->elems[j]) { \
-                    repeated = true; \
+        __repeated = false; \
+        for (size_t i = (__start); i < (__end); i++) { \
+            for (size_t j = (__start); j < i && !__repeated; j++) { \
+                if (__ptr[i] == __ptr[j]) { \
+                    __repeated = true; \
                 } \
             } \
-            if (!repeated) { \
-                __func(__ptr->elems[i], __user_data); \
+            if (!__repeated) { \
+                __func(__ptr[i], __user_data); \
             } \
-            repeated = false; \
+            __repeated = false; \
         } \
     } \
 } while(false)

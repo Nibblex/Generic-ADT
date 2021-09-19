@@ -245,10 +245,9 @@ inline void queue__sort(const Queue q, const compare_func_t compare_op)
 
 void queue__foreach(const Queue q, const applying_func_t func, void *user_data)
 {
-    char repeated;
     if (!q || !q->size) return;
 
-    ARRAY_FOREACH(q, func, user_data, q->front, q->back);
+    ARRAY_FOREACH(q->elems, func, user_data, q->front, q->back, q->copy_enabled);
 }
 
 void queue__clean_NULL(const Queue q)

@@ -218,7 +218,7 @@ void stack__foreach(const Stack s, const applying_func_t func, void *user_data)
     char repeated;
     if (!s || !s->size) return;
 
-    ARRAY_FOREACH(s, func, user_data);
+    ARRAY_FOREACH(s, func, user_data, 0, s->size);
 }
 
 void stack__clean_NULL(Stack s)

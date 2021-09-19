@@ -248,7 +248,7 @@ void queue__foreach(const Queue q, const applying_func_t func, void *user_data)
     char repeated;
     if (!q || !q->size) return;
 
-    ARRAY_FOREACH(q, func, user_data);
+    ARRAY_FOREACH(q, func, user_data, q->front, q->back);
 }
 
 void queue__clean_NULL(const Queue q)

@@ -321,7 +321,7 @@ void queue__debug(const Queue q, const debug_operator_t debug_op)
                                                                                                                          , q->back);
         printf("{ ");
         for (size_t i = 0; i < q->capacity; i++) {
-            if (q->front < i && i < q->back) {
+            if (q->front <= i && i < q->back) {
                 debug_op(q->elems[i]);
             } else {
                 printf("_ ");

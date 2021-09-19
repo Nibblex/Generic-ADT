@@ -7,8 +7,8 @@
     A = queue__empty_copy_enabled(operator_copy, operator_delete); \
     B = queue__empty_copy_disabled()
 
-#define QUEUE_ENQUEUE_u32(N, A, B) \
-    ADD_u32(queue__enqueue, N, A, B)
+#define QUEUE_ENQUEUE_u32(N, __elems, A, B) \
+    ADD_u32(queue__enqueue, N, __elems, A, B)
 
 #define QUEUE_ENQUEUE_i32_RAND(N, A, B) \
     ADD_i32_RAND(queue__enqueue, N, A, B)
@@ -43,10 +43,14 @@ static bool __name(char debug) \
     elem_t *A = NULL, *B = NULL; \
     QUEUE_CREATE(q, w); \
     u32 N = 8; \
+    u32 *elems = malloc(sizeof(u32) * N); \
+    for (u32 i = 0; i < N; i++) { \
+        elems[i] = i; \
+    } \
     if (__rand) { \
         QUEUE_ENQUEUE_i32_RAND(N, q, w); \
     } else { \
-        QUEUE_ENQUEUE_u32(N, q, w); \
+        QUEUE_ENQUEUE_u32(N, elems, q, w); \
     } \
     QUEUE_DEBUG_i32(q, w, "\n\tQueues before:"); \
     __expr \
@@ -58,6 +62,7 @@ static bool __name(char debug) \
         free(A); \
     } \
     free(B); \
+    free(elems); \
     QUEUE_FREE(q, w, NULL, NULL); \
     return result; \
 }
@@ -200,124 +205,61 @@ TEST_ON_NON_EMPTY_QUEUE (
     result = (queue__is_empty(q) && queue__is_empty(w)) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
+/* PEEK_FRONT */
 TEST_ON_EMPTY_QUEUE (
     test_queue__peek_front_on_empty_queue,
     result = (queue__peek_front(q, NULL) == -1 && queue__peek_front(w, NULL) == -1) ? TEST_SUCCESS : TEST_FAILURE;
 )
-
-static bool test_queue__peek_front_on_non_empty_queue(char debug)
-{
-    printf("%s... ", __func__);
-
-    bool result;
-    int value1 = 5;
-    int value2 = 7;
+TEST_ON_NON_EMPTY_QUEUE (
+    test_queue__peek_front_on_non_empty_queue, false,
     elem_t front_q = NULL;
     elem_t front_w = NULL;
-    QUEUE_CREATE(q, w);
-
-    queue__enqueue(q, &value1);
-    queue__enqueue(w, &value1);
-    queue__enqueue(q, &value2);
-    queue__enqueue(w, &value2);
-
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues before peek_front:");
-
     result = (!queue__peek_front(q, &front_q)
            && !queue__peek_front(w, &front_w)
            && !queue__is_empty(q)
            && !queue__is_empty(w)
-           && *(int *)front_q == 5
-           && *(int *)front_w == 5) ? TEST_SUCCESS : TEST_FAILURE;
-
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues after peek_front:");
-
+           && *(u32 *)front_q == 0
+           && *(u32 *)front_w == 0) ? TEST_SUCCESS : TEST_FAILURE;
     free(front_q);
-    QUEUE_FREE(q, w, NULL, NULL);
-    return result;
-}
+)
 
+/* PEEK_BACK */
 TEST_ON_EMPTY_QUEUE (
     test_queue__peek_back_on_empty_queue,
     result = (queue__peek_back(q, NULL) == -1 && queue__peek_back(w, NULL) == -1) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
-static bool test_queue__peek_back_on_non_empty_queue(char debug)
-{
-    printf("%s... ", __func__);
-
-    bool result;
-    int value1 = 5;
-    int value2 = 7;
+TEST_ON_NON_EMPTY_QUEUE (
+    test_queue__peek_back_on_non_empty_queue, false,
     elem_t back_q = NULL;
     elem_t back_w = NULL;
-    QUEUE_CREATE(q, w);
-
-    queue__enqueue(q, &value1);
-    queue__enqueue(w, &value1);
-    queue__enqueue(q, &value2);
-    queue__enqueue(w, &value2);
-
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues before peek_back:");
-
     result = (!queue__peek_back(q, &back_q)
            && !queue__peek_back(w, &back_w)
            && !queue__is_empty(q)
            && !queue__is_empty(w)
-           && *(int *)back_q == 7
-           && *(int *)back_w == 7) ? TEST_SUCCESS : TEST_FAILURE;
-
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues after peek_back:");
-
+           && *(u32 *)back_q == N-1
+           && *(u32 *)back_w == N-1) ? TEST_SUCCESS : TEST_FAILURE;
     free(back_q);
-    QUEUE_FREE(q, w, NULL, NULL);
-    return result;
-}
+)
 
+/* PEEK_NTH */
 TEST_ON_EMPTY_QUEUE (
     test_queue__peek_nth_on_empty_queue,
     result = (queue__peek_nth(q, NULL, 0) == -1 && queue__peek_nth(w, NULL, 0) == -1) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
-static bool test_queue__peek_nth_on_non_empty_queue(char debug)
-{
-    printf("%s... ", __func__);
-
-    bool result;
-    int value1 = 5;
-    int value2 = 7;
-    elem_t nth_s = NULL;
-    elem_t nth_t = NULL;
-    QUEUE_CREATE(q, w);
-
-    queue__enqueue(q, &value1);
-    queue__enqueue(w, &value1);
-    queue__enqueue(q, &value2);
-    queue__enqueue(w, &value2);
-
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues before peek_nth:");
-
-    result = (!queue__peek_nth(q, &nth_s, 0)
-           && !queue__peek_nth(w, &nth_t, 0)
+TEST_ON_NON_EMPTY_QUEUE (
+    test_queue__peek_nth_on_non_empty_queue, false,
+    elem_t nth_q = NULL;
+    elem_t nth_w = NULL;
+    result = (!queue__peek_nth(q, &nth_q, N>>1)
+           && !queue__peek_nth(w, &nth_w, N>>1)
            && !queue__is_empty(q)
            && !queue__is_empty(w)
-           && *(int *)nth_s == 5
-           && *(int *)nth_t == 5) ? TEST_SUCCESS : TEST_FAILURE;
-    free(nth_s);
-
-    result &= (!queue__peek_nth(q, &nth_s, 1)
-            && !queue__peek_nth(w, &nth_t, 1)
-            && !queue__is_empty(q)
-            && !queue__is_empty(w)
-            && *(int *)nth_s == 7
-            && *(int *)nth_t == 7) ? TEST_SUCCESS : TEST_FAILURE;
-    free(nth_s);
-
-    QUEUE_DEBUG_i32(q, w, "\n\tQueues after peek_nth:");
-
-    QUEUE_FREE(q, w, NULL, NULL);
-    return result;
-}
+           && *(u32 *)nth_q == N>>1
+           && *(u32 *)nth_w == N>>1) ? TEST_SUCCESS : TEST_FAILURE;
+    free(nth_q);
+)
 
 static bool test_queue__from_array(char debug)
 {

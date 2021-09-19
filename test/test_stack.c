@@ -7,8 +7,8 @@
     A = stack__empty_copy_enabled(operator_copy, operator_delete); \
     B = stack__empty_copy_disabled()
 
-#define STACK_PUSH_u32(N, A, B) \
-    ADD_u32(stack__push, N, A, B)
+#define STACK_PUSH_u32(N, __elems, A, B) \
+    ADD_u32(stack__push, N, __elems, A, B)
 
 #define STACK_PUSH_i32_RAND(N, A, B) \
     ADD_i32_RAND(stack__push, N, A, B)
@@ -43,10 +43,14 @@ static bool __name(char debug) \
     elem_t *A = NULL, *B = NULL; \
     STACK_CREATE(s, t); \
     u32 N = 8; \
+    u32 *elems = malloc(sizeof(u32) * N); \
+    for (u32 i = 0; i < N; i++) { \
+        elems[i] = i; \
+    } \
     if (__rand) { \
         STACK_PUSH_i32_RAND(N, s, t); \
     } else { \
-        STACK_PUSH_u32(N, s, t); \
+        STACK_PUSH_u32(N, elems, s, t); \
     } \
     STACK_DEBUG_i32(s, t, "\n\tStacks before:"); \
     __expr \
@@ -58,6 +62,7 @@ static bool __name(char debug) \
         free(A); \
     } \
     free(B); \
+    free(elems); \
     STACK_FREE(s, t, NULL, NULL); \
     return result; \
 }
@@ -200,87 +205,43 @@ TEST_ON_NON_EMPTY_STACK (
     result = (stack__is_empty(s) && stack__is_empty(t)) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
+/* PEEK_TOP */
 TEST_ON_EMPTY_STACK (
     test_stack__peek_top_on_empty_stack,
     result = (stack__peek_top(s, NULL) == -1 && stack__peek_top(t, NULL) == -1) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
-static bool test_stack__peek_top_on_non_empty_stack(char debug)
-{
-    printf("%s... ", __func__);
-
-    bool result;
-    int value1 = 5;
-    int value2 = 7;
+TEST_ON_NON_EMPTY_STACK (
+    test_stack__peek_top_on_non_empty_stack, false,
     elem_t top_s = NULL;
     elem_t top_t = NULL;
-    STACK_CREATE(s, t);
-
-    stack__push(s, &value1);
-    stack__push(t, &value1);
-    stack__push(s, &value2);
-    stack__push(t, &value2);
-
-    STACK_DEBUG_i32(s, t, "\n\tStacks before peek_top:");
-
     result = (!stack__peek_top(s, &top_s)
            && !stack__peek_top(t, &top_t)
            && !stack__is_empty(s)
            && !stack__is_empty(t)
-           && *(int *)top_s == 7
-           && *(int *)top_t == 7) ? TEST_SUCCESS : TEST_FAILURE;
-
-    STACK_DEBUG_i32(s, t, "\n\tStacks after peek_top:");
-
+           && *(u32 *)top_s == 7
+           && *(u32 *)top_t == 7) ? TEST_SUCCESS : TEST_FAILURE;
     free(top_s);
-    STACK_FREE(s, t, NULL, NULL);
-    return result;
-}
+)
 
+/* PEEK_NTH */
 TEST_ON_EMPTY_STACK (
     test_stack__peek_nth_on_empty_stack,
     result = (stack__peek_nth(s, NULL, 0) == -1 && stack__peek_nth(t, NULL, 0) == -1) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
-static bool test_stack__peek_nth_on_non_empty_stack(char debug)
-{
-    printf("%s... ", __func__);
-
-    bool result;
-    int value1 = 5;
-    int value2 = 7;
+TEST_ON_NON_EMPTY_STACK (
+    test_stack__peek_nth_on_non_empty_stack, false,
     elem_t nth_s = NULL;
     elem_t nth_t = NULL;
-    STACK_CREATE(s, t);
-
-    stack__push(s, &value1);
-    stack__push(t, &value1);
-    stack__push(s, &value2);
-    stack__push(t, &value2);
-
-    STACK_DEBUG_i32(s, t, "\n\tStacks before peek_nth:");
-
-    result = (!stack__peek_nth(s, &nth_s, 0)
-           && !stack__peek_nth(t, &nth_t, 0)
+    result = (!stack__peek_nth(s, &nth_s, N>>1)
+           && !stack__peek_nth(t, &nth_t, N>>1)
            && !stack__is_empty(s)
            && !stack__is_empty(t)
-           && *(int *)nth_s == 5
-           && *(int *)nth_t == 5) ? TEST_SUCCESS : TEST_FAILURE;
+           && *(u32 *)nth_s == (N>>1)
+           && *(u32 *)nth_t == (N>>1)) ? TEST_SUCCESS : TEST_FAILURE;
     free(nth_s);
-
-    result &= (!stack__peek_nth(s, &nth_s, 1)
-            && !stack__peek_nth(t, &nth_t, 1)
-            && !stack__is_empty(s)
-            && !stack__is_empty(t)
-            && *(int *)nth_s == 7
-            && *(int *)nth_t == 7) ? TEST_SUCCESS : TEST_FAILURE;
-    free(nth_s);
-
-    STACK_DEBUG_i32(s, t, "\n\tStacks after peek_nth:");
-
-    STACK_FREE(s, t, NULL, NULL);
-    return result;
-}
+)
 
 static bool test_stack__from_array(char debug)
 {

@@ -13,12 +13,11 @@
 #define TEST_FAILURE 0
 #endif
 
-#define ADD_u32(F, N, A, B) do { \
+#define ADD_u32(F, N, __elems, A, B) \
     for (u32 i = 0; i < N; i++) { \
-        F(A, &i); \
-        F(B, &i); \
-    } \
-} while (false)
+        F(A, &__elems[i]); \
+        F(B, &__elems[i]); \
+    }
 
 #define ADD_i32_RAND(F, N, A, B) do { \
     int r; \

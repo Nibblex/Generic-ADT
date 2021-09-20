@@ -48,6 +48,29 @@
     __result_ens; \
 })
 
+#define COPY(__dst, __src, __start, __n_elems) \
+({ \
+    if (__src->copy_enabled) { \
+        __dst->copy_enabled = true; \
+        for (size_t i = 0; i < (__n_elems); i++) { \
+            __dst->elems[i] = __src->operator_copy(__src->elems[(__start) + i]); \
+        } \
+    } else { \
+        __dst->copy_enabled = false; \
+        memcpy(__dst->elems, __src->elems + (__start), sizeof(elem_t) * (__n_elems)); \
+    } \
+    __dst->size = __src->size; \
+})
+
+#define ARRAY_CMP(__ptr_1, __ptr_2, __start_1, __start_2, __n_elems) \
+({ \
+    char res = true; \
+    for (size_t i = 0; i < (__n_elems); i++) { \
+        res &= (char)!compare_op(__ptr_1 + (__start_1) + i, __ptr_2 + (__start_2) + i); \
+    } \
+    res; \
+})
+
 #define ARRAY_FOREACH(__ptr, __func, __user_data, __start, __end, __copy_enabled) do { \
     char __repeated; \
     if (__copy_enabled) { \

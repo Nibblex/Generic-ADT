@@ -66,12 +66,12 @@ static inline elem_t id(elem_t e) {
 ///     QUEUE FUNCTIONS TO EXPORT
 ///////////////////////////////////////////////////////////////////////////////
 
-inline Queue queue__empty_copy_disabled(void)
+Queue queue__empty_copy_disabled(void)
 {
     return QUEUE_INIT(NULL, NULL, DEFAULT_QUEUE_CAPACITY);
 }
 
-inline Queue queue__empty_copy_enabled(const copy_operator_t copy_op, const delete_operator_t delete_op)
+Queue queue__empty_copy_enabled(const copy_operator_t copy_op, const delete_operator_t delete_op)
 {
     if (!copy_op || !delete_op) return NULL;
 
@@ -220,6 +220,36 @@ elem_t *queue__to_array(const Queue q)
     return res;
 }
 
+Queue queue__copy(const Queue q) {
+    if (!q) return NULL;
+
+    Queue copy = QUEUE_INIT(q->operator_copy, q->operator_delete, q->size);
+    if (!copy) return NULL;
+
+    COPY(copy, q, q->front, q->size);
+
+    copy->front = 0;
+    copy->back = q->size;
+
+    return copy;
+}
+
+char queue__cmp(const Queue q, const Queue w, compare_func_t compare_op) {
+    if (!q || !w || !compare_op) return FAILURE;
+
+    if (q == w) return true;
+    if (q->size != w->size) return false;
+
+    return ARRAY_CMP(q->elems, w->elems, q->front, w->front, q->size);
+}
+
+void queue__foreach(const Queue q, const applying_func_t func, void *user_data)
+{
+    if (!q || !q->size) return;
+
+    ARRAY_FOREACH(q->elems, func, user_data, q->front, q->back, q->copy_enabled);
+}
+
 void queue__reverse(const Queue q)
 {
     if (!q || q->size < 2) return;
@@ -241,13 +271,6 @@ inline void queue__sort(const Queue q, const compare_func_t compare_op)
     if (!q || q->size < 2) return;
 
     qsort(q->elems + q->front, q->size, sizeof(elem_t), compare_op);
-}
-
-void queue__foreach(const Queue q, const applying_func_t func, void *user_data)
-{
-    if (!q || !q->size) return;
-
-    ARRAY_FOREACH(q->elems, func, user_data, q->front, q->back, q->copy_enabled);
 }
 
 void queue__clean_NULL(const Queue q)

@@ -54,12 +54,12 @@ static inline elem_t id(elem_t e) {
 ///     STACK FUNCTIONS TO EXPORT
 ///////////////////////////////////////////////////////////////////////////////
 
-inline Stack stack__empty_copy_disabled(void)
+Stack stack__empty_copy_disabled(void)
 {
     return STACK_INIT(NULL, NULL, DEFAULT_STACK_CAPACITY);
 }
 
-inline Stack stack__empty_copy_enabled(const copy_operator_t copy_op, const delete_operator_t delete_op)
+Stack stack__empty_copy_enabled(const copy_operator_t copy_op, const delete_operator_t delete_op)
 {
     if (!copy_op || !delete_op) return NULL;
 
@@ -190,6 +190,33 @@ elem_t *stack__to_array(const Stack s)
     return res;
 }
 
+Stack stack__copy(const Stack s) {
+    if (!s) return NULL;
+
+    Stack copy = STACK_INIT(s->operator_copy, s->operator_delete, s->size);
+    if (!copy) return NULL;
+
+    COPY(copy, s, 0, s->size);
+
+    return copy;
+}
+
+char stack__cmp(const Stack s, const Stack t, compare_func_t compare_op) {
+    if (!s || !t || !compare_op) return FAILURE;
+
+    if (s == t) return true;
+    if (s->size != t->size) return false;
+
+    return ARRAY_CMP(s->elems, t->elems, 0, 0, s->size);
+}
+
+void stack__foreach(const Stack s, const applying_func_t func, void *user_data)
+{
+    if (!s || !s->size) return;
+
+    ARRAY_FOREACH(s->elems, func, user_data, 0, s->size, s->copy_enabled);
+}
+
 void stack__reverse(const Stack s)
 {
     if (!s || s->size < 2) return;
@@ -211,13 +238,6 @@ inline void stack__sort(const Stack s, const compare_func_t compare_op)
     if (!s || s->size < 2) return;
 
     qsort(s->elems, s->size, sizeof(elem_t), compare_op);
-}
-
-void stack__foreach(const Stack s, const applying_func_t func, void *user_data)
-{
-    if (!s || !s->size) return;
-
-    ARRAY_FOREACH(s->elems, func, user_data, 0, s->size, s->copy_enabled);
 }
 
 void stack__clean_NULL(Stack s)

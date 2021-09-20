@@ -157,6 +157,37 @@ elem_t *queue__to_array(const Queue q);
 
 
 /**
+ * @brief Retrieves a copy of the entire queue
+ * @details If copy is enabled the new one contains a copy of all elements of the original queue
+ * @note Complexity: O(n)
+ * @param q The queue
+ * @return a pointer to the new queue on success, NULL on failure
+ */
+Queue queue__copy(const Queue q);
+
+
+/**
+ * @brief Compare two queues including all their elements
+ * @note Complexity: O(n)
+ * @param q The queue
+ * @param w The queue
+ * @param compare_op The compare function
+ * @return 1 if the queues are equal including all their elements, 0 if the queues are not equal, -1 on failure
+ */
+char queue__cmp(const Queue q, const Queue w, compare_func_t compare_op);
+
+
+/**
+ * @brief Maps the given function to the queue
+ * @note Complexity: O(n) with copy enabled, O(n²) with copy disabled
+ * @param q The queue
+ * @param f The applying function
+ * @param user_data Optional data to be used as an additional argument of the application function
+ */
+void queue__foreach(const Queue q, const applying_func_t func, void *user_data);
+
+
+/**
  * @brief Revert the queue
  * @note Complexity: O(n)
  * @param s The queue
@@ -179,16 +210,6 @@ void queue__shuffle(const Queue q);
  * @param compare_op The compare function
  */
 void queue__sort(const Queue q, const compare_func_t compare_op);
-
-
-/**
- * @brief Maps the given function to the queue
- * @note Complexity: O(n) with copy enabled, O(n²) with copy disabled
- * @param q The queue
- * @param f The applying function
- * @param user_data Optional data to be used as an additional argument of the application function
- */
-void queue__foreach(const Queue q, const applying_func_t func, void *user_data);
 
 
 /**

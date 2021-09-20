@@ -287,6 +287,29 @@ TEST_ON_NON_EMPTY_QUEUE (
     }
 )
 
+/* COPY */
+TEST_ON_EMPTY_QUEUE (
+    test_queue__copy_on_empty_queue,
+    Queue u = queue__copy(q);
+    Queue v = queue__copy(w);
+
+    result = (queue__cmp(u, q, operator_compare)
+           && queue__cmp(v, w, operator_compare)) ? TEST_SUCCESS : TEST_FAILURE;
+
+    QUEUE_FREE(u, v, NULL, NULL);
+)
+
+TEST_ON_NON_EMPTY_QUEUE (
+    test_queue__copy_on_non_empty_queue, false,
+    Queue u = queue__copy(q);
+    Queue v = queue__copy(w);
+
+    result = (queue__cmp(u, q, operator_compare)
+           && queue__cmp(v, w, operator_compare)) ? TEST_SUCCESS : TEST_FAILURE;
+
+    QUEUE_FREE(u, v, NULL, NULL);
+)
+
 TEST_ON_EMPTY_QUEUE (
     test_queue__clean_NULL_on_empty_queue,
     queue__clean_NULL(q);
@@ -437,6 +460,8 @@ int main(void)
     print_test_result(test_queue__dump_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__to_array_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__to_array_on_non_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__copy_on_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__copy_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__clean_NULL_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__clean_NULL_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__clear_on_empty_queue(false), &nb_success, &nb_tests);

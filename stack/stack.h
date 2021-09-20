@@ -146,6 +146,37 @@ elem_t *stack__to_array(const Stack s);
 
 
 /**
+ * @brief Retrieves a copy of the entire stack
+ * @details If copy is enabled the new one contains a copy of all elements of the original stack
+ * @note Complexity: O(n)
+ * @param q The stack
+ * @return a pointer to the new stack on success, NULL on failure
+ */
+Stack stack__copy(const Stack s);
+
+
+/**
+ * @brief Compare two stacks including all their elements
+ * @note Complexity: O(n)
+ * @param s The Stack
+ * @param t The Stack
+ * @param compare_op The compare function
+ * @return 1 if the stacks are equal including all their elements, 0 if the stacks are not equal, -1 on failure
+ */
+char stack__cmp(const Stack s, const Stack t, compare_func_t compare_op);
+
+
+/**
+ * @brief Maps the given function to the stack
+ * @note Complexity: O(n) with copy enabled, O(n²) with copy disabled
+ * @param s The stack
+ * @param f The applying function
+ * @param user_data Optional data to be used as an additional argument of the application function
+ */
+void stack__foreach(const Stack s, const applying_func_t func, void *user_data);
+
+
+/**
  * @brief Revert the stack
  * @note Complexity: O(n)
  * @param s The stack
@@ -168,16 +199,6 @@ void stack__shuffle(const Stack s);
  * @param compare_op The compare function
  */
 void stack__sort(const Stack s, const compare_func_t compare_op);
-
-
-/**
- * @brief Maps the given function to the stack
- * @note Complexity: O(n) with copy enabled, O(n²) with copy disabled
- * @param s The stack
- * @param f The applying function
- * @param user_data Optional data to be used as an additional argument of the application function
- */
-void stack__foreach(const Stack s, const applying_func_t func, void *user_data);
 
 
 /**

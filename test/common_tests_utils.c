@@ -53,8 +53,8 @@ int operator_compare(const void *v1, const void *v2)
         exit(EXIT_FAILURE);
     }
 
-    int arg1 = *(*(int **)v1);
-    int arg2 = *(*(int **)v2);
+    u32 arg1 = *(*(u32 **)v1);
+    u32 arg2 = *(*(u32 **)v2);
 
     if (arg1 < arg2)
         return -1;

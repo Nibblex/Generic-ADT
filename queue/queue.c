@@ -97,7 +97,6 @@ char queue__enqueue(const Queue q, const elem_t element)
 {
     if (!q) return FAILURE;
 
-    // Adjust capacity if necessary
     if (q->back == q->capacity) {
         if (ENSURE_CAPACITY(q) < 0) return FAILURE;
     }
@@ -240,7 +239,7 @@ char queue__cmp(const Queue q, const Queue w, compare_func_t compare_op) {
     if (q == w) return true;
     if (q->size != w->size) return false;
 
-    return ARRAY_CMP(q->elems, w->elems, q->front, w->front, q->size);
+    return ARRAY_CMP(q->elems + q->front, w->elems + w->front, q->size);
 }
 
 void queue__foreach(const Queue q, const applying_func_t func, void *user_data)

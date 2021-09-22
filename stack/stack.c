@@ -85,7 +85,6 @@ char stack__push(const Stack s, const elem_t element)
 {
     if (!s) return FAILURE;
 
-    // Adjust capacity if necessary
     if (s->size == s->capacity) {
         if (ENSURE_CAPACITY(s) < 0) return FAILURE;
     }
@@ -207,7 +206,7 @@ char stack__cmp(const Stack s, const Stack t, compare_func_t compare_op) {
     if (s == t) return true;
     if (s->size != t->size) return false;
 
-    return ARRAY_CMP(s->elems, t->elems, 0, 0, s->size);
+    return ARRAY_CMP(s->elems, t->elems, s->size);
 }
 
 void stack__foreach(const Stack s, const applying_func_t func, void *user_data)

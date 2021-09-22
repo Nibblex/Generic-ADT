@@ -17,20 +17,20 @@
 #endif
 
 #define PTR_INCREMENT(__ptr, __size) \
-    __ptr = (void *)((size_t)__ptr + (__size))
+    (__ptr) = (void *)((size_t)(__ptr) + (__size))
 
-#define PTR_SWAP(__ptr1, __ptr2) \
-    elem_t __temp = __ptr1; \
-    __ptr1 = __ptr2; \
-    __ptr2 = __temp
+#define PTR_SWAP(__ptr_1, __ptr_2) \
+    elem_t __temp = (__ptr_1); \
+    (__ptr_1) = (__ptr_2); \
+    (__ptr_1) = (__temp)
 
 #define ARRAY_RESIZE(__ptr, __new_capacity) \
 ({ \
     char __result_res = FAILURE; \
-    elem_t *__realloc_res = realloc(__ptr->elems, sizeof(elem_t) * (__new_capacity)); \
+    elem_t *__realloc_res = realloc((__ptr)->elems, sizeof(elem_t) * (__new_capacity)); \
     if (__realloc_res) { \
-        __ptr->elems = __realloc_res; \
-        __ptr->capacity = (__new_capacity); \
+        (__ptr)->elems = __realloc_res; \
+        (__ptr)->capacity = (__new_capacity); \
         __result_res = SUCCESS; \
     } \
     __result_res; \
@@ -39,10 +39,10 @@
 #define ENSURE_CAPACITY(__ptr) \
 ({ \
     char __result_ens = FAILURE; \
-    size_t __capacity = __ptr->capacity; \
+    size_t __capacity = (__ptr)->capacity; \
     size_t __offset = (__capacity < LONG_MAX) ? __capacity \
                                               : ULONG_MAX - __capacity; \
-    while (__offset && (__result_ens = ARRAY_RESIZE(__ptr, __capacity + __offset))) { \
+    while (__offset && (__result_ens = ARRAY_RESIZE((__ptr), __capacity + __offset))) { \
         __offset = __offset>>1; \
     } \
     __result_ens; \
@@ -50,23 +50,23 @@
 
 #define COPY(__dst, __src, __start, __n_elems) \
 ({ \
-    if (__src->copy_enabled) { \
-        __dst->copy_enabled = true; \
+    if ((__src)->copy_enabled) { \
+        (__dst)->copy_enabled = true; \
         for (size_t i = 0; i < (__n_elems); i++) { \
-            __dst->elems[i] = __src->operator_copy(__src->elems[(__start) + i]); \
+            (__dst)->elems[i] = (__src)->operator_copy((__src)->elems[(__start) + i]); \
         } \
     } else { \
-        __dst->copy_enabled = false; \
-        memcpy(__dst->elems, __src->elems + (__start), sizeof(elem_t) * (__n_elems)); \
+        (__dst)->copy_enabled = false; \
+        memcpy((__dst)->elems, (__src)->elems + (__start), sizeof(elem_t) * (__n_elems)); \
     } \
-    __dst->size = __src->size; \
+    (__dst)->size = (__src)->size; \
 })
 
-#define ARRAY_CMP(__ptr_1, __ptr_2, __start_1, __start_2, __n_elems) \
+#define ARRAY_CMP(__ptr_1, __ptr_2, __n_elems) \
 ({ \
     char res = true; \
     for (size_t i = 0; i < (__n_elems); i++) { \
-        res &= (char)!compare_op(__ptr_1 + (__start_1) + i, __ptr_2 + (__start_2) + i); \
+        res &= (char)!compare_op((__ptr_1) + i, (__ptr_2) + i); \
     } \
     res; \
 })
@@ -75,18 +75,18 @@
     char __repeated; \
     if (__copy_enabled) { \
         for (size_t i = (__start); i < (__end); i++) { \
-            __func(__ptr[i], __user_data); \
+            (__func)((__ptr)[i], (__user_data)); \
         } \
     } else { \
         __repeated = false; \
         for (size_t i = (__start); i < (__end); i++) { \
             for (size_t j = (__start); j < i && !__repeated; j++) { \
-                if (__ptr[i] == __ptr[j]) { \
+                if ((__ptr)[i] == (__ptr)[j]) { \
                     __repeated = true; \
                 } \
             } \
             if (!__repeated) { \
-                __func(__ptr[i], __user_data); \
+                (__func)((__ptr)[i], (__user_data)); \
             } \
             __repeated = false; \
         } \
@@ -98,12 +98,12 @@
     for (size_t i = (__start); i < (__end); i++) { \
         __a = ((__start) + (size_t)(rand() % (int)((__start) + (__end)))); \
         __b = ((__start) + (size_t)(rand() % (int)((__start) + (__end)))); \
-        PTR_SWAP(__ptr[__a], __ptr[__b]); \
+        PTR_SWAP((__ptr)[__a], (__ptr)[__b]); \
     } \
 } while (false)
 
 #define CLEAN_NULL_ELEMS(__ptr, __start, __end) \
-    elem_t *__elems = __ptr->elems; \
+    elem_t *__elems = (__ptr)->elems; \
     size_t k = 0; \
     for (size_t i = (__start); i < (__end); i++) { \
         if (__elems[i]) { \
@@ -111,12 +111,12 @@
             k++; \
         } \
     } \
-    __ptr->size = k
+    (__ptr)->size = k
 
 #define FREE_ELEMS(__ptr, __start, __end) do { \
-    if (__ptr->copy_enabled) { \
+    if ((__ptr)->copy_enabled) { \
         for (size_t i = (__start); i < (__end); i++) { \
-            __ptr->operator_delete(__ptr->elems[i]); \
+            (__ptr)->operator_delete((__ptr)->elems[i]); \
         } \
     } \
 } while (false)

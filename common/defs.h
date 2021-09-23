@@ -62,11 +62,11 @@
     (__dst)->size = (__src)->size; \
 })
 
-#define ARRAY_CMP(__ptr_1, __ptr_2, __n_elems) \
+#define ARRAY_CMP(__ptr_1, __ptr_2, __compare, __n_elems) \
 ({ \
     char res = true; \
     for (size_t i = 0; i < (__n_elems); i++) { \
-        res &= (char)!compare_op((__ptr_1) + i, (__ptr_2) + i); \
+        res &= (char)!(__compare)((__ptr_1) + i, (__ptr_2) + i); \
     } \
     res; \
 })
@@ -149,6 +149,6 @@ typedef int (*compare_func_t)(const void *, const void *);
 /**
  * Function pointer for element print
  */
-typedef void (*debug_operator_t)(elem_t);
+typedef void (*debug_func_t)(elem_t);
 
 #endif

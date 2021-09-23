@@ -240,7 +240,7 @@ static bool test_queue__from_array(char debug)
     D = queue__to_array(w_int);
 
     for (u32 i = 0; i < 5; i++) {
-        result |= C[i] != *(int *)D[i];
+        result &= C[i] == *(int *)D[i];
     }
 
     QUEUE_DEBUG_char(q_char, w_char, "\n\tQueues after from_array:");

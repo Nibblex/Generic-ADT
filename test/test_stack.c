@@ -222,7 +222,7 @@ static bool test_stack__from_array(char debug)
     D = stack__to_array(t_int);
 
     for (u32 i = 0; i < 5; i++) {
-        result |= C[i] != *(int *)D[i];
+        result &= C[i] == *(int *)D[i];
     }
 
     STACK_DEBUG_char(s_char, t_char, "\n\tStacks after from_array:");

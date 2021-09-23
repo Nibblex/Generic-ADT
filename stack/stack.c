@@ -200,18 +200,18 @@ Stack stack__copy(const Stack s) {
     return copy;
 }
 
-char stack__cmp(const Stack s, const Stack t, compare_func_t compare_op) {
-    if (!s || !t || !compare_op) return FAILURE;
+char stack__cmp(const Stack s, const Stack t, compare_func_t compare) {
+    if (!s || !t || !compare) return FAILURE;
 
     if (s == t) return true;
     if (s->size != t->size) return false;
 
-    return ARRAY_CMP(s->elems, t->elems, s->size);
+    return ARRAY_CMP(s->elems, t->elems, compare, s->size);
 }
 
 void stack__foreach(const Stack s, const applying_func_t func, void *user_data)
 {
-    if (!s || !s->size) return;
+    if (!s || !s->size || !func) return;
 
     ARRAY_FOREACH(s->elems, func, user_data, 0, s->size, s->copy_enabled);
 }
@@ -232,11 +232,11 @@ void stack__shuffle(const Stack s)
     ARRAY_SHUFFLE(s->elems, 0, s->size);
 }
 
-inline void stack__sort(const Stack s, const compare_func_t compare_op)
+inline void stack__sort(const Stack s, const compare_func_t compare)
 {
     if (!s || s->size < 2) return;
 
-    qsort(s->elems, s->size, sizeof(elem_t), compare_op);
+    qsort(s->elems, s->size, sizeof(elem_t), compare);
 }
 
 void stack__clean_NULL(Stack s)
@@ -266,15 +266,15 @@ void stack__free(const Stack s)
     free(s);
 }
 
-void stack__debug(const Stack s, const debug_operator_t debug_op)
+void stack__debug(const Stack s, const debug_func_t debug)
 {
     setvbuf (stdout, NULL, _IONBF, 0);
 
     printf("\n");
     if (!s) {
         printf("\tInvalid stack (NULL)");
-    } else if (!debug_op) {
-        printf("\tInvalid degug operator (NULL)");
+    } else if (!debug) {
+        printf("\tInvalid degug function (NULL)");
     } else {
         stack__is_copy_enabled(s) ? printf("\tStack with copy enabled:")
                                   : printf("\tStack with copy disabled:");
@@ -282,7 +282,7 @@ void stack__debug(const Stack s, const debug_operator_t debug_op)
         printf("{ ");
         for (size_t i = 0; i < s->capacity; i++) {
             if (i < s->size) {
-                debug_op(s->elems[i]);
+                debug(s->elems[i]);
             } else {
                 printf("_ ");
             }

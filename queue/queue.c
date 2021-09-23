@@ -233,18 +233,18 @@ Queue queue__copy(const Queue q) {
     return copy;
 }
 
-char queue__cmp(const Queue q, const Queue w, compare_func_t compare_op) {
-    if (!q || !w || !compare_op) return FAILURE;
+char queue__cmp(const Queue q, const Queue w, compare_func_t compare) {
+    if (!q || !w || !compare) return FAILURE;
 
     if (q == w) return true;
     if (q->size != w->size) return false;
 
-    return ARRAY_CMP(q->elems + q->front, w->elems + w->front, q->size);
+    return ARRAY_CMP(q->elems + q->front, w->elems + w->front, compare, q->size);
 }
 
 void queue__foreach(const Queue q, const applying_func_t func, void *user_data)
 {
-    if (!q || !q->size) return;
+    if (!q || !q->size || !func) return;
 
     ARRAY_FOREACH(q->elems, func, user_data, q->front, q->back, q->copy_enabled);
 }
@@ -265,11 +265,11 @@ void queue__shuffle(const Queue q)
     ARRAY_SHUFFLE(q->elems, q->front, q->back);
 }
 
-inline void queue__sort(const Queue q, const compare_func_t compare_op)
+inline void queue__sort(const Queue q, const compare_func_t compare)
 {
     if (!q || q->size < 2) return;
 
-    qsort(q->elems + q->front, q->size, sizeof(elem_t), compare_op);
+    qsort(q->elems + q->front, q->size, sizeof(elem_t), compare);
 }
 
 void queue__clean_NULL(const Queue q)
@@ -303,15 +303,15 @@ void queue__free(const Queue q)
     free(q);
 }
 
-void queue__debug(const Queue q, const debug_operator_t debug_op)
+void queue__debug(const Queue q, const debug_func_t debug)
 {
     setvbuf (stdout, NULL, _IONBF, 0);
 
     printf("\n");
     if (!q) {
         printf("\tInvalid queue (NULL)");
-    } else if (!debug_op) {
-        printf("\tInvalid degug operator (NULL)");
+    } else if (!debug) {
+        printf("\tInvalid degug function (NULL)");
     } else {
         queue__is_copy_enabled(q) ? printf("\tQueue with copy enabled:")
                                   : printf("\tQueue with copy disabled:");
@@ -322,7 +322,7 @@ void queue__debug(const Queue q, const debug_operator_t debug_op)
         printf("{ ");
         for (size_t i = 0; i < q->capacity; i++) {
             if (q->front <= i && i < q->back) {
-                debug_op(q->elems[i]);
+                debug(q->elems[i]);
             } else {
                 printf("_ ");
             }

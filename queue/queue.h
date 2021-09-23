@@ -23,65 +23,65 @@ typedef struct QueueSt * Queue;
 
 
 /**
- * @brief Create an empty queue with copy disabled
- * @note Complexity: O(1)
+ * @brief create an empty queue with copy disabled
+ * @note complexity: O(1)
  * @return a pointer to queue on success, NULL on failure
  */
 Queue queue__empty_copy_disabled(void);
 
 
 /**
- * @brief Create an empty queue with copy enabled
- * @note Complexity: O(1)
- * @param copy_op Copy operator
- * @param delete_op Delete operator
+ * @brief create an empty queue with copy enabled
+ * @note complexity: O(1)
+ * @param copy_op copy operator
+ * @param delete_op delete operator
  * @return a pointer to queue on success, NULL on failure
  */
 Queue queue__empty_copy_enabled(const copy_operator_t copy_op, const delete_operator_t delete_op);
 
 
 /**
- * @brief Checks if the queue has the copy operator enabled
- * @note Complexity: O(1)
- * @param q The queue
+ * @brief checks if the queue has the copy operator enabled
+ * @note complexity: O(1)
+ * @param q the queue
  * @return 1 if the queue has copy enabled, 0 if not, -1 on failure
  */
 char queue__is_copy_enabled(const Queue q);
 
 
 /**
- * @brief Checks if the queue is empty
- * @note Complexity: O(1)
- * @param q The queue
+ * @brief checks if the queue is empty
+ * @note complexity: O(1)
+ * @param q the queue
  * @return 1 if the queue is empty, 0 if not, -1 on failure
  */
 char queue__is_empty(const Queue q);
 
 
 /**
- * @brief Number of elements in the queue
- * @note Complexity: O(1)
- * @param q The queue
- * @return an unsigned integer corresponding to the number of elements in the queue
+ * @brief number of elements in the queue
+ * @note complexity: O(1)
+ * @param q the queue
+ * @return  the number of elements contained in the queue on success, -1 on failure
  */
 size_t queue__size(const Queue q);
 
 
 /**
- * @brief Adds an element in the queue
- * @note Complexity: O(1)
- * @param q The queue
- * @param element The element to add
+ * @brief adds an element in the queue
+ * @note complexity: O(1)
+ * @param q the queue
+ * @param element the element to add
  * @return 0 on success, -1 on failure
  */
 char queue__enqueue(const Queue q, const elem_t element);
 
 
 /**
- * @brief Retrieve a copy of the front element (similar to 'queue__peek_front' but the element is removed of the queue)
- * @details The element is stored in 'front' variable and must be manually freed by user afterward
- * @note Complexity: O(1)
- * @param q The queue
+ * @brief retrieve a copy of the front element (similar to 'queue__peek_front' but the element is removed of the queue)
+ * @details the element is stored in 'front' variable and must be manually freed by user afterward
+ * @note complexity: O(1)
+ * @param q the queue
  * @param front pointer to storage variable
  * @return 0 on success, -1 on failure
  */
@@ -89,10 +89,10 @@ char queue__dequeue(const Queue q, elem_t *front);
 
 
 /**
- * @brief Retrieve the element on the front of the queue without removing it
- * @details The element is stored in 'front' variable and must be manually freed by user afterward
- * @note Complexity: O(1)
- * @param q The queue
+ * @brief retrieve the element on the front of the queue without removing it
+ * @details the element is stored in 'front' variable and must be manually freed by user afterward
+ * @note complexity: O(1)
+ * @param q the queue
  * @param front pointer to storage variable
  * @return 0 on success, -1 on failure
  */
@@ -100,10 +100,10 @@ char queue__peek_front(const Queue q, elem_t *front);
 
 
 /**
- * @brief Retrieve the element on the back of the queue without removing it
- * @details The element is stored in 'back' variable and must be manually freed by user afterward
- * @note Complexity: O(1)
- * @param q The queue
+ * @brief retrieve the element on the back of the queue without removing it
+ * @details the element is stored in 'back' variable and must be manually freed by user afterward
+ * @note complexity: O(1)
+ * @param q the queue
  * @param back pointer to storage variable
  * @return 0 on success, -1 on failure
  */
@@ -111,10 +111,10 @@ char queue__peek_back(const Queue q, elem_t *back);
 
 
 /**
- * @brief Retrieve the element at i position of the queue without removing it
- * @details The element is stored in 'top' variable and must be manually freed by user afterward
- * @note Complexity: O(1)
- * @param q The queue
+ * @brief Retrieve the element at 'i' position of the queue without removing it
+ * @details The element is stored in 'nth' variable and must be manually freed by user afterward
+ * @note complexity: O(1)
+ * @param q the queue
  * @param nth pointer to storage variable
  * @param i position
  * @return 0 on success, -1 on failure
@@ -123,128 +123,128 @@ char queue__peek_nth(const Queue q, elem_t *nth, const size_t i);
 
 
 /**
- * @brief Enqueues the first 'n_elems' elements of the given array in the queue
- * @details If q == NULL creates a new queue with copy disabled by default
- * @details If A == NULL returns the queue unaltered
- * @note Complexity: O(n)
- * @param q The queue
- * @param A The array
- * @param n_elems Number of elements to push, must be less than or equal to the length of the array
- * @param size Byte size of the elements contained in the given array
+ * @brief enqueues the first 'n_elems' elements of the given array
+ * @details if q == NULL creates a new queue with copy disabled by default
+ * @details if A == NULL returns the queue unaltered
+ * @note complexity: O(n)
+ * @param q the queue
+ * @param A the array
+ * @param n_elems number of elements to push, must be less than or equal to the length of the array
+ * @param size byte size of the elements contained in the given array
  * @return a pointer to queue on success, NULL on failure
  */
 Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t size);
 
 
 /**
- * @brief Dump all elements of the queue into an array
- * @details The array must be manually freed by user afterward, the queue is empty after use of this function
- * @note Complexity: O(n)
- * @param q The queue
- * @return a pointer to dynamically allocated array which contains all the elements from the given queue on success, NULL on failure
+ * @brief dump all elements of the queue into an array
+ * @details the array must be manually freed by user afterward, the queue is empty after use of this function
+ * @note complexity: O(n)
+ * @param q the queue
+ * @return a pointer to dynamically allocated array on success, NULL on failure
  */
 elem_t *queue__dump(const Queue q);
 
 
 /**
- * @brief Retrieves a copy of all items in a queue stored in array
- * @details The array must be manually freed by user afterward
- * @note Complexity: O(n)
- * @param q The queue
- * @return a pointer to dynamically allocated array which contains all the elements from the given queue on success, NULL on failure
+ * @brief retrieves a copy of all items in a queue stored in array
+ * @details the array must be manually freed by user afterward
+ * @note complexity: O(n)
+ * @param q the queue
+ * @return a pointer to dynamically allocated array on success, NULL on failure
  */
 elem_t *queue__to_array(const Queue q);
 
 
 /**
- * @brief Retrieves a copy of the entire queue
- * @details If copy is enabled the new one contains a copy of all elements of the original queue
- * @note Complexity: O(n)
- * @param q The queue
- * @return a pointer to the new queue on success, NULL on failure
+ * @brief retrieves a copy of the entire queue
+ * @details if copy is enabled the new one contains a copy of all elements of the original queue
+ * @note complexity: O(n)
+ * @param q the queue
+ * @return a pointer to queue on success, NULL on failure
  */
 Queue queue__copy(const Queue q);
 
 
 /**
- * @brief Compare two queues including all their elements
- * @note Complexity: O(n)
- * @param q The queue
- * @param w The queue
- * @param compare_op The compare function
- * @return 1 if the queues are equal including all their elements, 0 if the queues are not equal, -1 on failure
+ * @brief compare two queues including all their elements
+ * @note complexity: O(n)
+ * @param q first queue
+ * @param w second queue
+ * @param compare the compare function
+ * @return 1 if the queues are equal including all their elements, 0 if not, -1 on failure
  */
-char queue__cmp(const Queue q, const Queue w, compare_func_t compare_op);
+char queue__cmp(const Queue q, const Queue w, compare_func_t compare);
 
 
 /**
- * @brief Maps the given function to the queue
- * @note Complexity: O(n) with copy enabled, O(n²) with copy disabled
- * @param q The queue
- * @param f The applying function
- * @param user_data Optional data to be used as an additional argument of the application function
+ * @brief maps the given function to the queue
+ * @note complexity: O(n) with copy enabled, O(n²) with copy disabled
+ * @param q the queue
+ * @param func the applying function
+ * @param user_data optional data to be used as an additional argument of the application function
  */
 void queue__foreach(const Queue q, const applying_func_t func, void *user_data);
 
 
 /**
- * @brief Revert the queue
- * @note Complexity: O(n)
- * @param s The queue
+ * @brief reverse the queue
+ * @note complexity: O(n)
+ * @param s the queue
  */
 void queue__reverse(const Queue q);
 
 
 /**
- * @brief Randomly shuffles the queue
- * @note Complexity: O(n)
- * @param q The queue
+ * @brief shuffles the queue
+ * @note complexity: O(n)
+ * @param q the queue
  * */
 void queue__shuffle(const Queue q);
 
 
 /**
- * @brief Uses qsort to sort the queue elements using the comparison criteria given by the received compare function
- * @note Complexity: O(n*log(n))
- * @param q The queue
- * @param compare_op The compare function
+ * @brief uses qsort to sort the queue elements using the given compare function
+ * @note complexity: O(n*log(n))
+ * @param q the queue
+ * @param compare the compare function
  */
-void queue__sort(const Queue q, const compare_func_t compare_op);
+void queue__sort(const Queue q, const compare_func_t compare);
 
 
 /**
- * @brief Removes all NULL pointers in the queue
- * @note Complexity: O(n)
- * @param q The queue
+ * @brief removes all NULL pointers in the queue
+ * @note complexity: O(n)
+ * @param q the queue
  */
 void queue__clean_NULL(const Queue q);
 
 
 /**
- * @brief Removes all elements in the queue
- * @details If copy is enabled frees all allocated memory used by these elements, the queue is still usable afterwards
- * @note Complexity: O(n) with copy enabled, O(1) with copy disabled
- * @param q The queue
+ * @brief removes all elements in the queue
+ * @details if copy is enabled frees all allocated memory used by these elements, the queue is still usable afterwards
+ * @note complexity: O(n) with copy enabled, O(1) with copy disabled
+ * @param q the queue
  */
 void queue__clear(const Queue q);
 
 
 /**
- * @brief Frees all allocated memory used by the queue
- * @details If copy is enabled frees all memory used by the elements in the queue
- * @note Complexity: O(n) with copy enabled, O(1) with copy disabled
- * @param q The queue
+ * @brief frees all allocated memory used by the queue
+ * @details if copy is enabled frees all memory used by the elements in the queue
+ * @note complexity: O(n) with copy enabled, O(1) with copy disabled
+ * @param q the queue
  */
 void queue__free(const Queue q);
 
 
 /**
- * @brief Prints the queue's content
- * @note Complexity: O(n)
- * @param q The queue
- * @param debug_op debug operator
+ * @brief prints the queue's content
+ * @note complexity: O(n)
+ * @param q the queue
+ * @param debug the debug function
  */
-void queue__debug(const Queue q, const debug_operator_t debug_op);
+void queue__debug(const Queue q, const debug_func_t debug);
 
 
 #endif

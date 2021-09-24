@@ -211,7 +211,7 @@ char stack__cmp(const Stack s, const Stack t, compare_func_t cmp) {
 
 void stack__foreach(const Stack s, const applying_func_t func, void *user_data)
 {
-    if (!s || !s->size || !func) return;
+    if (!s || !func) return;
 
     ARRAY_FOREACH(s->elems, func, user_data, 0, s->size, s->copy_enabled);
 }
@@ -230,6 +230,13 @@ char stack__all(const Stack s, const filter_func_t pred, void *user_data)
     return ARRAY_ALL(s, 0, s->size, pred, user_data);
 }
 
+char stack__any(const Stack s, const filter_func_t pred, void *user_data)
+{
+    if (!s || !pred) return FAILURE;
+
+    return ARRAY_ANY(s, 0, s->size, pred, user_data);
+}
+
 void stack__reverse(const Stack s)
 {
     if (!s || s->size < 2) return;
@@ -241,14 +248,14 @@ void stack__reverse(const Stack s)
 
 void stack__shuffle(const Stack s)
 {
-    if (!s || s->size < 2) return;
+    if (!s) return;
 
     ARRAY_SHUFFLE(s->elems, 0, s->size);
 }
 
 inline void stack__sort(const Stack s, const compare_func_t cmp)
 {
-    if (!s || !cmp || s->size < 2) return;
+    if (!s || !cmp) return;
 
     qsort(s->elems, s->size, sizeof(elem_t), cmp);
 }

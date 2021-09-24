@@ -244,7 +244,7 @@ char queue__cmp(const Queue q, const Queue w, compare_func_t cmp) {
 
 void queue__foreach(const Queue q, const applying_func_t func, void *user_data)
 {
-    if (!q || !q->size || !func) return;
+    if (!q || !func) return;
 
     ARRAY_FOREACH(q->elems, func, user_data, q->front, q->back, q->copy_enabled);
 }
@@ -265,6 +265,13 @@ char queue__all(const Queue q, const filter_func_t pred, void *user_data)
     return ARRAY_ALL(q, q->front, q->back, pred, user_data);
 }
 
+char queue__any(const Queue q, const filter_func_t pred, void *user_data)
+{
+    if (!q || !pred) return FAILURE;
+
+    return ARRAY_ANY(q, q->front, q->back, pred, user_data);
+}
+
 void queue__reverse(const Queue q)
 {
     if (!q || q->size < 2) return;
@@ -276,14 +283,14 @@ void queue__reverse(const Queue q)
 
 void queue__shuffle(const Queue q)
 {
-    if (!q || q->size < 2) return;
+    if (!q) return;
 
     ARRAY_SHUFFLE(q->elems, q->front, q->back);
 }
 
 inline void queue__sort(const Queue q, const compare_func_t cmp)
 {
-    if (!q || !cmp || q->size < 2) return;
+    if (!q || !cmp) return;
 
     qsort(q->elems + q->front, q->size, sizeof(elem_t), cmp);
 }

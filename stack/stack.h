@@ -198,6 +198,17 @@ char stack__all(const Stack s, const filter_func_t pred, void *user_data);
 
 
 /**
+ * @brief verifies that at least one element of the stack satisfies the predicate
+ * @note complexity: O(n)
+ * @param s the stack
+ * @param pred the predicate
+ * @param user_data optional data to be used as an additional argument of the predicate
+ * @return 1 if any element satisfies the predicate , 0 if not, -1 on failure
+ */
+char stack__any(const Stack s, const filter_func_t pred, void *user_data);
+
+
+/**
  * @brief reverse the stack
  * @note complexity: O(n)
  * @param s the stack

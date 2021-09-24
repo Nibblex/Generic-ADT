@@ -379,11 +379,30 @@ TEST_ON_EMPTY_QUEUE (
 
 TEST_ON_NON_EMPTY_QUEUE (
     test_queue__filter_and_all_on_non_empty_queue, false,
-    u32 value = 2;
-    queue__filter(q, predicate, &value);
-    queue__filter(w, predicate, &value);
+    u32 value1 = 2;
+    u32 value2 = 3;
+    queue__filter(q, predicate, &value1);
+    queue__filter(w, predicate, &value1);
 
-    result = queue__all(q, predicate, &value) && queue__all(w, predicate, &value);
+    result &= queue__all(q, predicate, &value1) && queue__all(w, predicate, &value1);
+    result &= !queue__all(q, predicate, &value2) && !queue__all(w, predicate, &value2);
+)
+
+/* ANY */
+TEST_ON_EMPTY_QUEUE (
+    test_queue__any_on_empty_queue,
+    u32 value = 2;
+
+    result = !queue__any(q, predicate, &value) && !queue__any(w, predicate, &value);
+)
+
+TEST_ON_NON_EMPTY_QUEUE (
+    test_queue__any_on_non_empty_queue, false,
+    u32 value1 = 2;
+    u32 value2 = 3;
+
+    result &= queue__any(q, predicate, &value1) && queue__any(w, predicate, &value1);
+    result &= queue__any(q, predicate, &value2) && queue__any(w, predicate, &value2);
 )
 
 /* REVERSE */
@@ -479,6 +498,8 @@ int main(void)
     print_test_result(test_queue__foreach_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__filter_and_all_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__filter_and_all_on_non_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__any_on_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__any_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__reverse_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__reverse_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__shuffle_on_empty_queue(false), &nb_success, &nb_tests);

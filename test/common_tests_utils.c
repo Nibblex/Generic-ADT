@@ -86,3 +86,8 @@ void plus_op(void *v, void *user_data)
 {
     *(int*)v += *(int *)user_data;
 }
+
+char predicate(void *v, void *user_data)
+{
+    return *(int*)v % *(int*)user_data == 0;
+}

@@ -216,6 +216,13 @@ void stack__foreach(const Stack s, const applying_func_t func, void *user_data)
     ARRAY_FOREACH(s->elems, func, user_data, 0, s->size, s->copy_enabled);
 }
 
+void stack__filter(Stack s, filter_func_t pred, void *user_data)
+{
+    if (!s) return;
+
+    ARRAY_FILTER(s, 0, s->size, pred, user_data);
+}
+
 void stack__reverse(const Stack s)
 {
     if (!s || s->size < 2) return;

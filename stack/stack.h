@@ -177,6 +177,16 @@ void stack__foreach(const Stack s, const applying_func_t func, void *user_data);
 
 
 /**
+ * @brief filter the given stack using a predicate
+ * @note complexity: O(n)
+ * @param s the stack
+ * @param pred the predicate
+ * @param user_data optional data to be used as an additional argument of the predicate
+ */
+void stack__filter(const Stack s, const filter_func_t pred, void *user_data);
+
+
+/**
  * @brief reverse the stack
  * @note complexity: O(n)
  * @param s the stack

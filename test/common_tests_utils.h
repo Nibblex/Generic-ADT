@@ -19,16 +19,6 @@
         F(B, &__elems[i]); \
     }
 
-#define ADD_i32_RAND(F, N, A, B) do { \
-    int r; \
-    srand((u32)time(NULL)); \
-    for (u32 i = 0; i < N; i++) { \
-        r = rand() % 20; \
-        F(A, &r); \
-        F(B, &r); \
-    } \
-} while (false)
-
 #define DEBUG_char(F, A, B, C) do { \
     if (debug) { \
         printf(C); \
@@ -47,6 +37,52 @@
 
 #define FREE(F, A, B, C, D) \
     F(A); F(B); F(C); F(D)
+
+#define COMPARE(F, N, A, B, COPY_EN) \
+({ \
+    int __result = true; \
+    elem_t elem_A, elem_B; \
+    for (u32 i = 0; i < N; i++) { \
+        F(A, &elem_A, i); \
+        F(B, &elem_B, i); \
+        __result &= *(u32*)elem_A == *(u32*)elem_B; \
+        if (COPY_EN) { \
+            free(elem_A); \
+            free(elem_B); \
+        } \
+    } \
+    __result; \
+})
+
+#define COMPARE2(F, N, ARR, A, COPY_EN) \
+({ \
+    int __result = true; \
+    elem_t elem_A; \
+    for (u32 i = 0; i < N; i++) { \
+        F(A, &elem_A, i); \
+        __result &= *(u32*)elem_A == ARR[i]; \
+        if (COPY_EN) { \
+            free(elem_A); \
+        } \
+    } \
+    __result; \
+})
+
+#define IS_SORTED(F, N, A, COPY_EN) \
+({ \
+    int __result = true; \
+    elem_t elem_A, elem_B; \
+    for (u32 i = 0; i + 1 < N; i++) { \
+        F(A, &elem_A, i); \
+        F(A, &elem_B, i+1); \
+        __result &= *(u32*)elem_A <= *(u32*)elem_B; \
+        if (COPY_EN) { \
+            free(elem_A); \
+            free(elem_B); \
+        } \
+    } \
+    __result; \
+})
 
 typedef unsigned int u32;
 
@@ -80,5 +116,6 @@ void operator_debug_i32(const int *p_value);
 void operator_debug_u32(const u32 *p_value);
 void operator_debug_char(const char *p_value);
 void plus_op(void *v, void *user_data);
+char predicate(void *v, void *user_data);
 
 #endif

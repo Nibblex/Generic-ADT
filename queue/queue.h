@@ -188,6 +188,16 @@ void queue__foreach(const Queue q, const applying_func_t func, void *user_data);
 
 
 /**
+ * @brief filter the given queue using a predicate
+ * @note complexity: O(n)
+ * @param q the queue
+ * @param pred the predicate
+ * @param user_data optional data to be used as an additional argument of the predicate
+ */
+void queue__filter(const Queue q, const filter_func_t pred, void *user_data);
+
+
+/**
  * @brief reverse the queue
  * @note complexity: O(n)
  * @param s the queue

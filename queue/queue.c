@@ -249,6 +249,13 @@ void queue__foreach(const Queue q, const applying_func_t func, void *user_data)
     ARRAY_FOREACH(q->elems, func, user_data, q->front, q->back, q->copy_enabled);
 }
 
+void queue__filter(Queue q, filter_func_t pred, void *user_data)
+{
+    if (!q) return;
+
+    ARRAY_FILTER(q, q->front, q->back, pred, user_data);
+}
+
 void queue__reverse(const Queue q)
 {
     if (!q || q->size < 2) return;

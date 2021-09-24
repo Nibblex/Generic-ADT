@@ -72,33 +72,48 @@
 })
 
 #define ARRAY_FOREACH(__ptr, __func, __user_data, __start, __end, __copy_enabled) do { \
+    elem_t *__elems = (__ptr); \
     char __repeated; \
     if (__copy_enabled) { \
         for (size_t i = (__start); i < (__end); i++) { \
-            (__func)((__ptr)[i], (__user_data)); \
+            (__func)(__elems[i], (__user_data)); \
         } \
     } else { \
         __repeated = false; \
         for (size_t i = (__start); i < (__end); i++) { \
             for (size_t j = (__start); j < i && !__repeated; j++) { \
-                if ((__ptr)[i] == (__ptr)[j]) { \
+                if (__elems[i] == __elems[j]) { \
                     __repeated = true; \
                 } \
             } \
             if (!__repeated) { \
-                (__func)((__ptr)[i], (__user_data)); \
+                (__func)(__elems[i], (__user_data)); \
             } \
             __repeated = false; \
         } \
     } \
 } while(false)
 
+#define ARRAY_FILTER(__ptr, __start, __end, __pred, __user_data) \
+    elem_t *__elems = (__ptr)->elems; \
+    size_t k = 0; \
+    for (size_t i = (__start); i < (__end); i++) { \
+        if ((__pred)(__elems[i], (__user_data))) { \
+            __elems[k] = __elems[i]; \
+            k++; \
+        } else if ((__ptr)->operator_delete) { \
+            (__ptr)->operator_delete(__elems[i]); \
+        } \
+    } \
+    (__ptr)->size = k
+
 #define ARRAY_SHUFFLE(__ptr, __start, __end) do { \
+    elem_t *__elems = (__ptr); \
     size_t __a, __b; \
     for (size_t i = (__start); i < (__end); i++) { \
         __a = ((__start) + (size_t)(rand() % (int)((__start) + (__end)))); \
         __b = ((__start) + (size_t)(rand() % (int)((__start) + (__end)))); \
-        PTR_SWAP((__ptr)[__a], (__ptr)[__b]); \
+        PTR_SWAP(__elems[__a], __elems[__b]); \
     } \
 } while (false)
 
@@ -114,9 +129,10 @@
     (__ptr)->size = k
 
 #define FREE_ELEMS(__ptr, __start, __end) do { \
+    elem_t *__elems = (__ptr)->elems; \
     if ((__ptr)->copy_enabled) { \
         for (size_t i = (__start); i < (__end); i++) { \
-            (__ptr)->operator_delete((__ptr)->elems[i]); \
+            (__ptr)->operator_delete(__elems[i]); \
         } \
     } \
 } while (false)
@@ -140,6 +156,11 @@ typedef void (*delete_operator_t)(elem_t);
  * Function pointer for lambda applying
  */
 typedef void (*applying_func_t)(elem_t, void *);
+
+/**
+ * Function pointer for lambda applying
+ */
+typedef char (*filter_func_t)(elem_t, void *);
 
 /**
  * Function pointer for element comparison

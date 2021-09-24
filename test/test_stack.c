@@ -349,6 +349,25 @@ TEST_ON_NON_EMPTY_STACK (
     result &= COMPARE3(stack__peek_nth, stack__size(t), t, value, false);
 )
 
+/* FILTER AND ALL */
+TEST_ON_EMPTY_STACK (
+    test_stack__filter_and_all_on_empty_stack,
+    u32 value = 2;
+    stack__filter(s, predicate, &value);
+    stack__filter(t, predicate, &value);
+
+    result = stack__all(s, predicate, &value) && stack__all(t, predicate, &value);
+)
+
+TEST_ON_NON_EMPTY_STACK (
+    test_stack__filter_and_all_on_non_empty_stack, false,
+    u32 value = 2;
+    stack__filter(s, predicate, &value);
+    stack__filter(t, predicate, &value);
+
+    result = stack__all(s, predicate, &value) && stack__all(t, predicate, &value);
+)
+
 /* REVERSE */
 TEST_ON_EMPTY_STACK (
     test_stack__reverse_on_empty_stack,
@@ -438,6 +457,8 @@ int main(void)
 
     print_test_result(test_stack__foreach_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__foreach_on_non_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__filter_and_all_on_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__filter_and_all_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__reverse_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__reverse_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__shuffle_on_empty_stack(false), &nb_success, &nb_tests);

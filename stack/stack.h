@@ -187,6 +187,17 @@ void stack__filter(const Stack s, const filter_func_t pred, void *user_data);
 
 
 /**
+ * @brief verifies that all elements of the stack satisfy the predicate
+ * @note complexity: O(n)
+ * @param s the stack
+ * @param pred the predicate
+ * @param user_data optional data to be used as an additional argument of the predicate
+ * @return 1 if all elements satisfy the predicate, 0 if not, -1 on failure
+ */
+char stack__all(const Stack s, const filter_func_t pred, void *user_data);
+
+
+/**
  * @brief reverse the stack
  * @note complexity: O(n)
  * @param s the stack

@@ -107,6 +107,15 @@
     } \
     (__ptr)->size = k
 
+#define ARRAY_ALL(__ptr, __start, __end, __pred, __user_data) \
+({ \
+    char res = true; \
+    for (size_t i = (__start); i < (__end); i++) { \
+        res &= __pred(__ptr->elems[i], __user_data); \
+    } \
+    res; \
+})
+
 #define ARRAY_SHUFFLE(__ptr, __start, __end) do { \
     elem_t *__elems = (__ptr); \
     size_t __a, __b; \

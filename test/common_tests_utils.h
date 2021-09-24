@@ -13,10 +13,10 @@
 #define TEST_FAILURE 0
 #endif
 
-#define ADD_u32(F, N, __elems, A, B) \
+#define ADD_u32(F, N, ARR, A, B) \
     for (u32 i = 0; i < N; i++) { \
-        F(A, &__elems[i]); \
-        F(B, &__elems[i]); \
+        F(A, &ARR[i]); \
+        F(B, &ARR[i]); \
     }
 
 #define DEBUG_char(F, A, B, C) do { \
@@ -61,6 +61,34 @@
     for (u32 i = 0; i < N; i++) { \
         F(A, &elem_A, i); \
         __result &= *(u32*)elem_A == ARR[i]; \
+        if (COPY_EN) { \
+            free(elem_A); \
+        } \
+    } \
+    __result; \
+})
+
+#define COMPARE3(F, N, A, VAL, COPY_EN) \
+({ \
+    int __result = true; \
+    elem_t elem_A; \
+    for (u32 i = 0; i < N; i++) { \
+        F(A, &elem_A, i); \
+        __result &= *(u32*)elem_A == i + VAL; \
+        if (COPY_EN) { \
+            free(elem_A); \
+        } \
+    } \
+    __result; \
+})
+
+#define IS_REVERSE(F, N, A, COPY_EN) \
+({ \
+    int __result = true; \
+    elem_t elem_A; \
+    for (u32 i = 0; i < N; i++) { \
+        F(A, &elem_A, i); \
+        __result &= *(u32*)elem_A == N-i-1; \
         if (COPY_EN) { \
             free(elem_A); \
         } \

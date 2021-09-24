@@ -358,17 +358,13 @@ TEST_ON_EMPTY_QUEUE (
 )
 
 TEST_ON_NON_EMPTY_QUEUE (
-    test_queue__foreach_on_non_empty_queue, true,
+    test_queue__foreach_on_non_empty_queue, false,
     u32 value = 1;
     queue__foreach(q, plus_op, &value);
     queue__foreach(w, plus_op, &value);
 
-    A = queue__to_array(q);
-    B = queue__to_array(w);
-
-    for (u32 i = 0; i < N; i++) {
-        result |= i + value == *(u32 *)A[i] && N<<1 == *(u32 *)B[i];
-    }
+    result &= COMPARE3(queue__peek_nth, queue__size(q), q, value, true);
+    result &= COMPARE3(queue__peek_nth, queue__size(w), w, value, false);
 )
 
 /* REVERSE */
@@ -379,13 +375,12 @@ TEST_ON_EMPTY_QUEUE (
 )
 
 TEST_ON_NON_EMPTY_QUEUE (
-    test_queue__reverse_on_non_empty_queue, true,
+    test_queue__reverse_on_non_empty_queue, false,
     queue__reverse(q);
-    A = queue__to_array(q);
+    queue__reverse(w);
 
-    for (u32 i = 0; i < N; i++) {
-        result |= *(int *)A[i] != (int)(N-i-1);
-    }
+    result &= IS_REVERSE(queue__peek_nth, queue__size(q), q, true);
+    result &= IS_REVERSE(queue__peek_nth, queue__size(w), w, false);
 )
 
 /* SHUFFLE */

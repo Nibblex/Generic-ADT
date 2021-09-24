@@ -340,17 +340,13 @@ TEST_ON_EMPTY_STACK (
 )
 
 TEST_ON_NON_EMPTY_STACK (
-    test_stack__foreach_on_non_empty_stack, true,
+    test_stack__foreach_on_non_empty_stack, false,
     u32 value = 1;
     stack__foreach(s, plus_op, &value);
     stack__foreach(t, plus_op, &value);
 
-    A = stack__to_array(s);
-    B = stack__to_array(t);
-
-    for (u32 i = 0; i < N; i++) {
-        result |= i + value == *(u32 *)A[i] && N<<1 == *(u32 *)B[i];
-    }
+    result &= COMPARE3(stack__peek_nth, stack__size(s), s, value, true);
+    result &= COMPARE3(stack__peek_nth, stack__size(t), t, value, false);
 )
 
 /* REVERSE */
@@ -361,13 +357,12 @@ TEST_ON_EMPTY_STACK (
 )
 
 TEST_ON_NON_EMPTY_STACK (
-    test_stack__reverse_on_non_empty_stack, true,
+    test_stack__reverse_on_non_empty_stack, false,
     stack__reverse(s);
-    A = stack__to_array(s);
+    stack__reverse(t);
 
-    for (u32 i = 0; i < N; i++) {
-        result |= *(int *)A[i] != (int)(N-i-1);
-    }
+    result &= IS_REVERSE(stack__peek_nth, stack__size(s), s, true);
+    result &= IS_REVERSE(stack__peek_nth, stack__size(t), t, false);
 )
 
 /* SHUFFLE */

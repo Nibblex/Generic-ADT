@@ -22,7 +22,7 @@
 #define PTR_SWAP(__ptr_1, __ptr_2) \
     elem_t __temp = (__ptr_1); \
     (__ptr_1) = (__ptr_2); \
-    (__ptr_1) = (__temp)
+    (__ptr_2) = __temp
 
 #define ARRAY_RESIZE(__ptr, __new_capacity) \
 ({ \
@@ -62,11 +62,11 @@
     (__dst)->size = (__src)->size; \
 })
 
-#define ARRAY_CMP(__ptr_1, __ptr_2, __compare, __n_elems) \
+#define ARRAY_CMP(__ptr_1, __ptr_2, __cmp, __n_elems) \
 ({ \
     char res = true; \
     for (size_t i = 0; i < (__n_elems); i++) { \
-        res &= (char)!(__compare)((__ptr_1) + i, (__ptr_2) + i); \
+        res &= (char)!(__cmp)((__ptr_1) + i, (__ptr_2) + i); \
     } \
     res; \
 })

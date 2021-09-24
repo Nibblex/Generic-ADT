@@ -160,10 +160,10 @@ Stack stack__copy(const Stack s);
  * @note complexity: O(n)
  * @param s first Stack
  * @param t second Stack
- * @param compare the compare function
+ * @param cmp the compare function
  * @return 1 if the stacks are equal including all their elements, 0 if not, -1 on failure
  */
-char stack__cmp(const Stack s, const Stack t, compare_func_t compare);
+char stack__cmp(const Stack s, const Stack t, compare_func_t cmp);
 
 
 /**
@@ -206,9 +206,9 @@ void stack__shuffle(const Stack s);
  * @brief uses qsort to sort the stack elements using the given compare function
  * @note complexity: O(n*log(n))
  * @param s the stack
- * @param compare the compare function
+ * @param cmp the compare function
  */
-void stack__sort(const Stack s, const compare_func_t compare);
+void stack__sort(const Stack s, const compare_func_t cmp);
 
 
 /**

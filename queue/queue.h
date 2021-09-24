@@ -171,10 +171,10 @@ Queue queue__copy(const Queue q);
  * @note complexity: O(n)
  * @param q first queue
  * @param w second queue
- * @param compare the compare function
+ * @param cmp the compare function
  * @return 1 if the queues are equal including all their elements, 0 if not, -1 on failure
  */
-char queue__cmp(const Queue q, const Queue w, compare_func_t compare);
+char queue__cmp(const Queue q, const Queue w, compare_func_t cmp);
 
 
 /**
@@ -217,9 +217,9 @@ void queue__shuffle(const Queue q);
  * @brief uses qsort to sort the queue elements using the given compare function
  * @note complexity: O(n*log(n))
  * @param q the queue
- * @param compare the compare function
+ * @param cmp the compare function
  */
-void queue__sort(const Queue q, const compare_func_t compare);
+void queue__sort(const Queue q, const compare_func_t cmp);
 
 
 /**

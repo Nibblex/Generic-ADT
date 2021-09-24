@@ -233,13 +233,13 @@ Queue queue__copy(const Queue q) {
     return copy;
 }
 
-char queue__cmp(const Queue q, const Queue w, compare_func_t compare) {
-    if (!q || !w || !compare) return FAILURE;
+char queue__cmp(const Queue q, const Queue w, compare_func_t cmp) {
+    if (!q || !w || !cmp) return FAILURE;
 
     if (q == w) return true;
     if (q->size != w->size) return false;
 
-    return ARRAY_CMP(q->elems + q->front, w->elems + w->front, compare, q->size);
+    return ARRAY_CMP(q->elems + q->front, w->elems + w->front, cmp, q->size);
 }
 
 void queue__foreach(const Queue q, const applying_func_t func, void *user_data)
@@ -272,11 +272,11 @@ void queue__shuffle(const Queue q)
     ARRAY_SHUFFLE(q->elems, q->front, q->back);
 }
 
-inline void queue__sort(const Queue q, const compare_func_t compare)
+inline void queue__sort(const Queue q, const compare_func_t cmp)
 {
     if (!q || q->size < 2) return;
 
-    qsort(q->elems + q->front, q->size, sizeof(elem_t), compare);
+    qsort(q->elems + q->front, q->size, sizeof(elem_t), cmp);
 }
 
 void queue__clean_NULL(const Queue q)

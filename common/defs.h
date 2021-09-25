@@ -109,18 +109,20 @@
 
 #define ARRAY_ALL(__ptr, __start, __end, __pred, __user_data) \
 ({ \
+    elem_t *__elems = (__ptr); \
     char res = true; \
     for (size_t i = (__start); i < (__end); i++) { \
-        res &= __pred(__ptr->elems[i], __user_data); \
+        res &= (__pred)(__elems[i], (__user_data)); \
     } \
     res; \
 })
 
 #define ARRAY_ANY(__ptr, __start, __end, __pred, __user_data) \
 ({ \
+    elem_t *__elems = (__ptr); \
     char res = false; \
     for (size_t i = (__start); i < (__end); i++) { \
-        res |= __pred(__ptr->elems[i], __user_data); \
+        res |= (__pred)(__elems[i], (__user_data)); \
     } \
     res; \
 })

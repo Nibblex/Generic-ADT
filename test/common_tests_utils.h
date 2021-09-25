@@ -43,8 +43,8 @@
     int __result = true; \
     elem_t elem_A, elem_B; \
     for (u32 i = 0; i < N; i++) { \
-        F(A, &elem_A, i); \
-        F(B, &elem_B, i); \
+        F(A, i, &elem_A); \
+        F(B, i, &elem_B); \
         __result &= *(u32*)elem_A == *(u32*)elem_B; \
         if (COPY_EN) { \
             free(elem_A); \
@@ -59,7 +59,7 @@
     int __result = true; \
     elem_t elem_A; \
     for (u32 i = 0; i < N; i++) { \
-        F(A, &elem_A, i); \
+        F(A, i, &elem_A); \
         __result &= *(u32*)elem_A == ARR[i]; \
         if (COPY_EN) { \
             free(elem_A); \
@@ -73,7 +73,7 @@
     int __result = true; \
     elem_t elem_A; \
     for (u32 i = 0; i < N; i++) { \
-        F(A, &elem_A, i); \
+        F(A, i, &elem_A); \
         __result &= *(u32*)elem_A == i + VAL; \
         if (COPY_EN) { \
             free(elem_A); \
@@ -87,7 +87,7 @@
     int __result = true; \
     elem_t elem_A; \
     for (u32 i = 0; i < N; i++) { \
-        F(A, &elem_A, i); \
+        F(A, i, &elem_A); \
         __result &= *(u32*)elem_A == N-i-1; \
         if (COPY_EN) { \
             free(elem_A); \
@@ -101,8 +101,8 @@
     int __result = true; \
     elem_t elem_A, elem_B; \
     for (u32 i = 0; i + 1 < N; i++) { \
-        F(A, &elem_A, i); \
-        F(A, &elem_B, i+1); \
+        F(A, i, &elem_A); \
+        F(A, i+1, &elem_B); \
         __result &= *(u32*)elem_A <= *(u32*)elem_B; \
         if (COPY_EN) { \
             free(elem_A); \

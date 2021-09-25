@@ -175,15 +175,15 @@ TEST_ON_NON_EMPTY_STACK (
 /* PEEK_NTH */
 TEST_ON_EMPTY_STACK (
     test_stack__peek_nth_on_empty_stack,
-    result = (stack__peek_nth(s, NULL, 0) == -1 && stack__peek_nth(t, NULL, 0) == -1) ? TEST_SUCCESS : TEST_FAILURE;
+    result = (stack__peek_nth(s, 0, NULL) == -1 && stack__peek_nth(t, 0, NULL) == -1) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
 TEST_ON_NON_EMPTY_STACK (
     test_stack__peek_nth_on_non_empty_stack, false,
     elem_t nth_s = NULL;
     elem_t nth_t = NULL;
-    result = (!stack__peek_nth(s, &nth_s, N>>1)
-           && !stack__peek_nth(t, &nth_t, N>>1)
+    result = (!stack__peek_nth(s, N>>1, &nth_s)
+           && !stack__peek_nth(t, N>>1, &nth_t)
            && !stack__is_empty(s)
            && !stack__is_empty(t)
            && *(u32 *)nth_s == (N>>1)
@@ -208,16 +208,16 @@ TEST_ON_NON_EMPTY_STACK (
     elem_t pre_t2;
     elem_t post_t1;
     elem_t post_t2;
-    stack__peek_nth(s, &pre_s1, 2);
-    stack__peek_nth(s, &pre_s2, 5);
-    stack__peek_nth(t, &pre_t1, 2);
-    stack__peek_nth(t, &pre_t2, 5);
+    stack__peek_nth(s, 2, &pre_s1);
+    stack__peek_nth(s, 5, &pre_s2);
+    stack__peek_nth(t, 2, &pre_t1);
+    stack__peek_nth(t, 5, &pre_t2);
     result &= !stack__swap(s, 2, 5);
     result &= !stack__swap(t, 2, 5);
-    stack__peek_nth(s, &post_s1, 2);
-    stack__peek_nth(s, &post_s2, 5);
-    stack__peek_nth(t, &post_t1, 2);
-    stack__peek_nth(t, &post_t2, 5);
+    stack__peek_nth(s, 2, &post_s1);
+    stack__peek_nth(s, 5, &post_s2);
+    stack__peek_nth(t, 2, &post_t1);
+    stack__peek_nth(t, 5, &post_t2);
 
     result = *(u32*)pre_s1 == *(u32*)post_s2 && *(u32*)pre_s2 == *(u32*)post_s1;
     result = *(u32*)pre_t1 == *(u32*)post_t2 && *(u32*)pre_t2 == *(u32*)post_t1;

@@ -115,11 +115,11 @@ char queue__peek_back(const Queue q, elem_t *back);
  * @details The element is stored in 'nth' variable and must be manually freed by user afterward
  * @note complexity: O(1)
  * @param q the queue
- * @param nth pointer to storage variable
  * @param i position
+ * @param nth pointer to storage variable
  * @return 0 on success, -1 on failure
  */
-char queue__peek_nth(const Queue q, elem_t *nth, const size_t i);
+char queue__peek_nth(const Queue q, const size_t i, elem_t *nth);
 
 
 /**

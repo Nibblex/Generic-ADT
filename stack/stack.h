@@ -104,11 +104,11 @@ char stack__peek_top(const Stack s, elem_t *top);
  * @details the element is stored in 'nth' variable and must be manually freed by user afterward
  * @note complexity: O(1)
  * @param s the stack
- * @param nth pointer to storage variable
  * @param i position
+ * @param nth pointer to storage variable
  * @return 0 on success, -1 on failure
  */
-char stack__peek_nth(const Stack s, elem_t *nth, const size_t i);
+char stack__peek_nth(const Stack s, const size_t i, elem_t *nth);
 
 
 /**

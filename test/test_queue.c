@@ -193,15 +193,15 @@ TEST_ON_NON_EMPTY_QUEUE (
 /* PEEK_NTH */
 TEST_ON_EMPTY_QUEUE (
     test_queue__peek_nth_on_empty_queue,
-    result = (queue__peek_nth(q, NULL, 0) == -1 && queue__peek_nth(w, NULL, 0) == -1) ? TEST_SUCCESS : TEST_FAILURE;
+    result = (queue__peek_nth(q, 0, NULL) == -1 && queue__peek_nth(w, 0, NULL) == -1) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
 TEST_ON_NON_EMPTY_QUEUE (
     test_queue__peek_nth_on_non_empty_queue, false,
     elem_t nth_q = NULL;
     elem_t nth_w = NULL;
-    result = (!queue__peek_nth(q, &nth_q, N>>1)
-           && !queue__peek_nth(w, &nth_w, N>>1)
+    result = (!queue__peek_nth(q, N>>1, &nth_q)
+           && !queue__peek_nth(w, N>>1, &nth_w)
            && !queue__is_empty(q)
            && !queue__is_empty(w)
            && *(u32 *)nth_q == N>>1
@@ -226,16 +226,16 @@ TEST_ON_NON_EMPTY_QUEUE (
     elem_t pre_w2;
     elem_t post_w1;
     elem_t post_w2;
-    queue__peek_nth(q, &pre_q1, 2);
-    queue__peek_nth(q, &pre_q2, 5);
-    queue__peek_nth(w, &pre_w1, 2);
-    queue__peek_nth(w, &pre_w2, 5);
+    queue__peek_nth(q, 2, &pre_q1);
+    queue__peek_nth(q, 5, &pre_q2);
+    queue__peek_nth(w, 2, &pre_w1);
+    queue__peek_nth(w, 5, &pre_w2);
     result &= !queue__swap(q, 2, 5);
     result &= !queue__swap(w, 2, 5);
-    queue__peek_nth(q, &post_q1, 2);
-    queue__peek_nth(q, &post_q2, 5);
-    queue__peek_nth(w, &post_w1, 2);
-    queue__peek_nth(w, &post_w2, 5);
+    queue__peek_nth(q, 2, &post_q1);
+    queue__peek_nth(q, 5, &post_q2);
+    queue__peek_nth(w, 2, &post_w1);
+    queue__peek_nth(w, 5, &post_w2);
 
     result = *(u32*)pre_q1 == *(u32*)post_q2 && *(u32*)pre_q2 == *(u32*)post_q1;
     result = *(u32*)pre_w1 == *(u32*)post_w2 && *(u32*)pre_w2 == *(u32*)post_w1;

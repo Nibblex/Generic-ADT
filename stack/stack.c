@@ -54,35 +54,29 @@ static inline elem_t id(elem_t e) {
 ///     STACK FUNCTIONS TO EXPORT
 ///////////////////////////////////////////////////////////////////////////////
 
-Stack stack__empty_copy_disabled(void)
-{
+Stack stack__empty_copy_disabled(void) {
     return STACK_INIT(NULL, NULL, DEFAULT_STACK_CAPACITY);
 }
 
-Stack stack__empty_copy_enabled(const copy_operator_t copy_op, const delete_operator_t delete_op)
-{
+Stack stack__empty_copy_enabled(const copy_operator_t copy_op, const delete_operator_t delete_op) {
     if (!copy_op || !delete_op) return NULL;
 
     return STACK_INIT(copy_op, delete_op, DEFAULT_STACK_CAPACITY);
 }
 
-inline char stack__is_copy_enabled(const Stack s)
-{
+inline char stack__is_copy_enabled(const Stack s) {
     return !s ? FAILURE : s->copy_enabled;
 }
 
-inline char stack__is_empty(const Stack s)
-{
+inline char stack__is_empty(const Stack s) {
     return !s ? FAILURE : !s->size;
 }
 
-inline size_t stack__size(const Stack s)
-{
+inline size_t stack__size(const Stack s) {
     return !s ? (size_t)FAILURE : s->size;
 }
 
-char stack__push(const Stack s, const elem_t element)
-{
+char stack__push(const Stack s, const elem_t element) {
     if (!s) return FAILURE;
 
     if (s->size == s->capacity) {
@@ -95,8 +89,7 @@ char stack__push(const Stack s, const elem_t element)
     return SUCCESS;
 }
 
-char stack__pop(const Stack s, elem_t *top)
-{
+char stack__pop(const Stack s, elem_t *top) {
     size_t new_capacity;
     if (!s || !s->size) return FAILURE;
 
@@ -118,8 +111,7 @@ char stack__pop(const Stack s, elem_t *top)
     return SUCCESS;
 }
 
-char stack__peek_top(const Stack s, elem_t *top)
-{
+char stack__peek_top(const Stack s, elem_t *top) {
     if (!s || !s->size || !top) return FAILURE;
 
     *top = s->operator_copy(s->elems[s->size-1]);
@@ -127,8 +119,7 @@ char stack__peek_top(const Stack s, elem_t *top)
     return SUCCESS;
 }
 
-char stack__peek_nth(const Stack s, elem_t *nth, const size_t i)
-{
+char stack__peek_nth(const Stack s, const size_t i, elem_t *nth) {
     if (!s || !s->size || !nth || i >= s->size) return FAILURE;
 
     *nth = s->operator_copy(s->elems[i]);
@@ -136,8 +127,7 @@ char stack__peek_nth(const Stack s, elem_t *nth, const size_t i)
     return SUCCESS;
 }
 
-char stack__swap(const Stack s, size_t i, size_t j)
-{
+char stack__swap(const Stack s, size_t i, size_t j) {
     if (!s || i >= s->size || j >= s->size) return FAILURE;
 
     PTR_SWAP(s->elems[i], s->elems[j]);
@@ -145,8 +135,7 @@ char stack__swap(const Stack s, size_t i, size_t j)
     return SUCCESS;
 }
 
-Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t size)
-{
+Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t size) {
     if (!A) return NULL;
 
     if (!s) {
@@ -165,8 +154,7 @@ Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t siz
     return s;
 }
 
-elem_t *stack__dump(const Stack s)
-{
+elem_t *stack__dump(const Stack s) {
     if (!s || !s->size) return NULL;
 
     elem_t *res = malloc(sizeof(elem_t) * s->size);
@@ -180,8 +168,7 @@ elem_t *stack__dump(const Stack s)
     return res;
 }
 
-elem_t *stack__to_array(const Stack s)
-{
+elem_t *stack__to_array(const Stack s) {
     if (!s || !s->size) return NULL;
 
     elem_t *res = malloc(sizeof(elem_t) * s->size);
@@ -218,36 +205,31 @@ char stack__cmp(const Stack s, const Stack t, compare_func_t cmp) {
     return ARRAY_CMP(s->elems, t->elems, cmp, s->size);
 }
 
-void stack__foreach(const Stack s, const applying_func_t func, void *user_data)
-{
+void stack__foreach(const Stack s, const applying_func_t func, void *user_data) {
     if (!s || !func) return;
 
     ARRAY_FOREACH(s->elems, func, user_data, 0, s->size, s->copy_enabled);
 }
 
-void stack__filter(const Stack s, const filter_func_t pred, void *user_data)
-{
+void stack__filter(const Stack s, const filter_func_t pred, void *user_data) {
     if (!s || !pred) return;
 
     ARRAY_FILTER(s, 0, s->size, pred, user_data);
 }
 
-char stack__all(const Stack s, const filter_func_t pred, void *user_data)
-{
+char stack__all(const Stack s, const filter_func_t pred, void *user_data) {
     if (!s || !pred) return FAILURE;
 
-    return ARRAY_ALL(s, 0, s->size, pred, user_data);
+    return ARRAY_ALL(s->elems, 0, s->size, pred, user_data);
 }
 
-char stack__any(const Stack s, const filter_func_t pred, void *user_data)
-{
+char stack__any(const Stack s, const filter_func_t pred, void *user_data) {
     if (!s || !pred) return FAILURE;
 
-    return ARRAY_ANY(s, 0, s->size, pred, user_data);
+    return ARRAY_ANY(s->elems, 0, s->size, pred, user_data);
 }
 
-void stack__reverse(const Stack s)
-{
+void stack__reverse(const Stack s) {
     if (!s || s->size < 2) return;
 
     for (size_t i = 0, j = s->size - 1; i < j; i++, j--) {
@@ -255,29 +237,25 @@ void stack__reverse(const Stack s)
     }
 }
 
-void stack__shuffle(const Stack s)
-{
+void stack__shuffle(const Stack s) {
     if (!s) return;
 
     ARRAY_SHUFFLE(s->elems, 0, s->size);
 }
 
-inline void stack__sort(const Stack s, const compare_func_t cmp)
-{
+inline void stack__sort(const Stack s, const compare_func_t cmp) {
     if (!s || !cmp) return;
 
     qsort(s->elems, s->size, sizeof(elem_t), cmp);
 }
 
-void stack__clean_NULL(Stack s)
-{
+void stack__clean_NULL(Stack s) {
     if (!s) return;
 
     CLEAN_NULL_ELEMS(s, 0, s->size);
 }
 
-void stack__clear(const Stack s)
-{
+void stack__clear(const Stack s) {
     if (!s) return;
 
     FREE_ELEMS(s, 0, s->size);
@@ -286,8 +264,7 @@ void stack__clear(const Stack s)
     s->size = 0;
 }
 
-void stack__free(const Stack s)
-{
+void stack__free(const Stack s) {
     if (!s) return;
 
     FREE_ELEMS(s, 0, s->size);
@@ -296,8 +273,7 @@ void stack__free(const Stack s)
     free(s);
 }
 
-void stack__debug(const Stack s, const debug_func_t debug)
-{
+void stack__debug(const Stack s, const debug_func_t debug) {
     setvbuf (stdout, NULL, _IONBF, 0);
 
     printf("\n");

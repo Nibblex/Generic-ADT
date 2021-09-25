@@ -66,35 +66,29 @@ static inline elem_t id(elem_t e) {
 ///     QUEUE FUNCTIONS TO EXPORT
 ///////////////////////////////////////////////////////////////////////////////
 
-Queue queue__empty_copy_disabled(void)
-{
+Queue queue__empty_copy_disabled(void) {
     return QUEUE_INIT(NULL, NULL, DEFAULT_QUEUE_CAPACITY);
 }
 
-Queue queue__empty_copy_enabled(const copy_operator_t copy_op, const delete_operator_t delete_op)
-{
+Queue queue__empty_copy_enabled(const copy_operator_t copy_op, const delete_operator_t delete_op) {
     if (!copy_op || !delete_op) return NULL;
 
     return QUEUE_INIT(copy_op, delete_op, DEFAULT_QUEUE_CAPACITY);
 }
 
-inline char queue__is_copy_enabled(const Queue q)
-{
+inline char queue__is_copy_enabled(const Queue q) {
     return !q ? FAILURE : q->copy_enabled;
 }
 
-inline char queue__is_empty(const Queue q)
-{
+inline char queue__is_empty(const Queue q) {
     return !q ? FAILURE : !q->size;
 }
 
-inline size_t queue__size(const Queue q)
-{
+inline size_t queue__size(const Queue q) {
     return !q ? (size_t)FAILURE : q->size;
 }
 
-char queue__enqueue(const Queue q, const elem_t element)
-{
+char queue__enqueue(const Queue q, const elem_t element) {
     if (!q) return FAILURE;
 
     if (q->back == q->capacity) {
@@ -108,8 +102,7 @@ char queue__enqueue(const Queue q, const elem_t element)
     return SUCCESS;
 }
 
-char queue__dequeue(const Queue q, elem_t *front)
-{
+char queue__dequeue(const Queue q, elem_t *front) {
     size_t new_capacity;
     if (!q || !q->size) return FAILURE;
 
@@ -133,8 +126,7 @@ char queue__dequeue(const Queue q, elem_t *front)
     return SUCCESS;
 }
 
-char queue__peek_front(const Queue q, elem_t *front)
-{
+char queue__peek_front(const Queue q, elem_t *front) {
     if (!q || !q->size || !front) return FAILURE;
 
     *front = q->operator_copy(q->elems[q->front]);
@@ -142,8 +134,7 @@ char queue__peek_front(const Queue q, elem_t *front)
     return SUCCESS;
 }
 
-char queue__peek_back(const Queue q, elem_t *back)
-{
+char queue__peek_back(const Queue q, elem_t *back) {
     if (!q || !q->size || !back) return FAILURE;
 
     *back = q->operator_copy(q->elems[q->back - 1]);
@@ -151,8 +142,7 @@ char queue__peek_back(const Queue q, elem_t *back)
     return SUCCESS;
 }
 
-char queue__peek_nth(const Queue q, elem_t *nth, const size_t i)
-{
+char queue__peek_nth(const Queue q, const size_t i, elem_t *nth) {
     if (!q || !q->size || !nth || i < q->front || i >= q->back) return FAILURE;
 
     *nth = q->operator_copy(q->elems[i]);
@@ -160,8 +150,7 @@ char queue__peek_nth(const Queue q, elem_t *nth, const size_t i)
     return SUCCESS;
 }
 
-char queue__swap(const Queue q, size_t i, size_t j)
-{
+char queue__swap(const Queue q, size_t i, size_t j) {
     if (!q || i < q->front || i >= q->back || j < q->front || j >= q->back) return FAILURE;
 
     PTR_SWAP(q->elems[i], q->elems[j]);
@@ -169,8 +158,7 @@ char queue__swap(const Queue q, size_t i, size_t j)
     return SUCCESS;
 }
 
-Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t size)
-{
+Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t size) {
     if (!A) return NULL;
 
     if (!q) {
@@ -191,8 +179,7 @@ Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t siz
     return q;
 }
 
-elem_t *queue__dump(const Queue q)
-{
+elem_t *queue__dump(const Queue q) {
     if (!q || !q->size) return NULL;
 
     elem_t *res = malloc(sizeof(elem_t) * q->size);
@@ -208,8 +195,7 @@ elem_t *queue__dump(const Queue q)
     return res;
 }
 
-elem_t *queue__to_array(const Queue q)
-{
+elem_t *queue__to_array(const Queue q) {
     if (!q || !q->size) return NULL;
 
     elem_t *res = malloc(sizeof(elem_t) * q->size);
@@ -251,15 +237,13 @@ char queue__cmp(const Queue q, const Queue w, compare_func_t cmp) {
     return ARRAY_CMP(q->elems + q->front, w->elems + w->front, cmp, q->size);
 }
 
-void queue__foreach(const Queue q, const applying_func_t func, void *user_data)
-{
+void queue__foreach(const Queue q, const applying_func_t func, void *user_data) {
     if (!q || !func) return;
 
     ARRAY_FOREACH(q->elems, func, user_data, q->front, q->back, q->copy_enabled);
 }
 
-void queue__filter(const Queue q, const filter_func_t pred, void *user_data)
-{
+void queue__filter(const Queue q, const filter_func_t pred, void *user_data) {
     if (!q || !pred) return;
 
     ARRAY_FILTER(q, q->front, q->back, pred, user_data);
@@ -267,22 +251,19 @@ void queue__filter(const Queue q, const filter_func_t pred, void *user_data)
     q->back = q->front + q->size;
 }
 
-char queue__all(const Queue q, const filter_func_t pred, void *user_data)
-{
+char queue__all(const Queue q, const filter_func_t pred, void *user_data) {
     if (!q || !pred) return FAILURE;
 
-    return ARRAY_ALL(q, q->front, q->back, pred, user_data);
+    return ARRAY_ALL(q->elems, q->front, q->back, pred, user_data);
 }
 
-char queue__any(const Queue q, const filter_func_t pred, void *user_data)
-{
+char queue__any(const Queue q, const filter_func_t pred, void *user_data) {
     if (!q || !pred) return FAILURE;
 
-    return ARRAY_ANY(q, q->front, q->back, pred, user_data);
+    return ARRAY_ANY(q->elems, q->front, q->back, pred, user_data);
 }
 
-void queue__reverse(const Queue q)
-{
+void queue__reverse(const Queue q) {
     if (!q || q->size < 2) return;
 
     for (size_t i = q->front, j = q->back - 1; i < j; i++, j--) {
@@ -290,22 +271,19 @@ void queue__reverse(const Queue q)
     }
 }
 
-void queue__shuffle(const Queue q)
-{
+void queue__shuffle(const Queue q) {
     if (!q) return;
 
     ARRAY_SHUFFLE(q->elems, q->front, q->back);
 }
 
-inline void queue__sort(const Queue q, const compare_func_t cmp)
-{
+inline void queue__sort(const Queue q, const compare_func_t cmp) {
     if (!q || !cmp) return;
 
     qsort(q->elems + q->front, q->size, sizeof(elem_t), cmp);
 }
 
-void queue__clean_NULL(const Queue q)
-{
+void queue__clean_NULL(const Queue q) {
     if (!q) return;
 
     CLEAN_NULL_ELEMS(q, q->front, q->back);
@@ -313,8 +291,7 @@ void queue__clean_NULL(const Queue q)
     q->back = q->front + q->size;
 }
 
-void queue__clear(const Queue q)
-{
+void queue__clear(const Queue q) {
     if (!q) return;
 
     FREE_ELEMS(q, q->front, q->back);
@@ -325,8 +302,7 @@ void queue__clear(const Queue q)
     q->size = 0;
 }
 
-void queue__free(const Queue q)
-{
+void queue__free(const Queue q) {
     if (!q) return;
 
     FREE_ELEMS(q, q->front, q->back);
@@ -335,8 +311,7 @@ void queue__free(const Queue q)
     free(q);
 }
 
-void queue__debug(const Queue q, const debug_func_t debug)
-{
+void queue__debug(const Queue q, const debug_func_t debug) {
     setvbuf (stdout, NULL, _IONBF, 0);
 
     printf("\n");

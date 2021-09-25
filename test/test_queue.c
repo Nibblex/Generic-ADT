@@ -209,6 +209,42 @@ TEST_ON_NON_EMPTY_QUEUE (
     free(nth_q);
 )
 
+/* SWAP */
+TEST_ON_EMPTY_QUEUE (
+    test_queue__swap_on_empty_queue,
+    queue__swap(q, 2, 5);
+    queue__swap(w, 2, 5);
+)
+
+TEST_ON_NON_EMPTY_QUEUE (
+    test_queue__swap_on_non_empty_queue, false,
+    elem_t pre_q1;
+    elem_t pre_q2;
+    elem_t post_q1;
+    elem_t post_q2;
+    elem_t pre_w1;
+    elem_t pre_w2;
+    elem_t post_w1;
+    elem_t post_w2;
+    queue__peek_nth(q, &pre_q1, 2);
+    queue__peek_nth(q, &pre_q2, 5);
+    queue__peek_nth(w, &pre_w1, 2);
+    queue__peek_nth(w, &pre_w2, 5);
+    result &= !queue__swap(q, 2, 5);
+    result &= !queue__swap(w, 2, 5);
+    queue__peek_nth(q, &post_q1, 2);
+    queue__peek_nth(q, &post_q2, 5);
+    queue__peek_nth(w, &post_w1, 2);
+    queue__peek_nth(w, &post_w2, 5);
+
+    result = *(u32*)pre_q1 == *(u32*)post_q2 && *(u32*)pre_q2 == *(u32*)post_q1;
+    result = *(u32*)pre_w1 == *(u32*)post_w2 && *(u32*)pre_w2 == *(u32*)post_w1;
+    free(pre_q1);
+    free(pre_q2);
+    free(post_q1);
+    free(post_q2);
+)
+
 static bool test_queue__from_array(char debug)
 {
     printf("%s... ", __func__);
@@ -481,6 +517,8 @@ int main(void)
     print_test_result(test_queue__peek_back_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__peek_nth_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__peek_nth_on_non_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__swap_on_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__swap_on_non_empty_queue(false), &nb_success, &nb_tests);
 
     print_test_result(test_queue__from_array(false), &nb_success, &nb_tests);
     print_test_result(test_queue__dump_on_empty_queue(false), &nb_success, &nb_tests);

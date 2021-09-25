@@ -191,6 +191,42 @@ TEST_ON_NON_EMPTY_STACK (
     free(nth_s);
 )
 
+/* SWAP */
+TEST_ON_EMPTY_STACK (
+    test_stack__swap_on_empty_stack,
+    stack__swap(s, 2, 5);
+    stack__swap(t, 2, 5);
+)
+
+TEST_ON_NON_EMPTY_STACK (
+    test_stack__swap_on_non_empty_stack, false,
+    elem_t pre_s1;
+    elem_t pre_s2;
+    elem_t post_s1;
+    elem_t post_s2;
+    elem_t pre_t1;
+    elem_t pre_t2;
+    elem_t post_t1;
+    elem_t post_t2;
+    stack__peek_nth(s, &pre_s1, 2);
+    stack__peek_nth(s, &pre_s2, 5);
+    stack__peek_nth(t, &pre_t1, 2);
+    stack__peek_nth(t, &pre_t2, 5);
+    result &= !stack__swap(s, 2, 5);
+    result &= !stack__swap(t, 2, 5);
+    stack__peek_nth(s, &post_s1, 2);
+    stack__peek_nth(s, &post_s2, 5);
+    stack__peek_nth(t, &post_t1, 2);
+    stack__peek_nth(t, &post_t2, 5);
+
+    result = *(u32*)pre_s1 == *(u32*)post_s2 && *(u32*)pre_s2 == *(u32*)post_s1;
+    result = *(u32*)pre_t1 == *(u32*)post_t2 && *(u32*)pre_t2 == *(u32*)post_t1;
+    free(pre_s1);
+    free(pre_s2);
+    free(post_s1);
+    free(post_s2);
+)
+
 static bool test_stack__from_array(char debug)
 {
     printf("%s... ", __func__);
@@ -461,6 +497,8 @@ int main(void)
     print_test_result(test_stack__peek_top_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__peek_nth_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__peek_nth_on_non_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__swap_on_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__swap_on_non_empty_stack(false), &nb_success, &nb_tests);
 
     print_test_result(test_stack__from_array(false), &nb_success, &nb_tests);
     print_test_result(test_stack__dump_on_empty_stack(false), &nb_success, &nb_tests);

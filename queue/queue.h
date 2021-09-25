@@ -123,6 +123,17 @@ char queue__peek_nth(const Queue q, elem_t *nth, const size_t i);
 
 
 /**
+ * @brief swaps two elements of the queue
+ * @note complexity: O(1)
+ * @param q the queue
+ * @param i position of the first element
+ * @param j position of the second element
+ * @return 0 on success, -1 on failure
+ */
+char queue__swap(const Queue q, size_t i, size_t j);
+
+
+/**
  * @brief enqueues the first 'n_elems' elements of the given array
  * @details if q == NULL creates a new queue with copy disabled by default
  * @details if A == NULL returns the queue unaltered

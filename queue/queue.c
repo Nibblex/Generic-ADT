@@ -153,9 +153,18 @@ char queue__peek_back(const Queue q, elem_t *back)
 
 char queue__peek_nth(const Queue q, elem_t *nth, const size_t i)
 {
-    if (!q || !q->size || !nth || i >= q->size) return FAILURE;
+    if (!q || !q->size || !nth || i < q->front || i >= q->back) return FAILURE;
 
     *nth = q->operator_copy(q->elems[i]);
+
+    return SUCCESS;
+}
+
+char queue__swap(const Queue q, size_t i, size_t j)
+{
+    if (!q || i < q->front || i >= q->back || j < q->front || j >= q->back) return FAILURE;
+
+    PTR_SWAP(q->elems[i], q->elems[j]);
 
     return SUCCESS;
 }

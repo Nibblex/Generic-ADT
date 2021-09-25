@@ -112,6 +112,17 @@ char stack__peek_nth(const Stack s, elem_t *nth, const size_t i);
 
 
 /**
+ * @brief swaps two elements of the stack
+ * @note complexity: O(1)
+ * @param s the stack
+ * @param i position of the first element
+ * @param j position of the second element
+ * @return 0 on success, -1 on failure
+ */
+char stack__swap(const Stack s, size_t i, size_t j);
+
+
+/**
  * @brief pushes the first 'n_elems' elements of the given array
  * @details if s == NULL creates a new stack with copy disabled by default
  * @details if A == NULL returns the stack unaltered

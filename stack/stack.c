@@ -136,6 +136,15 @@ char stack__peek_nth(const Stack s, elem_t *nth, const size_t i)
     return SUCCESS;
 }
 
+char stack__swap(const Stack s, size_t i, size_t j)
+{
+    if (!s || i >= s->size || j >= s->size) return FAILURE;
+
+    PTR_SWAP(s->elems[i], s->elems[j]);
+
+    return SUCCESS;
+}
+
 Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t size)
 {
     if (!A) return NULL;

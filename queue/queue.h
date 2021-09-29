@@ -243,7 +243,7 @@ void queue__reverse(const Queue q);
  * @note complexity: O(n)
  * @param q the queue
  * */
-void queue__shuffle(const Queue q);
+void queue__shuffle(const Queue q, const unsigned int seed);
 
 
 /**

@@ -65,7 +65,7 @@
 #define ARRAY_CMP(__ptr_1, __ptr_2, __cmp, __n_elems) \
 ({ \
     char res = true; \
-    for (size_t i = 0; i < (__n_elems); i++) { \
+    for (size_t i = 0; i < (__n_elems) && res; i++) { \
         res &= (char)!(__cmp)((__ptr_1) + i, (__ptr_2) + i); \
     } \
     res; \
@@ -121,15 +121,16 @@
 ({ \
     elem_t *__elems = (__ptr); \
     char res = false; \
-    for (size_t i = (__start); i < (__end); i++) { \
+    for (size_t i = (__start); i < (__end) && !res; i++) { \
         res |= (__pred)(__elems[i], (__user_data)); \
     } \
     res; \
 })
 
-#define ARRAY_SHUFFLE(__ptr, __start, __end) do { \
+#define ARRAY_SHUFFLE(__ptr, __start, __end, __seed) do { \
     elem_t *__elems = (__ptr); \
     size_t __a, __b; \
+    srand(__seed); \
     for (size_t i = (__start); i < (__end); i++) { \
         __a = ((__start) + (size_t)(rand() % (int)((__start) + (__end)))); \
         __b = ((__start) + (size_t)(rand() % (int)((__start) + (__end)))); \

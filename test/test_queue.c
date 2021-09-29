@@ -460,13 +460,13 @@ TEST_ON_NON_EMPTY_QUEUE (
 /* SHUFFLE */
 TEST_ON_EMPTY_QUEUE (
     test_queue__shuffle_on_empty_queue,
-    queue__shuffle(q);
-    queue__shuffle(w);
+    queue__shuffle(q, 1);
+    queue__shuffle(w, 1);
 )
 
 TEST_ON_NON_EMPTY_QUEUE (
     test_queue__shuffle_on_non_empty_queue, true,
-    queue__shuffle(q);
+    queue__shuffle(q, 1);
     A = queue__to_array(q);
 
     result = TEST_FAILURE;

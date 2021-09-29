@@ -442,13 +442,13 @@ TEST_ON_NON_EMPTY_STACK (
 /* SHUFFLE */
 TEST_ON_EMPTY_STACK (
     test_stack__shuffle_on_empty_stack,
-    stack__shuffle(s);
-    stack__shuffle(t);
+    stack__shuffle(s, 1);
+    stack__shuffle(t, 1);
 )
 
 TEST_ON_NON_EMPTY_STACK (
     test_stack__shuffle_on_non_empty_stack, true,
-    stack__shuffle(s);
+    stack__shuffle(s, 1);
     A = stack__to_array(s);
 
     result = TEST_FAILURE;

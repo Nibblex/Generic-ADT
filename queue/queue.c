@@ -271,10 +271,10 @@ void queue__reverse(const Queue q) {
     }
 }
 
-void queue__shuffle(const Queue q) {
+void queue__shuffle(const Queue q, const unsigned int seed) {
     if (!q) return;
 
-    ARRAY_SHUFFLE(q->elems, q->front, q->back);
+    ARRAY_SHUFFLE(q->elems, q->front, q->back, seed);
 }
 
 inline void queue__sort(const Queue q, const compare_func_t cmp) {

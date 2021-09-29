@@ -237,10 +237,10 @@ void stack__reverse(const Stack s) {
     }
 }
 
-void stack__shuffle(const Stack s) {
+void stack__shuffle(const Stack s, const unsigned int seed) {
     if (!s) return;
 
-    ARRAY_SHUFFLE(s->elems, 0, s->size);
+    ARRAY_SHUFFLE(s->elems, 0, s->size, seed);
 }
 
 inline void stack__sort(const Stack s, const compare_func_t cmp) {

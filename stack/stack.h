@@ -232,7 +232,7 @@ void stack__reverse(const Stack s);
  * @note complexity: O(n)
  * @param s the stack
  */
-void stack__shuffle(const Stack s);
+void stack__shuffle(const Stack s, const unsigned int seed);
 
 
 /**

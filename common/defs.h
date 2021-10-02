@@ -64,11 +64,11 @@
 
 #define ARRAY_CMP(__ptr_1, __ptr_2, __cmp, __n_elems) \
 ({ \
-    char res = true; \
-    for (size_t i = 0; i < (__n_elems) && res; i++) { \
-        res &= (char)!(__cmp)((__ptr_1) + i, (__ptr_2) + i); \
+    char __result_cmp = true; \
+    for (size_t i = 0; i < (__n_elems) && __result_cmp; i++) { \
+        __result_cmp &= (char)!(__cmp)((__ptr_1) + i, (__ptr_2) + i); \
     } \
-    res; \
+    __result_cmp; \
 })
 
 #define ARRAY_FOREACH(__ptr, __func, __user_data, __start, __end, __copy_enabled) do { \
@@ -110,21 +110,21 @@
 #define ARRAY_ALL(__ptr, __start, __end, __pred, __user_data) \
 ({ \
     elem_t *__elems = (__ptr); \
-    char res = true; \
+    char __result_all = true; \
     for (size_t i = (__start); i < (__end); i++) { \
-        res &= (__pred)(__elems[i], (__user_data)); \
+        __result_all &= (__pred)(__elems[i], (__user_data)); \
     } \
-    res; \
+    __result_all; \
 })
 
 #define ARRAY_ANY(__ptr, __start, __end, __pred, __user_data) \
 ({ \
     elem_t *__elems = (__ptr); \
-    char res = false; \
-    for (size_t i = (__start); i < (__end) && !res; i++) { \
-        res |= (__pred)(__elems[i], (__user_data)); \
+    char __result_any = false; \
+    for (size_t i = (__start); i < (__end) && !__result_any; i++) { \
+        __result_any |= (__pred)(__elems[i], (__user_data)); \
     } \
-    res; \
+    __result_any; \
 })
 
 #define ARRAY_SHUFFLE(__ptr, __start, __end, __seed) do { \

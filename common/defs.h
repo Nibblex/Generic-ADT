@@ -1,7 +1,7 @@
 #ifndef __DEFS_H__
 #define __DEFS_H__
 
-#include <limits.h>
+#include <stdint.h>
 
 #ifndef SUCCESS
 #define SUCCESS 0
@@ -40,8 +40,8 @@
 ({ \
     char __result_ens = FAILURE; \
     size_t __capacity = (__ptr)->capacity; \
-    size_t __offset = (__capacity < LONG_MAX) ? __capacity \
-                                              : ULONG_MAX - __capacity; \
+    size_t __offset = (__capacity < SIZE_MAX>>1) ? __capacity \
+                                              : SIZE_MAX - __capacity; \
     while (__offset && (__result_ens = ARRAY_RESIZE((__ptr), __capacity + __offset))) { \
         __offset = __offset>>1; \
     } \

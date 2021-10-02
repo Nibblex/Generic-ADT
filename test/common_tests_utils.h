@@ -13,7 +13,7 @@
 #define TEST_FAILURE 0
 #endif
 
-#define ADD_u32(F, N, ARR, A, B) \
+#define FROM_ARRAY(F, N, ARR, A, B) \
     for (u32 i = 0; i < N; i++) { \
         F(A, &ARR[i]); \
         F(B, &ARR[i]); \

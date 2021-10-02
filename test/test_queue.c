@@ -7,8 +7,8 @@
     A = queue__empty_copy_enabled(operator_copy, operator_delete); \
     B = queue__empty_copy_disabled()
 
-#define QUEUE_ENQUEUE_u32(N, __elems, A, B) \
-    ADD_u32(queue__enqueue, N, __elems, A, B)
+#define QUEUE_FROM_ARRAY(N, __elems, A, B) \
+    FROM_ARRAY(queue__enqueue, N, __elems, A, B)
 
 #define QUEUE_DEBUG_char(A, B, C) \
     DEBUG_char(queue__debug, A, B, C)
@@ -44,7 +44,7 @@ static bool __name(char debug) \
     for (u32 i = 0; i < N; i++) { \
         elems[i] = __rand ? (u32)rand() % 20 : i; \
     } \
-    QUEUE_ENQUEUE_u32(N, elems, q, w); \
+    QUEUE_FROM_ARRAY(N, elems, q, w); \
     QUEUE_DEBUG_u32(q, w, "\n\tQueues before:"); \
     __expr \
     QUEUE_DEBUG_u32(q, w, "\n\tQueues after:"); \
@@ -410,7 +410,7 @@ TEST_ON_EMPTY_QUEUE (
     queue__filter(q, predicate, &value);
     queue__filter(w, predicate, &value);
 
-    result = queue__all(q, predicate, &value) && queue__all(w, predicate, &value);
+    result = queue__all(q, predicate, &value) == 1 && queue__all(w, predicate, &value) == 1;
 )
 
 TEST_ON_NON_EMPTY_QUEUE (
@@ -420,8 +420,8 @@ TEST_ON_NON_EMPTY_QUEUE (
     queue__filter(q, predicate, &value1);
     queue__filter(w, predicate, &value1);
 
-    result &= queue__all(q, predicate, &value1) && queue__all(w, predicate, &value1);
-    result &= !queue__all(q, predicate, &value2) && !queue__all(w, predicate, &value2);
+    result &= queue__all(q, predicate, &value1) == 1 && queue__all(w, predicate, &value1) == 1;
+    result &= queue__all(q, predicate, &value2) == 0 && queue__all(w, predicate, &value2) == 0;
 )
 
 /* ANY */
@@ -429,7 +429,7 @@ TEST_ON_EMPTY_QUEUE (
     test_queue__any_on_empty_queue,
     u32 value = 2;
 
-    result = !queue__any(q, predicate, &value) && !queue__any(w, predicate, &value);
+    result = queue__any(q, predicate, &value) == 0 && queue__any(w, predicate, &value) == 0;
 )
 
 TEST_ON_NON_EMPTY_QUEUE (
@@ -437,8 +437,8 @@ TEST_ON_NON_EMPTY_QUEUE (
     u32 value1 = 2;
     u32 value2 = 3;
 
-    result &= queue__any(q, predicate, &value1) && queue__any(w, predicate, &value1);
-    result &= queue__any(q, predicate, &value2) && queue__any(w, predicate, &value2);
+    result &= queue__any(q, predicate, &value1) == 1 && queue__any(w, predicate, &value1) == 1;
+    result &= queue__any(q, predicate, &value2) == 1 && queue__any(w, predicate, &value2) == 1;
 )
 
 /* REVERSE */

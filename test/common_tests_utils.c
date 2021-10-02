@@ -89,5 +89,5 @@ void plus_op(void *v, void *user_data)
 
 char predicate(void *v, void *user_data)
 {
-    return *(int*)v % *(int*)user_data == 0;
+    return *(u32*)v % *(u32*)user_data == 0;
 }

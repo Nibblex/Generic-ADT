@@ -7,8 +7,8 @@
     A = stack__empty_copy_enabled(operator_copy, operator_delete); \
     B = stack__empty_copy_disabled()
 
-#define STACK_PUSH_u32(N, __elems, A, B) \
-    ADD_u32(stack__push, N, __elems, A, B)
+#define STACK_FROM_ARRAY(N, __elems, A, B) \
+    FROM_ARRAY(stack__push, N, __elems, A, B)
 
 #define STACK_DEBUG_char(A, B, C) \
     DEBUG_char(stack__debug, A, B, C)
@@ -44,7 +44,7 @@ static bool __name(char debug) \
     for (u32 i = 0; i < N; i++) { \
         elems[i] = __rand ? (u32)rand() % 20 : i; \
     } \
-    STACK_PUSH_u32(N, elems, s, t); \
+    STACK_FROM_ARRAY(N, elems, s, t); \
     STACK_DEBUG_u32(s, t, "\n\tStacks before:"); \
     __expr \
     STACK_DEBUG_u32(s, t, "\n\tStacks after:"); \
@@ -392,7 +392,7 @@ TEST_ON_EMPTY_STACK (
     stack__filter(s, predicate, &value);
     stack__filter(t, predicate, &value);
 
-    result = stack__all(s, predicate, &value) && stack__all(t, predicate, &value);
+    result = stack__all(s, predicate, &value) == 1 && stack__all(t, predicate, &value) == 1;
 )
 
 TEST_ON_NON_EMPTY_STACK (
@@ -402,8 +402,8 @@ TEST_ON_NON_EMPTY_STACK (
     stack__filter(s, predicate, &value1);
     stack__filter(t, predicate, &value1);
 
-    result &= stack__all(s, predicate, &value1) && stack__all(t, predicate, &value1);
-    result &= !stack__all(s, predicate, &value2) && !stack__all(t, predicate, &value2);
+    result &= stack__all(s, predicate, &value1) == 1 && stack__all(t, predicate, &value1) == 1;
+    result &= stack__all(s, predicate, &value2) == 0 && stack__all(t, predicate, &value2) == 0;
 )
 
 /* ANY */
@@ -411,7 +411,7 @@ TEST_ON_EMPTY_STACK (
     test_stack__any_on_empty_stack,
     u32 value = 2;
 
-    result = !stack__any(s, predicate, &value) && !stack__any(t, predicate, &value);
+    result = stack__any(s, predicate, &value) == 0 && stack__any(t, predicate, &value) == 0;
 )
 
 TEST_ON_NON_EMPTY_STACK (
@@ -419,8 +419,8 @@ TEST_ON_NON_EMPTY_STACK (
     u32 value1 = 2;
     u32 value2 = 3;
 
-    result &= stack__any(s, predicate, &value1) && stack__any(t, predicate, &value1);
-    result &= stack__any(s, predicate, &value2) && stack__any(t, predicate, &value2);
+    result &= stack__any(s, predicate, &value1) == 1 && stack__any(t, predicate, &value1) == 1;
+    result &= stack__any(s, predicate, &value2) == 1 && stack__any(t, predicate, &value2) == 1;
 )
 
 /* REVERSE */

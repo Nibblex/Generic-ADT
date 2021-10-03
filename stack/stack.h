@@ -174,7 +174,7 @@ Stack stack__copy(const Stack s);
  * @param cmp the compare function
  * @return 1 if the stacks are equal including all their elements, 0 if not, -1 on failure
  */
-char stack__cmp(const Stack s, const Stack t, compare_func_t cmp);
+char stack__cmp(const Stack s, const Stack t, const compare_func_t cmp);
 
 
 /**

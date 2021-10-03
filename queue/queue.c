@@ -118,7 +118,7 @@ char queue__dequeue(const Queue q, elem_t *front) {
     new_capacity = q->capacity>>1;
     if (q->length < new_capacity && new_capacity >= DEFAULT_QUEUE_CAPACITY) {
         QUEUE_SHIFT(q);
-        ARRAY_RESIZE(q, new_capacity);
+        RESIZE(q, new_capacity);
     }
 
     return SUCCESS;
@@ -151,7 +151,7 @@ char queue__peek_nth(const Queue q, const size_t i, elem_t *nth) {
 char queue__swap(const Queue q, size_t i, size_t j) {
     if (!q || i < q->front || i >= q->back || j < q->front || j >= q->back) return FAILURE;
 
-    PTR_SWAP(q->elems[i], q->elems[j]);
+    SWAP(q, i, j);
 
     return SUCCESS;
 }
@@ -162,7 +162,7 @@ Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t siz
     if (!q) {
         if (!(q = QUEUE_INIT(NULL, NULL, n_elems))) return NULL;
     } else {
-        if (ARRAY_RESIZE(q, q->back + n_elems) < 0) return NULL;
+        if (RESIZE(q, q->back + n_elems) < 0) return NULL;
     }
 
     FROM_ARRAY(q, A, n_elems, size);
@@ -177,7 +177,7 @@ elem_t *queue__dump(const Queue q) {
     if (!res) return NULL;
 
     memcpy(res, q->elems + q->front, sizeof(elem_t) * q->length);
-    ARRAY_RESIZE(q, DEFAULT_QUEUE_CAPACITY);
+    RESIZE(q, DEFAULT_QUEUE_CAPACITY);
 
     q->front = 0;
     q->back = 0;
@@ -219,7 +219,7 @@ Queue queue__copy(const Queue q) {
     return copy;
 }
 
-char queue__cmp(const Queue q, const Queue w, compare_func_t cmp) {
+char queue__cmp(const Queue q, const Queue w, const compare_func_t cmp) {
     if (!q || !w || !cmp) return FAILURE;
 
     if (q == w) return true;
@@ -231,13 +231,13 @@ char queue__cmp(const Queue q, const Queue w, compare_func_t cmp) {
 void queue__foreach(const Queue q, const applying_func_t func, void *user_data) {
     if (!q || !func) return;
 
-    ARRAY_FOREACH(q->elems, func, user_data, q->front, q->back, q->copy_enabled);
+    FOREACH(q, func, user_data, q->front, q->back);
 }
 
 void queue__filter(const Queue q, const filter_func_t pred, void *user_data) {
     if (!q || !pred) return;
 
-    ARRAY_FILTER(q, q->front, q->back, pred, user_data);
+    FILTER(q, q->front, q->back, pred, user_data);
 
     q->back = q->front + q->length;
 }
@@ -258,14 +258,14 @@ void queue__reverse(const Queue q) {
     if (!q || q->length < 2) return;
 
     for (size_t i = q->front, j = q->back - 1; i < j; i++, j--) {
-        PTR_SWAP(q->elems[i], q->elems[j]);
+        SWAP(q, i, j);
     }
 }
 
 void queue__shuffle(const Queue q, const unsigned int seed) {
     if (!q) return;
 
-    ARRAY_SHUFFLE(q->elems, q->front, q->back, seed);
+    SHUFFLE(q, q->front, q->back, seed);
 }
 
 inline void queue__sort(const Queue q, const compare_func_t cmp) {
@@ -286,7 +286,7 @@ void queue__clear(const Queue q) {
     if (!q) return;
 
     FREE_ELEMS(q, q->front, q->back);
-    ARRAY_RESIZE(q, DEFAULT_QUEUE_CAPACITY);
+    RESIZE(q, DEFAULT_QUEUE_CAPACITY);
 
     q->front = 0;
 }

@@ -19,12 +19,13 @@
 #define PTR_INCREMENT(__ptr, __size) \
     (__ptr) = (void *)((size_t)(__ptr) + (__size))
 
-#define PTR_SWAP(__ptr_1, __ptr_2) \
-    elem_t __temp = (__ptr_1); \
-    (__ptr_1) = (__ptr_2); \
-    (__ptr_2) = __temp
+#define SWAP(__ptr, __i, __j) \
+    elem_t *__elems = (__ptr)->elems; \
+    elem_t __temp = __elems[__i]; \
+    __elems[__i] = __elems[__j]; \
+    __elems[__j] = __temp
 
-#define ARRAY_RESIZE(__ptr, __new_capacity) \
+#define RESIZE(__ptr, __new_capacity) \
 ({ \
     char __result_res = FAILURE; \
     elem_t *__realloc_res = realloc((__ptr)->elems, sizeof(elem_t) * (__new_capacity)); \
@@ -42,7 +43,7 @@
     size_t __capacity = (__ptr)->capacity; \
     if ((__ptr)->back == __capacity) { \
         size_t __offset = (__capacity < SIZE_MAX>>1) ? __capacity : SIZE_MAX - __capacity; \
-        while (__offset && (__result_ens = ARRAY_RESIZE((__ptr), __capacity + __offset))) { \
+        while (__offset && (__result_ens = RESIZE((__ptr), __capacity + __offset))) { \
             __offset = __offset>>1; \
         } \
     } else { \
@@ -82,10 +83,10 @@
     __result_cmp; \
 })
 
-#define ARRAY_FOREACH(__ptr, __func, __user_data, __start, __end, __copy_enabled) do { \
-    elem_t *__elems = (__ptr); \
+#define FOREACH(__ptr, __func, __user_data, __start, __end) do { \
+    elem_t *__elems = (__ptr)->elems; \
     char __repeated; \
-    if (__copy_enabled) { \
+    if ((__ptr)->copy_enabled) { \
         for (size_t i = (__start); i < (__end); i++) { \
             (__func)(__elems[i], (__user_data)); \
         } \
@@ -105,7 +106,7 @@
     } \
 } while(false)
 
-#define ARRAY_FILTER(__ptr, __start, __end, __pred, __user_data) \
+#define FILTER(__ptr, __start, __end, __pred, __user_data) \
     elem_t *__elems = (__ptr)->elems; \
     size_t k = 0; \
     for (size_t i = (__start); i < (__end); i++) { \
@@ -138,14 +139,13 @@
     __result_any; \
 })
 
-#define ARRAY_SHUFFLE(__ptr, __start, __end, __seed) do { \
-    elem_t *__elems = (__ptr); \
-    size_t __a, __b; \
+#define SHUFFLE(__ptr, __start, __end, __seed) do { \
+    size_t __i, __j; \
     srand(__seed); \
     for (size_t i = (__start); i < (__end); i++) { \
-        __a = ((__start) + (size_t)(rand() % (int)((__start) + (__end)))); \
-        __b = ((__start) + (size_t)(rand() % (int)((__start) + (__end)))); \
-        PTR_SWAP(__elems[__a], __elems[__b]); \
+        __i = ((__start) + (size_t)(rand() % (int)((__start) + (__end)))); \
+        __j = ((__start) + (size_t)(rand() % (int)((__start) + (__end)))); \
+        SWAP(__ptr, __i, __j); \
     } \
 } while (false)
 
@@ -189,12 +189,17 @@ typedef void (*delete_operator_t)(elem_t);
 /**
  * Function pointer for lambda applying
  */
-typedef void (*applying_func_t)(elem_t, void *);
+typedef void (*applying_func_t)(const void *, void *);
+
+/**
+ * Function pointer for binary lambda applying
+ */
+typedef void (*bin_applying_func_t)(const void *, const void *, void *);
 
 /**
  * Function pointer for lambda applying
  */
-typedef char (*filter_func_t)(elem_t, void *);
+typedef char (*filter_func_t)(const void *, void *);
 
 /**
  * Function pointer for element comparison

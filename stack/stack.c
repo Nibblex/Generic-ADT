@@ -107,7 +107,7 @@ char stack__pop(const Stack s, elem_t *top) {
 
     new_capacity = s->capacity>>1;
     if (s->length < new_capacity && new_capacity >= DEFAULT_STACK_CAPACITY) {
-        ARRAY_RESIZE(s, new_capacity);
+        RESIZE(s, new_capacity);
     }
 
     return SUCCESS;
@@ -132,7 +132,7 @@ char stack__peek_nth(const Stack s, const size_t i, elem_t *nth) {
 char stack__swap(const Stack s, size_t i, size_t j) {
     if (!s || i >= s->length || j >= s->length) return FAILURE;
 
-    PTR_SWAP(s->elems[i], s->elems[j]);
+    SWAP(s, i, j);
 
     return SUCCESS;
 }
@@ -143,7 +143,7 @@ Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t siz
     if (!s) {
         if (!(s = STACK_INIT(NULL, NULL, n_elems))) return NULL;
     } else {
-        if (ARRAY_RESIZE(s, s->back + n_elems) < 0) return NULL;
+        if (RESIZE(s, s->back + n_elems) < 0) return NULL;
     }
 
     FROM_ARRAY(s, A, n_elems, size);
@@ -158,7 +158,7 @@ elem_t *stack__dump(const Stack s) {
     if (!res) return NULL;
 
     memcpy(res, s->elems, sizeof(elem_t) * s->length);
-    ARRAY_RESIZE(s, DEFAULT_STACK_CAPACITY);
+    RESIZE(s, DEFAULT_STACK_CAPACITY);
 
     s->back = 0;
     s->length = 0;
@@ -194,7 +194,7 @@ Stack stack__copy(const Stack s) {
     return copy;
 }
 
-char stack__cmp(const Stack s, const Stack t, compare_func_t cmp) {
+char stack__cmp(const Stack s, const Stack t, const compare_func_t cmp) {
     if (!s || !t || !cmp) return FAILURE;
 
     if (s == t) return true;
@@ -206,13 +206,13 @@ char stack__cmp(const Stack s, const Stack t, compare_func_t cmp) {
 void stack__foreach(const Stack s, const applying_func_t func, void *user_data) {
     if (!s || !func) return;
 
-    ARRAY_FOREACH(s->elems, func, user_data, 0, s->length, s->copy_enabled);
+    FOREACH(s, func, user_data, 0, s->length);
 }
 
 void stack__filter(const Stack s, const filter_func_t pred, void *user_data) {
     if (!s || !pred) return;
 
-    ARRAY_FILTER(s, 0, s->length, pred, user_data);
+    FILTER(s, 0, s->length, pred, user_data);
 }
 
 char stack__all(const Stack s, const filter_func_t pred, void *user_data) {
@@ -231,14 +231,14 @@ void stack__reverse(const Stack s) {
     if (!s || s->length < 2) return;
 
     for (size_t i = 0, j = s->length - 1; i < j; i++, j--) {
-        PTR_SWAP(s->elems[i], s->elems[j]);
+        SWAP(s, i, j);
     }
 }
 
 void stack__shuffle(const Stack s, const unsigned int seed) {
     if (!s) return;
 
-    ARRAY_SHUFFLE(s->elems, 0, s->length, seed);
+    SHUFFLE(s, 0, s->length, seed);
 }
 
 inline void stack__sort(const Stack s, const compare_func_t cmp) {
@@ -257,7 +257,7 @@ void stack__clear(const Stack s) {
     if (!s) return;
 
     FREE_ELEMS(s, 0, s->length);
-    ARRAY_RESIZE(s, DEFAULT_STACK_CAPACITY);
+    RESIZE(s, DEFAULT_STACK_CAPACITY);
 }
 
 void stack__free(const Stack s) {

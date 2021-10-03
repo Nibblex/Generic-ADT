@@ -185,7 +185,7 @@ Queue queue__copy(const Queue q);
  * @param cmp the compare function
  * @return 1 if the queues are equal including all their elements, 0 if not, -1 on failure
  */
-char queue__cmp(const Queue q, const Queue w, compare_func_t cmp);
+char queue__cmp(const Queue q, const Queue w, const compare_func_t cmp);
 
 
 /**

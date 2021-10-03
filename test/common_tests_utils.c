@@ -82,12 +82,12 @@ void operator_debug_char(const char *p_value)
     }
 }
 
-void plus_op(void *v, void *user_data)
+void plus_op(const void *v, void *user_data)
 {
     *(int*)v += *(int *)user_data;
 }
 
-char predicate(void *v, void *user_data)
+char predicate(const void *v, void *user_data)
 {
     return *(u32*)v % *(u32*)user_data == 0;
 }

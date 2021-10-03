@@ -143,7 +143,7 @@ int operator_compare(const void *v1, const void *v2);
 void operator_debug_i32(const int *p_value);
 void operator_debug_u32(const u32 *p_value);
 void operator_debug_char(const char *p_value);
-void plus_op(void *v, void *user_data);
-char predicate(void *v, void *user_data);
+void plus_op(const void *v, void *user_data);
+char predicate(const void *v, void *user_data);
 
 #endif

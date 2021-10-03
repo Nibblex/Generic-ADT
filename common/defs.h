@@ -74,6 +74,16 @@
     (__dst)->length = (__src)->length; \
 })
 
+#define PTR_CONTAINS(__ptr, __start, __end, __elem) \
+({ \
+    elem_t *__elems = (__ptr)->elems; \
+    int __result_ptr_contains = false; \
+    for (size_t i = (__start); i < (__end) && !__result_ptr_contains; i++) { \
+        __result_ptr_contains |= (__elems[i] == (__elem)); \
+    } \
+    (char)__result_ptr_contains; \
+})
+
 #define ARRAY_CMP(__ptr_1, __ptr_2, __cmp, __n_elems) \
 ({ \
     char __result_cmp = true; \
@@ -119,9 +129,9 @@
     } \
     (__ptr)->length = k
 
-#define ARRAY_ALL(__ptr, __start, __end, __pred, __user_data) \
+#define ALL(__ptr, __start, __end, __pred, __user_data) \
 ({ \
-    elem_t *__elems = (__ptr); \
+    elem_t *__elems = (__ptr)->elems; \
     char __result_all = true; \
     for (size_t i = (__start); i < (__end); i++) { \
         __result_all &= (__pred)(__elems[i], (__user_data)); \
@@ -129,9 +139,9 @@
     __result_all; \
 })
 
-#define ARRAY_ANY(__ptr, __start, __end, __pred, __user_data) \
+#define ANY(__ptr, __start, __end, __pred, __user_data) \
 ({ \
-    elem_t *__elems = (__ptr); \
+    elem_t *__elems = (__ptr)->elems; \
     char __result_any = false; \
     for (size_t i = (__start); i < (__end) && !__result_any; i++) { \
         __result_any |= (__pred)(__elems[i], (__user_data)); \
@@ -194,7 +204,7 @@ typedef void (*applying_func_t)(const void *, void *);
 /**
  * Function pointer for binary lambda applying
  */
-typedef void (*bin_applying_func_t)(const void *, const void *, void *);
+typedef void *(*bin_applying_func_t)(const void *, const void *, void *);
 
 /**
  * Function pointer for lambda applying

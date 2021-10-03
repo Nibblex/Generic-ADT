@@ -160,10 +160,20 @@ elem_t *stack__to_array(const Stack s);
  * @brief retrieves a copy of the entire stack
  * @details if copy is enabled the new one contains a copy of all elements of the original stack
  * @note complexity: O(n)
- * @param q the stack
+ * @param s the stack
  * @return a pointer to stack on success, NULL on failure
  */
 Stack stack__copy(const Stack s);
+
+
+/**
+ * @brief check if a pointer is on the stack
+ * @note complexity: O(n)
+ * @param s the stack
+ * @param elem the pointer
+ * @return 1 if the pointer is on the stack, 0 if not, -1 on failure
+ */
+char stack__ptr_contains(const Stack s, const elem_t elem);
 
 
 /**

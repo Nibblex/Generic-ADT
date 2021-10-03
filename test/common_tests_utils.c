@@ -82,9 +82,16 @@ void operator_debug_char(const char *p_value)
     }
 }
 
-void plus_op(const void *v, void *user_data)
+void plus_op(const void *a, void *user_data)
 {
-    *(int*)v += *(int *)user_data;
+    *(u32 *)a += *(u32 *)user_data;
+}
+
+void *bin_plus_op(const void *a, const void *b, void *user_data)
+{
+    u32 *res = malloc(sizeof(u32));
+    *res = *(u32 *)a + *(u32 *)b;
+    return res;
 }
 
 char predicate(const void *v, void *user_data)

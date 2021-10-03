@@ -194,6 +194,12 @@ Stack stack__copy(const Stack s) {
     return copy;
 }
 
+char stack__ptr_contains(const Stack s, const elem_t elem) {
+    if (!s) return FAILURE;
+
+    return PTR_CONTAINS(s, 0, s->length, elem);
+}
+
 char stack__cmp(const Stack s, const Stack t, const compare_func_t cmp) {
     if (!s || !t || !cmp) return FAILURE;
 
@@ -218,13 +224,13 @@ void stack__filter(const Stack s, const filter_func_t pred, void *user_data) {
 char stack__all(const Stack s, const filter_func_t pred, void *user_data) {
     if (!s || !pred) return FAILURE;
 
-    return ARRAY_ALL(s->elems, 0, s->length, pred, user_data);
+    return ALL(s, 0, s->length, pred, user_data);
 }
 
 char stack__any(const Stack s, const filter_func_t pred, void *user_data) {
     if (!s || !pred) return FAILURE;
 
-    return ARRAY_ANY(s->elems, 0, s->length, pred, user_data);
+    return ANY(s, 0, s->length, pred, user_data);
 }
 
 void stack__reverse(const Stack s) {

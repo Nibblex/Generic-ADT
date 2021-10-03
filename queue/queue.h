@@ -178,6 +178,16 @@ Queue queue__copy(const Queue q);
 
 
 /**
+ * @brief check if a pointer is on the queue
+ * @note complexity: O(n)
+ * @param q the queue
+ * @param elem the pointer
+ * @return 1 if the pointer is on the queue, 0 if not, -1 on failure
+ */
+char queue__ptr_contains(const Queue q, const elem_t elem);
+
+
+/**
  * @brief compare two queues including all their elements
  * @note complexity: O(n)
  * @param q first queue
@@ -211,29 +221,29 @@ void queue__filter(const Queue q, const filter_func_t pred, void *user_data);
 /**
  * @brief verifies that all elements of the queue satisfy the predicate
  * @note complexity: O(n)
- * @param s the queue
+ * @param q the queue
  * @param pred the predicate
  * @param user_data optional data to be used as an additional argument of the predicate
  * @return 1 if all elements satisfy the predicate, 0 if not, -1 on failure
  */
-char queue__all(const Queue s, const filter_func_t pred, void *user_data);
+char queue__all(const Queue q, const filter_func_t pred, void *user_data);
 
 
 /**
  * @brief verifies that at least one element of the queue satisfies the predicate
  * @note complexity: O(n)
- * @param s the queue
+ * @param q the queue
  * @param pred the predicate
  * @param user_data optional data to be used as an additional argument of the predicate
  * @return 1 if any element satisfies the predicate , 0 if not, -1 on failure
  */
-char queue__any(const Queue s, const filter_func_t pred, void *user_data);
+char queue__any(const Queue q, const filter_func_t pred, void *user_data);
 
 
 /**
  * @brief reverse the queue
  * @note complexity: O(n)
- * @param s the queue
+ * @param q the queue
  */
 void queue__reverse(const Queue q);
 

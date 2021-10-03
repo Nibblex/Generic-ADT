@@ -219,6 +219,12 @@ Queue queue__copy(const Queue q) {
     return copy;
 }
 
+char queue__ptr_contains(const Queue q, const elem_t elem) {
+    if (!q) return FAILURE;
+
+    return PTR_CONTAINS(q, q->front, q->back, elem);
+}
+
 char queue__cmp(const Queue q, const Queue w, const compare_func_t cmp) {
     if (!q || !w || !cmp) return FAILURE;
 
@@ -245,13 +251,13 @@ void queue__filter(const Queue q, const filter_func_t pred, void *user_data) {
 char queue__all(const Queue q, const filter_func_t pred, void *user_data) {
     if (!q || !pred) return FAILURE;
 
-    return ARRAY_ALL(q->elems, q->front, q->back, pred, user_data);
+    return ALL(q, q->front, q->back, pred, user_data);
 }
 
 char queue__any(const Queue q, const filter_func_t pred, void *user_data) {
     if (!q || !pred) return FAILURE;
 
-    return ARRAY_ANY(q->elems, q->front, q->back, pred, user_data);
+    return ANY(q, q->front, q->back, pred, user_data);
 }
 
 void queue__reverse(const Queue q) {

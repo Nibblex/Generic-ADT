@@ -313,6 +313,24 @@ TEST_ON_NON_EMPTY_QUEUE (
     }
 )
 
+/* PTR_CONTAINS */
+TEST_ON_EMPTY_QUEUE (
+    test_queue__ptr_contains_on_empty_queue,
+    result &= queue__ptr_contains(q, NULL) == false;
+    result &= queue__ptr_contains(w, NULL) == false;
+)
+
+TEST_ON_NON_EMPTY_QUEUE (
+    test_queue__ptr_contains_on_non_empty_queue, true,
+    result &= queue__ptr_contains(q, NULL) == false;
+    result &= queue__ptr_contains(w, NULL) == false;
+
+    for (u32 i = 0; i < N; i++) {
+        result &= queue__ptr_contains(q, elems + i) == false;
+        result &= queue__ptr_contains(w, elems + i) == true;
+    }
+)
+
 /* COPY AND CMP */
 TEST_ON_EMPTY_QUEUE (
     test_queue__copy_and_cmp_on_empty_queue,
@@ -525,6 +543,8 @@ int main(void)
     print_test_result(test_queue__dump_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__to_array_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__to_array_on_non_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__ptr_contains_on_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__ptr_contains_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__copy_and_cmp_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__copy_and_cmp_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__clean_NULL_on_empty_queue(false), &nb_success, &nb_tests);

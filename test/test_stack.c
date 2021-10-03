@@ -295,6 +295,24 @@ TEST_ON_NON_EMPTY_STACK (
     }
 )
 
+/* PTR_CONTAINS */
+TEST_ON_EMPTY_STACK (
+    test_stack__ptr_contains_on_empty_stack,
+    result &= stack__ptr_contains(s, NULL) == false;
+    result &= stack__ptr_contains(t, NULL) == false;
+)
+
+TEST_ON_NON_EMPTY_STACK (
+    test_stack__ptr_contains_on_non_empty_stack, true,
+    result &= stack__ptr_contains(s, NULL) == false;
+    result &= stack__ptr_contains(t, NULL) == false;
+
+    for (u32 i = 0; i < N; i++) {
+        result &= stack__ptr_contains(s, elems + i) == false;
+        result &= stack__ptr_contains(t, elems + i) == true;
+    }
+)
+
 /* COPY AND CMP */
 TEST_ON_EMPTY_STACK (
     test_stack__copy_and_cmp_on_empty_stack,
@@ -505,6 +523,8 @@ int main(void)
     print_test_result(test_stack__dump_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__to_array_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__to_array_on_non_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__ptr_contains_on_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__ptr_contains_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__copy_and_cmp_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__copy_and_cmp_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__clean_NULL_on_empty_stack(false), &nb_success, &nb_tests);

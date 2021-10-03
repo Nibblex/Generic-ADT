@@ -13,10 +13,10 @@
 struct QueueSt
 {
     elem_t *elems;
-    size_t capacity;
     size_t front;
     size_t back;
-    size_t size;
+    size_t length;
+    size_t capacity;
     char copy_enabled;
     copy_operator_t operator_copy;
     delete_operator_t operator_delete;
@@ -39,10 +39,10 @@ static inline elem_t id(elem_t e) {
     if (__ptr) { \
         __ptr->elems = malloc(sizeof(elem_t) * (__n_elems)); \
         if (__ptr->elems) { \
-            __ptr->capacity = (__n_elems); \
             __ptr->front = 0; \
             __ptr->back = 0; \
-            __ptr->size = 0; \
+            __ptr->length = 0; \
+            __ptr->capacity = (__n_elems); \
             __ptr->copy_enabled = __copy_op ? true : false; \
             __ptr->operator_copy = __copy_op ? __copy_op : id; \
             __ptr->operator_delete = __delete_op; \
@@ -58,9 +58,9 @@ static inline elem_t id(elem_t e) {
  * Macro to shift entire queue to the left of the elems array
  */
 #define QUEUE_SHIFT(__ptr) \
-    memmove(__ptr->elems, __ptr->elems + __ptr->front, sizeof(elem_t) * __ptr->size); \
+    memmove(__ptr->elems, __ptr->elems + __ptr->front, sizeof(elem_t) * __ptr->length); \
     __ptr->front = 0; \
-    __ptr->back = __ptr->size
+    __ptr->back = __ptr->length
 
 ///////////////////////////////////////////////////////////////////////////////
 ///     QUEUE FUNCTIONS TO EXPORT
@@ -81,30 +81,28 @@ inline char queue__is_copy_enabled(const Queue q) {
 }
 
 inline char queue__is_empty(const Queue q) {
-    return !q ? FAILURE : !q->size;
+    return !q ? FAILURE : !q->length;
 }
 
-inline size_t queue__size(const Queue q) {
-    return !q ? (size_t)FAILURE : q->size;
+inline size_t queue__length(const Queue q) {
+    return !q ? (size_t)FAILURE : q->length;
 }
 
 char queue__enqueue(const Queue q, const elem_t element) {
     if (!q) return FAILURE;
 
-    if (q->back == q->capacity) {
-        if (ENSURE_CAPACITY(q) < 0) return FAILURE;
-    }
+    if (ENSURE_CAPACITY(q) < 0) return FAILURE;
 
     q->elems[q->back] = q->operator_copy(element);
-    q->size++;
     q->back++;
+    q->length++;
 
     return SUCCESS;
 }
 
 char queue__dequeue(const Queue q, elem_t *front) {
     size_t new_capacity;
-    if (!q || !q->size) return FAILURE;
+    if (!q || !q->length) return FAILURE;
 
     if (front) {
         *front = q->elems[q->front];
@@ -114,11 +112,11 @@ char queue__dequeue(const Queue q, elem_t *front) {
         }
     }
 
-    q->size--;
     q->front++;
+    q->length--;
 
     new_capacity = q->capacity>>1;
-    if (q->size < new_capacity && new_capacity >= DEFAULT_QUEUE_CAPACITY) {
+    if (q->length < new_capacity && new_capacity >= DEFAULT_QUEUE_CAPACITY) {
         QUEUE_SHIFT(q);
         ARRAY_RESIZE(q, new_capacity);
     }
@@ -127,7 +125,7 @@ char queue__dequeue(const Queue q, elem_t *front) {
 }
 
 char queue__peek_front(const Queue q, elem_t *front) {
-    if (!q || !q->size || !front) return FAILURE;
+    if (!q || !q->length || !front) return FAILURE;
 
     *front = q->operator_copy(q->elems[q->front]);
 
@@ -135,7 +133,7 @@ char queue__peek_front(const Queue q, elem_t *front) {
 }
 
 char queue__peek_back(const Queue q, elem_t *back) {
-    if (!q || !q->size || !back) return FAILURE;
+    if (!q || !q->length || !back) return FAILURE;
 
     *back = q->operator_copy(q->elems[q->back - 1]);
 
@@ -143,7 +141,7 @@ char queue__peek_back(const Queue q, elem_t *back) {
 }
 
 char queue__peek_nth(const Queue q, const size_t i, elem_t *nth) {
-    if (!q || !q->size || !nth || i < q->front || i >= q->back) return FAILURE;
+    if (!q || !q->length || !nth || i < q->front || i >= q->back) return FAILURE;
 
     *nth = q->operator_copy(q->elems[i]);
 
@@ -164,41 +162,34 @@ Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t siz
     if (!q) {
         if (!(q = QUEUE_INIT(NULL, NULL, n_elems))) return NULL;
     } else {
-        QUEUE_SHIFT(q);
-        if (ARRAY_RESIZE(q, q->size + n_elems) < 0) return NULL;
+        if (ARRAY_RESIZE(q, q->back + n_elems) < 0) return NULL;
     }
 
-    for (size_t i = 0; i < n_elems; i++) {
-        q->elems[q->size + i] = q->operator_copy(A);
-        PTR_INCREMENT(A, size);
-    }
-
-    q->size += n_elems;
-    q->back = q->size;
+    FROM_ARRAY(q, A, n_elems, size);
 
     return q;
 }
 
 elem_t *queue__dump(const Queue q) {
-    if (!q || !q->size) return NULL;
+    if (!q || !q->length) return NULL;
 
-    elem_t *res = malloc(sizeof(elem_t) * q->size);
+    elem_t *res = malloc(sizeof(elem_t) * q->length);
     if (!res) return NULL;
 
-    memcpy(res, q->elems + q->front, sizeof(elem_t) * q->size);
+    memcpy(res, q->elems + q->front, sizeof(elem_t) * q->length);
     ARRAY_RESIZE(q, DEFAULT_QUEUE_CAPACITY);
 
     q->front = 0;
     q->back = 0;
-    q->size = 0;
+    q->length = 0;
 
     return res;
 }
 
 elem_t *queue__to_array(const Queue q) {
-    if (!q || !q->size) return NULL;
+    if (!q || !q->length) return NULL;
 
-    elem_t *res = malloc(sizeof(elem_t) * q->size);
+    elem_t *res = malloc(sizeof(elem_t) * q->length);
     if (!res) return NULL;
 
     size_t k = 0;
@@ -208,7 +199,7 @@ elem_t *queue__to_array(const Queue q) {
             k++;
         }
     } else {
-        memcpy(res, q->elems + q->front, sizeof(elem_t) * q->size);
+        memcpy(res, q->elems + q->front, sizeof(elem_t) * q->length);
     }
 
     return res;
@@ -217,13 +208,13 @@ elem_t *queue__to_array(const Queue q) {
 Queue queue__copy(const Queue q) {
     if (!q) return NULL;
 
-    Queue copy = QUEUE_INIT(q->operator_copy, q->operator_delete, q->size);
+    Queue copy = QUEUE_INIT(q->operator_copy, q->operator_delete, q->length);
     if (!copy) return NULL;
 
-    COPY(copy, q, q->front, q->size);
+    COPY(copy, q, q->front, q->length);
 
     copy->front = 0;
-    copy->back = q->size;
+    copy->back = q->length;
 
     return copy;
 }
@@ -232,9 +223,9 @@ char queue__cmp(const Queue q, const Queue w, compare_func_t cmp) {
     if (!q || !w || !cmp) return FAILURE;
 
     if (q == w) return true;
-    if (q->size != w->size) return false;
+    if (q->length != w->length) return false;
 
-    return ARRAY_CMP(q->elems + q->front, w->elems + w->front, cmp, q->size);
+    return ARRAY_CMP(q->elems + q->front, w->elems + w->front, cmp, q->length);
 }
 
 void queue__foreach(const Queue q, const applying_func_t func, void *user_data) {
@@ -248,7 +239,7 @@ void queue__filter(const Queue q, const filter_func_t pred, void *user_data) {
 
     ARRAY_FILTER(q, q->front, q->back, pred, user_data);
 
-    q->back = q->front + q->size;
+    q->back = q->front + q->length;
 }
 
 char queue__all(const Queue q, const filter_func_t pred, void *user_data) {
@@ -264,7 +255,7 @@ char queue__any(const Queue q, const filter_func_t pred, void *user_data) {
 }
 
 void queue__reverse(const Queue q) {
-    if (!q || q->size < 2) return;
+    if (!q || q->length < 2) return;
 
     for (size_t i = q->front, j = q->back - 1; i < j; i++, j--) {
         PTR_SWAP(q->elems[i], q->elems[j]);
@@ -280,7 +271,7 @@ void queue__shuffle(const Queue q, const unsigned int seed) {
 inline void queue__sort(const Queue q, const compare_func_t cmp) {
     if (!q || !cmp) return;
 
-    qsort(q->elems + q->front, q->size, sizeof(elem_t), cmp);
+    qsort(q->elems + q->front, q->length, sizeof(elem_t), cmp);
 }
 
 void queue__clean_NULL(const Queue q) {
@@ -288,7 +279,7 @@ void queue__clean_NULL(const Queue q) {
 
     CLEAN_NULL_ELEMS(q, q->front, q->back);
 
-    q->back = q->front + q->size;
+    q->back = q->front + q->length;
 }
 
 void queue__clear(const Queue q) {
@@ -298,8 +289,6 @@ void queue__clear(const Queue q) {
     ARRAY_RESIZE(q, DEFAULT_QUEUE_CAPACITY);
 
     q->front = 0;
-    q->back = 0;
-    q->size = 0;
 }
 
 void queue__free(const Queue q) {
@@ -322,7 +311,7 @@ void queue__debug(const Queue q, const debug_func_t debug) {
     } else {
         queue__is_copy_enabled(q) ? printf("\tQueue with copy enabled:")
                                   : printf("\tQueue with copy disabled:");
-        printf("\n\tQueue size: %lu\n\tQueue capacity: %lu\n\tQueue front: %lu\n\tQueue back: %lu\n\tQueue content: \n\t", q->size
+        printf("\n\tQueue size: %lu\n\tQueue capacity: %lu\n\tQueue front: %lu\n\tQueue back: %lu\n\tQueue content: \n\t", q->length
                                                                                                                          , q->capacity
                                                                                                                          , q->front
                                                                                                                          , q->back);

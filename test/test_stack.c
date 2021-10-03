@@ -8,7 +8,7 @@
     B = stack__empty_copy_disabled()
 
 #define STACK_FROM_ARRAY(N, __elems, A, B) \
-    FROM_ARRAY(stack__push, N, __elems, A, B)
+    TEST_FROM_ARRAY(stack__push, N, __elems, A, B)
 
 #define STACK_DEBUG_char(A, B, C) \
     DEBUG_char(stack__debug, A, B, C)
@@ -109,8 +109,8 @@ static bool test_stack__is_copy_enabled(void)
 
 /* SIZE */
 TEST_ON_NON_EMPTY_STACK (
-    test_stack__size, true,
-    result = (stack__size(s) == N && stack__size(t) == N) ? TEST_SUCCESS : TEST_FAILURE;
+    test_stack__length, true,
+    result = (stack__length(s) == N && stack__length(t) == N) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
 /* IS_EMPTY */
@@ -127,9 +127,9 @@ TEST_ON_NON_EMPTY_STACK (
 /* PUSH */
 TEST_ON_NON_EMPTY_STACK (
     test_stack__push, false,
-    result &= (stack__size(s) == N && stack__size(t) == N) ? TEST_SUCCESS : TEST_FAILURE;
-    result &= COMPARE2(stack__peek_nth, stack__size(s), elems, s, true);
-    result &= COMPARE2(stack__peek_nth, stack__size(t), elems, t, false);
+    result &= (stack__length(s) == N && stack__length(t) == N) ? TEST_SUCCESS : TEST_FAILURE;
+    result &= COMPARE2(stack__peek_nth, stack__length(s), elems, s, true);
+    result &= COMPARE2(stack__peek_nth, stack__length(t), elems, t, false);
 )
 
 /* POP */
@@ -145,8 +145,8 @@ TEST_ON_NON_EMPTY_STACK (
     for (u32 i = 0; i < N; i++) {
         result &= !stack__pop(s, &top_s)
                && !stack__pop(t, &top_t)
-               && stack__size(s) == N-i-1
-               && stack__size(t) == N-i-1
+               && stack__length(s) == N-i-1
+               && stack__length(t) == N-i-1
                && *(u32 *)top_s == N-i-1
                && *(u32 *)top_t == N-i-1;
         free(top_s);
@@ -244,13 +244,13 @@ static bool test_stack__from_array(char debug)
            && stack__from_array(t_char, B, 5, sizeof(char))
            && stack__from_array(s_u32, C, 5, sizeof(u32))
            && (t_u32 = stack__from_array(t_u32, C, 5, sizeof(u32)))
-           && stack__size(s_char) == 10
-           && stack__size(t_char) == 10
-           && stack__size(s_u32) == 5
-           && stack__size(t_u32) == 5) ? TEST_SUCCESS : TEST_FAILURE;
+           && stack__length(s_char) == 10
+           && stack__length(t_char) == 10
+           && stack__length(s_u32) == 5
+           && stack__length(t_u32) == 5) ? TEST_SUCCESS : TEST_FAILURE;
 
-    result &= COMPARE2(stack__peek_nth, stack__size(s_u32), C, s_u32, true);
-    result &= COMPARE2(stack__peek_nth, stack__size(t_u32), C, t_u32, false);
+    result &= COMPARE2(stack__peek_nth, stack__length(s_u32), C, s_u32, true);
+    result &= COMPARE2(stack__peek_nth, stack__length(t_u32), C, t_u32, false);
 
     STACK_DEBUG_char(s_char, t_char, "\n\tStacks after from_array:");
     STACK_DEBUG_u32(s_u32, t_u32, " ");
@@ -288,7 +288,7 @@ TEST_ON_NON_EMPTY_STACK (
     A = stack__to_array(s);
     B = stack__to_array(t);
 
-    result = (stack__size(s) == N && stack__size(t) == N) ? TEST_SUCCESS : TEST_FAILURE;
+    result = (stack__length(s) == N && stack__length(t) == N) ? TEST_SUCCESS : TEST_FAILURE;
 
     for (u32 i = 0; i < N; i++) {
         result |= *(u32 *)A[i] != i || *(u32 *)B[i] != N;
@@ -303,8 +303,8 @@ TEST_ON_EMPTY_STACK (
 
     result = (stack__cmp(u, s, operator_compare)
            && stack__cmp(v, t, operator_compare)
-           && COMPARE(stack__peek_nth, stack__size(s), u, s, true)
-           && COMPARE(stack__peek_nth, stack__size(t), v, t, false)) ? TEST_SUCCESS : TEST_FAILURE;
+           && COMPARE(stack__peek_nth, stack__length(s), u, s, true)
+           && COMPARE(stack__peek_nth, stack__length(t), v, t, false)) ? TEST_SUCCESS : TEST_FAILURE;
     STACK_FREE(u, v, NULL, NULL);
 )
 
@@ -315,8 +315,8 @@ TEST_ON_NON_EMPTY_STACK (
 
     result = (stack__cmp(u, s, operator_compare)
            && stack__cmp(v, t, operator_compare)
-           && COMPARE(stack__peek_nth, stack__size(s), u, s, true)
-           && COMPARE(stack__peek_nth, stack__size(t), v, t, false)) ? TEST_SUCCESS : TEST_FAILURE;
+           && COMPARE(stack__peek_nth, stack__length(s), u, s, true)
+           && COMPARE(stack__peek_nth, stack__length(t), v, t, false)) ? TEST_SUCCESS : TEST_FAILURE;
     STACK_FREE(u, v, NULL, NULL);
 )
 
@@ -344,7 +344,7 @@ static bool test_stack__clean_NULL_on_non_empty_stack(char debug)
     stack__clean_NULL(s);
     stack__clean_NULL(t);
 
-    result = (stack__size(s) == N>>1 && stack__size(t) == N>>1) ? TEST_SUCCESS : TEST_FAILURE;
+    result = (stack__length(s) == N>>1 && stack__length(t) == N>>1) ? TEST_SUCCESS : TEST_FAILURE;
 
     STACK_DEBUG_u32(s, t, "\n\tStacks after clean_NULL:");
 
@@ -381,8 +381,8 @@ TEST_ON_NON_EMPTY_STACK (
     stack__foreach(s, plus_op, &value);
     stack__foreach(t, plus_op, &value);
 
-    result &= COMPARE3(stack__peek_nth, stack__size(s), s, value, true);
-    result &= COMPARE3(stack__peek_nth, stack__size(t), t, value, false);
+    result &= COMPARE3(stack__peek_nth, stack__length(s), s, value, true);
+    result &= COMPARE3(stack__peek_nth, stack__length(t), t, value, false);
 )
 
 /* FILTER AND ALL */
@@ -435,8 +435,8 @@ TEST_ON_NON_EMPTY_STACK (
     stack__reverse(s);
     stack__reverse(t);
 
-    result &= IS_REVERSE(stack__peek_nth, stack__size(s), s, true);
-    result &= IS_REVERSE(stack__peek_nth, stack__size(t), t, false);
+    result &= IS_REVERSE(stack__peek_nth, stack__length(s), s, true);
+    result &= IS_REVERSE(stack__peek_nth, stack__length(t), t, false);
 )
 
 /* SHUFFLE */
@@ -463,8 +463,8 @@ TEST_ON_EMPTY_STACK (
     stack__sort(s, operator_compare);
     stack__sort(t, operator_compare);
 
-    result &= IS_SORTED(stack__peek_nth, stack__size(s), s, true);
-    result &= IS_SORTED(stack__peek_nth, stack__size(t), t, false);
+    result &= IS_SORTED(stack__peek_nth, stack__length(s), s, true);
+    result &= IS_SORTED(stack__peek_nth, stack__length(t), t, false);
 )
 
 TEST_ON_NON_EMPTY_STACK (
@@ -472,8 +472,8 @@ TEST_ON_NON_EMPTY_STACK (
     stack__sort(s, operator_compare);
     stack__sort(t, operator_compare);
 
-    result &= IS_SORTED(stack__peek_nth, stack__size(s), s, true);
-    result &= IS_SORTED(stack__peek_nth, stack__size(t), t, false);
+    result &= IS_SORTED(stack__peek_nth, stack__length(s), s, true);
+    result &= IS_SORTED(stack__peek_nth, stack__length(t), t, false);
 )
 
 
@@ -486,7 +486,7 @@ int main(void)
     print_test_result(test_stack__empty_copy_disabled(false), &nb_success, &nb_tests);
     print_test_result(test_stack__empty_copy_enabled(false), &nb_success, &nb_tests);
     print_test_result(test_stack__is_copy_enabled(), &nb_success, &nb_tests);
-    print_test_result(test_stack__size(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__length(false), &nb_success, &nb_tests);
     print_test_result(test_stack__is_empty_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__is_empty_on_non_empty_stack(false), &nb_success, &nb_tests);
 

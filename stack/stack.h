@@ -64,7 +64,7 @@ char stack__is_empty(const Stack s);
  * @param s the stack
  * @return the number of elements contained in the stack on success, -1 on failure
  */
-size_t stack__size(const Stack s);
+size_t stack__length(const Stack s);
 
 
 /**

@@ -64,7 +64,7 @@ char queue__is_empty(const Queue q);
  * @param q the queue
  * @return  the number of elements contained in the queue on success, -1 on failure
  */
-size_t queue__size(const Queue q);
+size_t queue__length(const Queue q);
 
 
 /**

@@ -8,7 +8,7 @@
     B = queue__empty_copy_disabled()
 
 #define QUEUE_FROM_ARRAY(N, __elems, A, B) \
-    FROM_ARRAY(queue__enqueue, N, __elems, A, B)
+    TEST_FROM_ARRAY(queue__enqueue, N, __elems, A, B)
 
 #define QUEUE_DEBUG_char(A, B, C) \
     DEBUG_char(queue__debug, A, B, C)
@@ -109,8 +109,8 @@ static bool test_queue__is_copy_enabled(void)
 
 /* SIZE */
 TEST_ON_NON_EMPTY_QUEUE (
-    test_queue__size, true,
-    result = (queue__size(q) == N && queue__size(w) == N) ? TEST_SUCCESS : TEST_FAILURE;
+    test_queue__length, true,
+    result = (queue__length(q) == N && queue__length(w) == N) ? TEST_SUCCESS : TEST_FAILURE;
 )
 
 /* IS_EMPTY */
@@ -127,9 +127,9 @@ TEST_ON_NON_EMPTY_QUEUE (
 /* ENQUEUE */
 TEST_ON_NON_EMPTY_QUEUE (
     test_queue__enqueue, false,
-    result = (queue__size(q) == N && queue__size(w) == N) ? TEST_SUCCESS : TEST_FAILURE;
-    result &= COMPARE2(queue__peek_nth, queue__size(q), elems, q, true);
-    result &= COMPARE2(queue__peek_nth, queue__size(w), elems, w, false);
+    result = (queue__length(q) == N && queue__length(w) == N) ? TEST_SUCCESS : TEST_FAILURE;
+    result &= COMPARE2(queue__peek_nth, queue__length(q), elems, q, true);
+    result &= COMPARE2(queue__peek_nth, queue__length(w), elems, w, false);
 )
 
 /* DEQUEUE */
@@ -145,8 +145,8 @@ TEST_ON_NON_EMPTY_QUEUE (
     for (u32 i = 0; i < N; i++) {
         result &= !queue__dequeue(q, &front_q)
                && !queue__dequeue(w, &front_w)
-               && queue__size(q) == N-i-1
-               && queue__size(w) == N-i-1
+               && queue__length(q) == N-i-1
+               && queue__length(w) == N-i-1
                && *(u32 *)front_q == i
                && *(u32 *)front_w == i;
         free(front_q);
@@ -262,13 +262,13 @@ static bool test_queue__from_array(char debug)
            && queue__from_array(w_char, B, 5, sizeof(char))
            && queue__from_array(q_u32, C, 5, sizeof(u32))
            && (w_u32 = queue__from_array(w_u32, C, 5, sizeof(u32)))
-           && queue__size(q_char) == 10
-           && queue__size(w_char) == 10
-           && queue__size(q_u32) == 5
-           && queue__size(w_u32) == 5) ? TEST_SUCCESS : TEST_FAILURE;
+           && queue__length(q_char) == 10
+           && queue__length(w_char) == 10
+           && queue__length(q_u32) == 5
+           && queue__length(w_u32) == 5) ? TEST_SUCCESS : TEST_FAILURE;
 
-    result &= COMPARE2(queue__peek_nth, queue__size(q_u32), C, q_u32, true);
-    result &= COMPARE2(queue__peek_nth, queue__size(w_u32), C, w_u32, false);
+    result &= COMPARE2(queue__peek_nth, queue__length(q_u32), C, q_u32, true);
+    result &= COMPARE2(queue__peek_nth, queue__length(w_u32), C, w_u32, false);
 
     QUEUE_DEBUG_char(q_char, w_char, "\n\tQueues after from_array:");
     QUEUE_DEBUG_u32(q_u32, w_u32, " ");
@@ -306,7 +306,7 @@ TEST_ON_NON_EMPTY_QUEUE (
     A = queue__to_array(q);
     B = queue__to_array(w);
 
-    result = (queue__size(q) == N && queue__size(w) == N) ? TEST_SUCCESS : TEST_FAILURE;
+    result = (queue__length(q) == N && queue__length(w) == N) ? TEST_SUCCESS : TEST_FAILURE;
 
     for (u32 i = 0; i < N; i++) {
         result |= *(u32 *)A[i] != i || *(u32 *)B[i] != N;
@@ -321,8 +321,8 @@ TEST_ON_EMPTY_QUEUE (
 
     result = (queue__cmp(u, q, operator_compare)
            && queue__cmp(v, w, operator_compare)
-           && COMPARE(queue__peek_nth, queue__size(q), u, q, true)
-           && COMPARE(queue__peek_nth, queue__size(w), v, w, false)) ? TEST_SUCCESS : TEST_FAILURE;
+           && COMPARE(queue__peek_nth, queue__length(q), u, q, true)
+           && COMPARE(queue__peek_nth, queue__length(w), v, w, false)) ? TEST_SUCCESS : TEST_FAILURE;
     QUEUE_FREE(u, v, NULL, NULL);
 )
 
@@ -333,8 +333,8 @@ TEST_ON_NON_EMPTY_QUEUE (
 
     result = (queue__cmp(u, q, operator_compare)
            && queue__cmp(v, w, operator_compare)
-           && COMPARE(queue__peek_nth, queue__size(q), u, q, true)
-           && COMPARE(queue__peek_nth, queue__size(w), v, w, false)) ? TEST_SUCCESS : TEST_FAILURE;
+           && COMPARE(queue__peek_nth, queue__length(q), u, q, true)
+           && COMPARE(queue__peek_nth, queue__length(w), v, w, false)) ? TEST_SUCCESS : TEST_FAILURE;
     QUEUE_FREE(u, v, NULL, NULL);
 )
 
@@ -362,7 +362,7 @@ static bool test_queue__clean_NULL_on_non_empty_queue(char debug)
     queue__clean_NULL(q);
     queue__clean_NULL(w);
 
-    result = (queue__size(q) == N>>1 && queue__size(w) == N>>1) ? TEST_SUCCESS : TEST_FAILURE;
+    result = (queue__length(q) == N>>1 && queue__length(w) == N>>1) ? TEST_SUCCESS : TEST_FAILURE;
 
     QUEUE_DEBUG_u32(q, w, "\n\tQueues after clean_NULL:");
 
@@ -399,8 +399,8 @@ TEST_ON_NON_EMPTY_QUEUE (
     queue__foreach(q, plus_op, &value);
     queue__foreach(w, plus_op, &value);
 
-    result &= COMPARE3(queue__peek_nth, queue__size(q), q, value, true);
-    result &= COMPARE3(queue__peek_nth, queue__size(w), w, value, false);
+    result &= COMPARE3(queue__peek_nth, queue__length(q), q, value, true);
+    result &= COMPARE3(queue__peek_nth, queue__length(w), w, value, false);
 )
 
 /* FILTER AND ALL */
@@ -453,8 +453,8 @@ TEST_ON_NON_EMPTY_QUEUE (
     queue__reverse(q);
     queue__reverse(w);
 
-    result &= IS_REVERSE(queue__peek_nth, queue__size(q), q, true);
-    result &= IS_REVERSE(queue__peek_nth, queue__size(w), w, false);
+    result &= IS_REVERSE(queue__peek_nth, queue__length(q), q, true);
+    result &= IS_REVERSE(queue__peek_nth, queue__length(w), w, false);
 )
 
 /* SHUFFLE */
@@ -481,8 +481,8 @@ TEST_ON_EMPTY_QUEUE (
     queue__sort(q, operator_compare);
     queue__sort(w, operator_compare);
 
-    result &= IS_SORTED(queue__peek_nth, queue__size(q), q, true);
-    result &= IS_SORTED(queue__peek_nth, queue__size(w), w, false);
+    result &= IS_SORTED(queue__peek_nth, queue__length(q), q, true);
+    result &= IS_SORTED(queue__peek_nth, queue__length(w), w, false);
 )
 
 TEST_ON_NON_EMPTY_QUEUE (
@@ -490,8 +490,8 @@ TEST_ON_NON_EMPTY_QUEUE (
     queue__sort(q, operator_compare);
     queue__sort(w, operator_compare);
 
-    result &= IS_SORTED(queue__peek_nth, queue__size(q), q, true);
-    result &= IS_SORTED(queue__peek_nth, queue__size(w), w, false);
+    result &= IS_SORTED(queue__peek_nth, queue__length(q), q, true);
+    result &= IS_SORTED(queue__peek_nth, queue__length(w), w, false);
 )
 
 
@@ -504,7 +504,7 @@ int main(void)
     print_test_result(test_queue__empty_copy_disabled(false), &nb_success, &nb_tests);
     print_test_result(test_queue__empty_copy_enabled(false), &nb_success, &nb_tests);
     print_test_result(test_queue__is_copy_enabled(), &nb_success, &nb_tests);
-    print_test_result(test_queue__size(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__length(false), &nb_success, &nb_tests);
     print_test_result(test_queue__is_empty_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__is_empty_on_non_empty_queue(false), &nb_success, &nb_tests);
 

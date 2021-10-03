@@ -40,13 +40,24 @@
 ({ \
     char __result_ens = FAILURE; \
     size_t __capacity = (__ptr)->capacity; \
-    size_t __offset = (__capacity < SIZE_MAX>>1) ? __capacity \
-                                              : SIZE_MAX - __capacity; \
-    while (__offset && (__result_ens = ARRAY_RESIZE((__ptr), __capacity + __offset))) { \
-        __offset = __offset>>1; \
+    if ((__ptr)->back == __capacity) { \
+        size_t __offset = (__capacity < SIZE_MAX>>1) ? __capacity : SIZE_MAX - __capacity; \
+        while (__offset && (__result_ens = ARRAY_RESIZE((__ptr), __capacity + __offset))) { \
+            __offset = __offset>>1; \
+        } \
+    } else { \
+        __result_ens = 0; \
     } \
     __result_ens; \
 })
+
+#define FROM_ARRAY(__ptr, __array, __n_elems, __size) \
+    for (size_t i = 0; i < __n_elems; i++) { \
+        (__ptr)->elems[(__ptr)->back + i] = (__ptr)->operator_copy(A); \
+        PTR_INCREMENT(__array, __size); \
+    } \
+    (__ptr)->back += n_elems; \
+    (__ptr)->length += n_elems
 
 #define COPY(__dst, __src, __start, __n_elems) \
 ({ \
@@ -59,7 +70,7 @@
         (__dst)->copy_enabled = false; \
         memcpy((__dst)->elems, (__src)->elems + (__start), sizeof(elem_t) * (__n_elems)); \
     } \
-    (__dst)->size = (__src)->size; \
+    (__dst)->length = (__src)->length; \
 })
 
 #define ARRAY_CMP(__ptr_1, __ptr_2, __cmp, __n_elems) \
@@ -105,7 +116,7 @@
             (__ptr)->operator_delete(__elems[i]); \
         } \
     } \
-    (__ptr)->size = k
+    (__ptr)->length = k
 
 #define ARRAY_ALL(__ptr, __start, __end, __pred, __user_data) \
 ({ \
@@ -147,7 +158,7 @@
             k++; \
         } \
     } \
-    (__ptr)->size = k
+    (__ptr)->length = k
 
 #define FREE_ELEMS(__ptr, __start, __end) do { \
     elem_t *__elems = (__ptr)->elems; \
@@ -156,6 +167,8 @@
             (__ptr)->operator_delete(__elems[i]); \
         } \
     } \
+    (__ptr)->back = 0; \
+    (__ptr)->length = 0; \
 } while (false)
 
 /**

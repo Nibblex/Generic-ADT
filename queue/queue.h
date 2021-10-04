@@ -134,6 +134,16 @@ char queue__swap(const Queue q, size_t i, size_t j);
 
 
 /**
+ * @brief retrieves a copy of the entire queue
+ * @details if copy is enabled the new one contains a copy of all elements of the original queue
+ * @note complexity: O(n)
+ * @param q the queue
+ * @return a pointer to queue on success, NULL on failure
+ */
+Queue queue__copy(const Queue q);
+
+
+/**
  * @brief enqueues the first 'n_elems' elements of the given array
  * @details if q == NULL creates a new queue with copy disabled by default
  * @details if A == NULL returns the queue unaltered
@@ -168,16 +178,6 @@ elem_t *queue__to_array(const Queue q);
 
 
 /**
- * @brief retrieves a copy of the entire queue
- * @details if copy is enabled the new one contains a copy of all elements of the original queue
- * @note complexity: O(n)
- * @param q the queue
- * @return a pointer to queue on success, NULL on failure
- */
-Queue queue__copy(const Queue q);
-
-
-/**
  * @brief check if a pointer is on the queue
  * @note complexity: O(n)
  * @param q the queue
@@ -196,26 +196,6 @@ char queue__ptr_contains(const Queue q, const elem_t elem);
  * @return 1 if the queues are equal including all their elements, 0 if not, -1 on failure
  */
 char queue__cmp(const Queue q, const Queue w, const compare_func_t cmp);
-
-
-/**
- * @brief maps the given function to the queue
- * @note complexity: O(n) with copy enabled, O(n²) with copy disabled
- * @param q the queue
- * @param func the applying function
- * @param user_data optional data to be used as an additional argument of the application function
- */
-void queue__foreach(const Queue q, const applying_func_t func, void *user_data);
-
-
-/**
- * @brief filter the given queue using a predicate
- * @note complexity: O(n)
- * @param q the queue
- * @param pred the predicate
- * @param user_data optional data to be used as an additional argument of the predicate
- */
-void queue__filter(const Queue q, const filter_func_t pred, void *user_data);
 
 
 /**
@@ -238,6 +218,26 @@ char queue__all(const Queue q, const filter_func_t pred, void *user_data);
  * @return 1 if any element satisfies the predicate , 0 if not, -1 on failure
  */
 char queue__any(const Queue q, const filter_func_t pred, void *user_data);
+
+
+/**
+ * @brief maps the given function to the queue
+ * @note complexity: O(n) with copy enabled, O(n²) with copy disabled
+ * @param q the queue
+ * @param func the applying function
+ * @param user_data optional data to be used as an additional argument of the application function
+ */
+void queue__foreach(const Queue q, const applying_func_t func, void *user_data);
+
+
+/**
+ * @brief filter the given queue using a predicate
+ * @note complexity: O(n)
+ * @param q the queue
+ * @param pred the predicate
+ * @param user_data optional data to be used as an additional argument of the predicate
+ */
+void queue__filter(const Queue q, const filter_func_t pred, void *user_data);
 
 
 /**

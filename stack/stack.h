@@ -123,6 +123,16 @@ char stack__swap(const Stack s, size_t i, size_t j);
 
 
 /**
+ * @brief retrieves a copy of the entire stack
+ * @details if copy is enabled the new one contains a copy of all elements of the original stack
+ * @note complexity: O(n)
+ * @param s the stack
+ * @return a pointer to stack on success, NULL on failure
+ */
+Stack stack__copy(const Stack s);
+
+
+/**
  * @brief pushes the first 'n_elems' elements of the given array
  * @details if s == NULL creates a new stack with copy disabled by default
  * @details if A == NULL returns the stack unaltered
@@ -157,16 +167,6 @@ elem_t *stack__to_array(const Stack s);
 
 
 /**
- * @brief retrieves a copy of the entire stack
- * @details if copy is enabled the new one contains a copy of all elements of the original stack
- * @note complexity: O(n)
- * @param s the stack
- * @return a pointer to stack on success, NULL on failure
- */
-Stack stack__copy(const Stack s);
-
-
-/**
  * @brief check if a pointer is on the stack
  * @note complexity: O(n)
  * @param s the stack
@@ -185,26 +185,6 @@ char stack__ptr_contains(const Stack s, const elem_t elem);
  * @return 1 if the stacks are equal including all their elements, 0 if not, -1 on failure
  */
 char stack__cmp(const Stack s, const Stack t, const compare_func_t cmp);
-
-
-/**
- * @brief maps the given function to the stack
- * @note complexity: O(n) with copy enabled, O(n²) with copy disabled
- * @param s the stack
- * @param func the applying function
- * @param user_data optional data to be used as an additional argument of the application function
- */
-void stack__foreach(const Stack s, const applying_func_t func, void *user_data);
-
-
-/**
- * @brief filter the given stack using a predicate
- * @note complexity: O(n)
- * @param s the stack
- * @param pred the predicate
- * @param user_data optional data to be used as an additional argument of the predicate
- */
-void stack__filter(const Stack s, const filter_func_t pred, void *user_data);
 
 
 /**
@@ -227,6 +207,26 @@ char stack__all(const Stack s, const filter_func_t pred, void *user_data);
  * @return 1 if any element satisfies the predicate , 0 if not, -1 on failure
  */
 char stack__any(const Stack s, const filter_func_t pred, void *user_data);
+
+
+/**
+ * @brief maps the given function to the stack
+ * @note complexity: O(n) with copy enabled, O(n²) with copy disabled
+ * @param s the stack
+ * @param func the applying function
+ * @param user_data optional data to be used as an additional argument of the application function
+ */
+void stack__foreach(const Stack s, const applying_func_t func, void *user_data);
+
+
+/**
+ * @brief filter the given stack using a predicate
+ * @note complexity: O(n)
+ * @param s the stack
+ * @param pred the predicate
+ * @param user_data optional data to be used as an additional argument of the predicate
+ */
+void stack__filter(const Stack s, const filter_func_t pred, void *user_data);
 
 
 /**

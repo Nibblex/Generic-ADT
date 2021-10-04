@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "stack.h"
+#include "../common/vec.h"
 
 #define DEFAULT_STACK_CAPACITY 2
 
@@ -137,6 +138,17 @@ char stack__swap(const Stack s, size_t i, size_t j) {
     return SUCCESS;
 }
 
+Stack stack__copy(const Stack s) {
+    if (!s) return NULL;
+
+    Stack copy = STACK_INIT(s->operator_copy, s->operator_delete, s->length);
+    if (!copy) return NULL;
+
+    COPY(copy, s, 0, s->length);
+
+    return copy;
+}
+
 Stack stack__from_array(Stack s, void *A, const size_t n_elems, const size_t size) {
     if (!A) return NULL;
 
@@ -183,17 +195,6 @@ elem_t *stack__to_array(const Stack s) {
     return res;
 }
 
-Stack stack__copy(const Stack s) {
-    if (!s) return NULL;
-
-    Stack copy = STACK_INIT(s->operator_copy, s->operator_delete, s->length);
-    if (!copy) return NULL;
-
-    COPY(copy, s, 0, s->length);
-
-    return copy;
-}
-
 char stack__ptr_contains(const Stack s, const elem_t elem) {
     if (!s) return FAILURE;
 
@@ -209,18 +210,6 @@ char stack__cmp(const Stack s, const Stack t, const compare_func_t cmp) {
     return ARRAY_CMP(s->elems, t->elems, cmp, s->length);
 }
 
-void stack__foreach(const Stack s, const applying_func_t func, void *user_data) {
-    if (!s || !func) return;
-
-    FOREACH(s, func, user_data, 0, s->length);
-}
-
-void stack__filter(const Stack s, const filter_func_t pred, void *user_data) {
-    if (!s || !pred) return;
-
-    FILTER(s, 0, s->length, pred, user_data);
-}
-
 char stack__all(const Stack s, const filter_func_t pred, void *user_data) {
     if (!s || !pred) return FAILURE;
 
@@ -231,6 +220,18 @@ char stack__any(const Stack s, const filter_func_t pred, void *user_data) {
     if (!s || !pred) return FAILURE;
 
     return ANY(s, 0, s->length, pred, user_data);
+}
+
+void stack__foreach(const Stack s, const applying_func_t func, void *user_data) {
+    if (!s || !func) return;
+
+    FOREACH(s, func, user_data, 0, s->length);
+}
+
+void stack__filter(const Stack s, const filter_func_t pred, void *user_data) {
+    if (!s || !pred) return;
+
+    FILTER(s, 0, s->length, pred, user_data);
 }
 
 void stack__reverse(const Stack s) {
@@ -247,7 +248,7 @@ void stack__shuffle(const Stack s, const unsigned int seed) {
     SHUFFLE(s, 0, s->length, seed);
 }
 
-inline void stack__sort(const Stack s, const compare_func_t cmp) {
+void stack__sort(const Stack s, const compare_func_t cmp) {
     if (!s || !cmp) return;
 
     qsort(s->elems, s->length, sizeof(elem_t), cmp);

@@ -227,6 +227,31 @@ TEST_ON_NON_EMPTY_STACK (
     free(post_s2);
 )
 
+/* COPY AND CMP */
+TEST_ON_EMPTY_STACK (
+    test_stack__copy_and_cmp_on_empty_stack,
+    Stack u = stack__copy(s);
+    Stack v = stack__copy(t);
+
+    result = (stack__cmp(u, s, operator_compare)
+           && stack__cmp(v, t, operator_compare)
+           && COMPARE(stack__peek_nth, stack__length(s), u, s, true)
+           && COMPARE(stack__peek_nth, stack__length(t), v, t, false)) ? TEST_SUCCESS : TEST_FAILURE;
+    STACK_FREE(u, v, NULL, NULL);
+)
+
+TEST_ON_NON_EMPTY_STACK (
+    test_stack__copy_and_cmp_on_non_empty_stack, false,
+    Stack u = stack__copy(s);
+    Stack v = stack__copy(t);
+
+    result = (stack__cmp(u, s, operator_compare)
+           && stack__cmp(v, t, operator_compare)
+           && COMPARE(stack__peek_nth, stack__length(s), u, s, true)
+           && COMPARE(stack__peek_nth, stack__length(t), v, t, false)) ? TEST_SUCCESS : TEST_FAILURE;
+    STACK_FREE(u, v, NULL, NULL);
+)
+
 static bool test_stack__from_array(char debug)
 {
     printf("%s... ", __func__);
@@ -311,31 +336,6 @@ TEST_ON_NON_EMPTY_STACK (
         result &= stack__ptr_contains(s, elems + i) == false;
         result &= stack__ptr_contains(t, elems + i) == true;
     }
-)
-
-/* COPY AND CMP */
-TEST_ON_EMPTY_STACK (
-    test_stack__copy_and_cmp_on_empty_stack,
-    Stack u = stack__copy(s);
-    Stack v = stack__copy(t);
-
-    result = (stack__cmp(u, s, operator_compare)
-           && stack__cmp(v, t, operator_compare)
-           && COMPARE(stack__peek_nth, stack__length(s), u, s, true)
-           && COMPARE(stack__peek_nth, stack__length(t), v, t, false)) ? TEST_SUCCESS : TEST_FAILURE;
-    STACK_FREE(u, v, NULL, NULL);
-)
-
-TEST_ON_NON_EMPTY_STACK (
-    test_stack__copy_and_cmp_on_non_empty_stack, false,
-    Stack u = stack__copy(s);
-    Stack v = stack__copy(t);
-
-    result = (stack__cmp(u, s, operator_compare)
-           && stack__cmp(v, t, operator_compare)
-           && COMPARE(stack__peek_nth, stack__length(s), u, s, true)
-           && COMPARE(stack__peek_nth, stack__length(t), v, t, false)) ? TEST_SUCCESS : TEST_FAILURE;
-    STACK_FREE(u, v, NULL, NULL);
 )
 
 TEST_ON_EMPTY_STACK (
@@ -518,6 +518,8 @@ int main(void)
     print_test_result(test_stack__swap_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__swap_on_non_empty_stack(false), &nb_success, &nb_tests);
 
+    print_test_result(test_stack__copy_and_cmp_on_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__copy_and_cmp_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__from_array(false), &nb_success, &nb_tests);
     print_test_result(test_stack__dump_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__dump_on_non_empty_stack(false), &nb_success, &nb_tests);
@@ -525,8 +527,6 @@ int main(void)
     print_test_result(test_stack__to_array_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__ptr_contains_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__ptr_contains_on_non_empty_stack(false), &nb_success, &nb_tests);
-    print_test_result(test_stack__copy_and_cmp_on_empty_stack(false), &nb_success, &nb_tests);
-    print_test_result(test_stack__copy_and_cmp_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__clean_NULL_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__clean_NULL_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__clear_on_empty_stack(false), &nb_success, &nb_tests);

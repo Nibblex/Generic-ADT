@@ -245,6 +245,31 @@ TEST_ON_NON_EMPTY_QUEUE (
     free(post_q2);
 )
 
+/* COPY AND CMP */
+TEST_ON_EMPTY_QUEUE (
+    test_queue__copy_and_cmp_on_empty_queue,
+    Queue u = queue__copy(q);
+    Queue v = queue__copy(w);
+
+    result = (queue__cmp(u, q, operator_compare)
+           && queue__cmp(v, w, operator_compare)
+           && COMPARE(queue__peek_nth, queue__length(q), u, q, true)
+           && COMPARE(queue__peek_nth, queue__length(w), v, w, false)) ? TEST_SUCCESS : TEST_FAILURE;
+    QUEUE_FREE(u, v, NULL, NULL);
+)
+
+TEST_ON_NON_EMPTY_QUEUE (
+    test_queue__copy_and_cmp_on_non_empty_queue, false,
+    Queue u = queue__copy(q);
+    Queue v = queue__copy(w);
+
+    result = (queue__cmp(u, q, operator_compare)
+           && queue__cmp(v, w, operator_compare)
+           && COMPARE(queue__peek_nth, queue__length(q), u, q, true)
+           && COMPARE(queue__peek_nth, queue__length(w), v, w, false)) ? TEST_SUCCESS : TEST_FAILURE;
+    QUEUE_FREE(u, v, NULL, NULL);
+)
+
 static bool test_queue__from_array(char debug)
 {
     printf("%s... ", __func__);
@@ -329,31 +354,6 @@ TEST_ON_NON_EMPTY_QUEUE (
         result &= queue__ptr_contains(q, elems + i) == false;
         result &= queue__ptr_contains(w, elems + i) == true;
     }
-)
-
-/* COPY AND CMP */
-TEST_ON_EMPTY_QUEUE (
-    test_queue__copy_and_cmp_on_empty_queue,
-    Queue u = queue__copy(q);
-    Queue v = queue__copy(w);
-
-    result = (queue__cmp(u, q, operator_compare)
-           && queue__cmp(v, w, operator_compare)
-           && COMPARE(queue__peek_nth, queue__length(q), u, q, true)
-           && COMPARE(queue__peek_nth, queue__length(w), v, w, false)) ? TEST_SUCCESS : TEST_FAILURE;
-    QUEUE_FREE(u, v, NULL, NULL);
-)
-
-TEST_ON_NON_EMPTY_QUEUE (
-    test_queue__copy_and_cmp_on_non_empty_queue, false,
-    Queue u = queue__copy(q);
-    Queue v = queue__copy(w);
-
-    result = (queue__cmp(u, q, operator_compare)
-           && queue__cmp(v, w, operator_compare)
-           && COMPARE(queue__peek_nth, queue__length(q), u, q, true)
-           && COMPARE(queue__peek_nth, queue__length(w), v, w, false)) ? TEST_SUCCESS : TEST_FAILURE;
-    QUEUE_FREE(u, v, NULL, NULL);
 )
 
 TEST_ON_EMPTY_QUEUE (
@@ -538,6 +538,8 @@ int main(void)
     print_test_result(test_queue__swap_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__swap_on_non_empty_queue(false), &nb_success, &nb_tests);
 
+    print_test_result(test_queue__copy_and_cmp_on_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__copy_and_cmp_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__from_array(false), &nb_success, &nb_tests);
     print_test_result(test_queue__dump_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__dump_on_non_empty_queue(false), &nb_success, &nb_tests);
@@ -545,8 +547,6 @@ int main(void)
     print_test_result(test_queue__to_array_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__ptr_contains_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__ptr_contains_on_non_empty_queue(false), &nb_success, &nb_tests);
-    print_test_result(test_queue__copy_and_cmp_on_empty_queue(false), &nb_success, &nb_tests);
-    print_test_result(test_queue__copy_and_cmp_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__clean_NULL_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__clean_NULL_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__clear_on_empty_queue(false), &nb_success, &nb_tests);

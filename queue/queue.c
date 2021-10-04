@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "queue.h"
+#include "../common/vec.h"
 
 #define DEFAULT_QUEUE_CAPACITY 2
 
@@ -156,6 +157,20 @@ char queue__swap(const Queue q, size_t i, size_t j) {
     return SUCCESS;
 }
 
+Queue queue__copy(const Queue q) {
+    if (!q) return NULL;
+
+    Queue copy = QUEUE_INIT(q->operator_copy, q->operator_delete, q->length);
+    if (!copy) return NULL;
+
+    COPY(copy, q, q->front, q->length);
+
+    copy->front = 0;
+    copy->back = q->length;
+
+    return copy;
+}
+
 Queue queue__from_array(Queue q, void *A, const size_t n_elems, const size_t size) {
     if (!A) return NULL;
 
@@ -203,20 +218,6 @@ elem_t *queue__to_array(const Queue q) {
     }
 
     return res;
-}
-
-Queue queue__copy(const Queue q) {
-    if (!q) return NULL;
-
-    Queue copy = QUEUE_INIT(q->operator_copy, q->operator_delete, q->length);
-    if (!copy) return NULL;
-
-    COPY(copy, q, q->front, q->length);
-
-    copy->front = 0;
-    copy->back = q->length;
-
-    return copy;
 }
 
 char queue__ptr_contains(const Queue q, const elem_t elem) {
@@ -274,7 +275,7 @@ void queue__shuffle(const Queue q, const unsigned int seed) {
     SHUFFLE(q, q->front, q->back, seed);
 }
 
-inline void queue__sort(const Queue q, const compare_func_t cmp) {
+void queue__sort(const Queue q, const compare_func_t cmp) {
     if (!q || !cmp) return;
 
     qsort(q->elems + q->front, q->length, sizeof(elem_t), cmp);

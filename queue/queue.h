@@ -88,6 +88,14 @@ char queue__enqueue(const Queue q, const elem_t element);
 char queue__dequeue(const Queue q, elem_t *front);
 
 
+/**
+ * @brief remove the element in the nth position
+ * @details the deleted item is still part of the queue as a null value instead
+ * @note complexity: O(1)
+ * @param q the queue
+ * @param i position
+ * @return 0 on success, -1 on failure
+ */
 char queue__remove_nth(const Queue q, const size_t i);
 
 

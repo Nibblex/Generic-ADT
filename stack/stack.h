@@ -88,6 +88,14 @@ char stack__push(const Stack s, const elem_t element);
 char stack__pop(const Stack s, elem_t *top);
 
 
+/**
+ * @brief remove the element in the nth position
+ * @details the deleted item is still part of the stack as a null value instead
+ * @note complexity: O(1)
+ * @param s the stack
+ * @param i position
+ * @return 0 on success, -1 on failure
+ */
 char stack__remove_nth(const Stack s, const size_t i);
 
 

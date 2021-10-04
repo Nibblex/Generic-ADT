@@ -62,11 +62,11 @@
 #define PTR_CONTAINS(__ptr, __start, __end, __elem) \
 ({ \
     elem_t *__elems = (__ptr)->elems; \
-    int __result_ptr_contains = false; \
-    for (size_t i = (__start); i < (__end) && !__result_ptr_contains; i++) { \
-        __result_ptr_contains |= (__elems[i] == (__elem)); \
+    size_t __pos = (__start); \
+    while (__pos < (__end) && __elems[__pos] != (__elem)) { \
+        __pos++; \
     } \
-    (char)__result_ptr_contains; \
+    __pos == (__end) ? SIZE_MAX : __pos; \
 })
 
 #define ARRAY_CMP(__ptr_1, __ptr_2, __cmp, __n_elems) \

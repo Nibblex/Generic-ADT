@@ -62,7 +62,7 @@ char queue__is_empty(const Queue q);
  * @brief number of elements in the queue
  * @note complexity: O(1)
  * @param q the queue
- * @return  the number of elements contained in the queue on success, -1 on failure
+ * @return  the number of elements contained in the queue on success, SIZE_MAX on failure
  */
 size_t queue__length(const Queue q);
 
@@ -130,7 +130,7 @@ char queue__peek_nth(const Queue q, const size_t i, elem_t *nth);
  * @param j position of the second element
  * @return 0 on success, -1 on failure
  */
-char queue__swap(const Queue q, size_t i, size_t j);
+char queue__swap(const Queue q, const size_t i, const size_t j);
 
 
 /**
@@ -182,9 +182,9 @@ elem_t *queue__to_array(const Queue q);
  * @note complexity: O(n)
  * @param q the queue
  * @param elem the pointer
- * @return 1 if the pointer is on the queue, 0 if not, -1 on failure
+ * @return the position of the pointer in the queue if it is contained in it, SIZE_MAX if not, SIZE_MAX on failure
  */
-char queue__ptr_contains(const Queue q, const elem_t elem);
+size_t queue__ptr_contains(const Queue q, const elem_t elem);
 
 
 /**

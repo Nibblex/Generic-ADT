@@ -76,7 +76,7 @@ inline char stack__is_empty(const Stack s) {
 }
 
 inline size_t stack__length(const Stack s) {
-    return !s ? (size_t)FAILURE : s->length;
+    return !s ? SIZE_MAX : s->length;
 }
 
 char stack__push(const Stack s, const elem_t element) {
@@ -130,7 +130,7 @@ char stack__peek_nth(const Stack s, const size_t i, elem_t *nth) {
     return SUCCESS;
 }
 
-char stack__swap(const Stack s, size_t i, size_t j) {
+char stack__swap(const Stack s, const size_t i, const size_t j) {
     if (!s || i >= s->length || j >= s->length) return FAILURE;
 
     SWAP(s, i, j);
@@ -195,8 +195,8 @@ elem_t *stack__to_array(const Stack s) {
     return res;
 }
 
-char stack__ptr_contains(const Stack s, const elem_t elem) {
-    if (!s) return FAILURE;
+size_t stack__ptr_contains(const Stack s, const elem_t elem) {
+    if (!s) return SIZE_MAX;
 
     return PTR_CONTAINS(s, 0, s->length, elem);
 }

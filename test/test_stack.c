@@ -323,18 +323,18 @@ TEST_ON_NON_EMPTY_STACK (
 /* PTR_CONTAINS */
 TEST_ON_EMPTY_STACK (
     test_stack__ptr_contains_on_empty_stack,
-    result &= stack__ptr_contains(s, NULL) == false;
-    result &= stack__ptr_contains(t, NULL) == false;
+    result &= stack__ptr_contains(s, NULL) == SIZE_MAX;
+    result &= stack__ptr_contains(t, NULL) == SIZE_MAX;
 )
 
 TEST_ON_NON_EMPTY_STACK (
     test_stack__ptr_contains_on_non_empty_stack, true,
-    result &= stack__ptr_contains(s, NULL) == false;
-    result &= stack__ptr_contains(t, NULL) == false;
+    result &= stack__ptr_contains(s, NULL) == SIZE_MAX;
+    result &= stack__ptr_contains(t, NULL) == SIZE_MAX;
 
     for (u32 i = 0; i < N; i++) {
-        result &= stack__ptr_contains(s, elems + i) == false;
-        result &= stack__ptr_contains(t, elems + i) == true;
+        result &= stack__ptr_contains(s, elems + i) == SIZE_MAX;
+        result &= stack__ptr_contains(t, elems + i) == i;
     }
 )
 

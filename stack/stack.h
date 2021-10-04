@@ -62,7 +62,7 @@ char stack__is_empty(const Stack s);
  * @brief number of elements in the stack
  * @note complexity: O(1)
  * @param s the stack
- * @return the number of elements contained in the stack on success, -1 on failure
+ * @return the number of elements contained in the stack on success, SIZE_MAX on failure
  */
 size_t stack__length(const Stack s);
 
@@ -119,7 +119,7 @@ char stack__peek_nth(const Stack s, const size_t i, elem_t *nth);
  * @param j position of the second element
  * @return 0 on success, -1 on failure
  */
-char stack__swap(const Stack s, size_t i, size_t j);
+char stack__swap(const Stack s, const size_t i, const size_t j);
 
 
 /**
@@ -171,9 +171,9 @@ elem_t *stack__to_array(const Stack s);
  * @note complexity: O(n)
  * @param s the stack
  * @param elem the pointer
- * @return 1 if the pointer is on the stack, 0 if not, -1 on failure
+ * @return the position of the pointer in the stack if it is contained in it, SIZE_MAX if not, SIZE_MAX on failure
  */
-char stack__ptr_contains(const Stack s, const elem_t elem);
+size_t stack__ptr_contains(const Stack s, const elem_t elem);
 
 
 /**

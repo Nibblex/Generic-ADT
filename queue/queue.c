@@ -86,7 +86,7 @@ inline char queue__is_empty(const Queue q) {
 }
 
 inline size_t queue__length(const Queue q) {
-    return !q ? (size_t)FAILURE : q->length;
+    return !q ? SIZE_MAX : q->length;
 }
 
 char queue__enqueue(const Queue q, const elem_t element) {
@@ -149,7 +149,7 @@ char queue__peek_nth(const Queue q, const size_t i, elem_t *nth) {
     return SUCCESS;
 }
 
-char queue__swap(const Queue q, size_t i, size_t j) {
+char queue__swap(const Queue q, const size_t i, const size_t j) {
     if (!q || i < q->front || i >= q->back || j < q->front || j >= q->back) return FAILURE;
 
     SWAP(q, i, j);
@@ -220,8 +220,8 @@ elem_t *queue__to_array(const Queue q) {
     return res;
 }
 
-char queue__ptr_contains(const Queue q, const elem_t elem) {
-    if (!q) return FAILURE;
+size_t queue__ptr_contains(const Queue q, const elem_t elem) {
+    if (!q) return SIZE_MAX;
 
     return PTR_CONTAINS(q, q->front, q->back, elem);
 }

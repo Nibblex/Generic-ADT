@@ -133,7 +133,7 @@ TEST_ON_NON_EMPTY_STACK (
 )
 
 /* POP */
-TEST_ON_EMPTY_STACK(
+TEST_ON_EMPTY_STACK (
     test_stack__pop_on_empty_stack,
     result = (stack__pop(s, NULL) == -1 && stack__pop(t, NULL) == -1) ? TEST_SUCCESS : TEST_FAILURE;
 )
@@ -150,6 +150,26 @@ TEST_ON_NON_EMPTY_STACK (
                && *(u32 *)top_s == N-i-1
                && *(u32 *)top_t == N-i-1;
         free(top_s);
+    }
+)
+
+/* REMOVE_NTH */
+TEST_ON_EMPTY_STACK (
+    test_stack__remove_nth_on_empty_stack,
+    result &= stack__remove_nth(s, 0) == -1;
+    result &= stack__remove_nth(t, 0) == -1;
+)
+
+TEST_ON_NON_EMPTY_STACK (
+    test_stack__remove_nth_on_non_empty_stack, true,
+    elem_t tmp = NULL;
+    for (u32 i = 0; i < N; i++) {
+        result &= stack__remove_nth(s, i) == 0;
+        result &= stack__remove_nth(t, i) == 0;
+        stack__peek_nth(s, i, &tmp);
+        result &= tmp == NULL;
+        stack__peek_nth(t, i, &tmp);
+        result &= tmp == NULL;
     }
 )
 
@@ -511,6 +531,8 @@ int main(void)
     print_test_result(test_stack__push(false), &nb_success, &nb_tests);
     print_test_result(test_stack__pop_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__pop_on_non_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__remove_nth_on_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__remove_nth_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__peek_top_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__peek_top_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__peek_nth_on_empty_stack(false), &nb_success, &nb_tests);

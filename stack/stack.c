@@ -30,6 +30,10 @@ static inline elem_t id(elem_t e) {
     return e;
 }
 
+static inline void skip(elem_t e) {
+    return;
+}
+
 /**
  * Macro to allocate all memory used by the stack
  */
@@ -44,7 +48,7 @@ static inline elem_t id(elem_t e) {
             __ptr->capacity = (__n_elems); \
             __ptr->copy_enabled = __copy_op ? true : false; \
             __ptr->operator_copy = __copy_op ? __copy_op : id; \
-            __ptr->operator_delete = __delete_op; \
+            __ptr->operator_delete = __delete_op ? __delete_op : skip; \
         } else { \
             free(__ptr); \
             __ptr = NULL; \
@@ -98,9 +102,7 @@ char stack__pop(const Stack s, elem_t *top) {
     if (top) {
         *top = s->elems[s->length-1];
     } else {
-        if (s->operator_delete) {
-            s->operator_delete(s->elems[s->length-1]);
-        }
+        s->operator_delete(s->elems[s->length-1]);
     }
 
     s->back--;
@@ -110,6 +112,15 @@ char stack__pop(const Stack s, elem_t *top) {
     if (s->length < new_capacity && new_capacity >= DEFAULT_STACK_CAPACITY) {
         RESIZE(s, new_capacity);
     }
+
+    return SUCCESS;
+}
+
+char stack__remove_nth(const Stack s, const size_t i) {
+    if (!s || i >= s->length) return FAILURE;
+
+    s->operator_delete(s->elems[i]);
+    s->elems[i] = NULL;
 
     return SUCCESS;
 }

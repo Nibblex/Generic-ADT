@@ -88,6 +88,9 @@ char queue__enqueue(const Queue q, const elem_t element);
 char queue__dequeue(const Queue q, elem_t *front);
 
 
+char queue__remove_nth(const Queue q, const size_t i);
+
+
 /**
  * @brief retrieve the element on the front of the queue without removing it
  * @details the element is stored in 'front' variable and must be manually freed by user afterward

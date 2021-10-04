@@ -31,6 +31,10 @@ static inline elem_t id(elem_t e) {
     return e;
 }
 
+static inline void skip(elem_t e) {
+    return;
+}
+
 /**
  * Macro to allocate all memory used by the queue
  */
@@ -46,7 +50,7 @@ static inline elem_t id(elem_t e) {
             __ptr->capacity = (__n_elems); \
             __ptr->copy_enabled = __copy_op ? true : false; \
             __ptr->operator_copy = __copy_op ? __copy_op : id; \
-            __ptr->operator_delete = __delete_op; \
+            __ptr->operator_delete = __delete_op ? __delete_op : skip; \
         } else { \
             free(__ptr); \
             __ptr = NULL; \
@@ -108,9 +112,7 @@ char queue__dequeue(const Queue q, elem_t *front) {
     if (front) {
         *front = q->elems[q->front];
     } else {
-        if (q->operator_delete) {
-            q->operator_delete(q->elems[q->front]);
-        }
+        q->operator_delete(q->elems[q->front]);
     }
 
     q->front++;
@@ -121,6 +123,15 @@ char queue__dequeue(const Queue q, elem_t *front) {
         QUEUE_SHIFT(q);
         RESIZE(q, new_capacity);
     }
+
+    return SUCCESS;
+}
+
+char queue__remove_nth(const Queue q, const size_t i) {
+    if (!q || i >= q->length) return FAILURE;
+
+    q->operator_delete(q->elems[i]);
+    q->elems[i] = NULL;
 
     return SUCCESS;
 }

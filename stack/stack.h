@@ -88,6 +88,9 @@ char stack__push(const Stack s, const elem_t element);
 char stack__pop(const Stack s, elem_t *top);
 
 
+char stack__remove_nth(const Stack s, const size_t i);
+
+
 /**
  * @brief retrieve the element on the top of the stack without removing it
  * @details the element is stored in 'top' variable and must be manually freed by user afterward

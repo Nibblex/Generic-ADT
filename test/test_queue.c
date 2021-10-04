@@ -153,6 +153,26 @@ TEST_ON_NON_EMPTY_QUEUE (
     }
 )
 
+/* REMOVE_NTH */
+TEST_ON_EMPTY_QUEUE (
+    test_queue__remove_nth_on_empty_queue,
+    result &= queue__remove_nth(q, 0) == -1;
+    result &= queue__remove_nth(w, 0) == -1;
+)
+
+TEST_ON_NON_EMPTY_QUEUE (
+    test_queue__remove_nth_on_non_empty_queue, true,
+    elem_t tmp = NULL;
+    for (u32 i = 0; i < N; i++) {
+        result &= queue__remove_nth(q, i) == 0;
+        result &= queue__remove_nth(w, i) == 0;
+        queue__peek_nth(q, i, &tmp);
+        result &= tmp == NULL;
+        queue__peek_nth(w, i, &tmp);
+        result &= tmp == NULL;
+    }
+)
+
 /* PEEK_FRONT */
 TEST_ON_EMPTY_QUEUE (
     test_queue__peek_front_on_empty_queue,
@@ -529,6 +549,8 @@ int main(void)
     print_test_result(test_queue__enqueue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__dequeue_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__dequeue_on_non_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__remove_nth_on_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__remove_nth_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__peek_front_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__peek_front_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__peek_back_on_empty_queue(false), &nb_success, &nb_tests);

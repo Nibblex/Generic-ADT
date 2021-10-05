@@ -59,7 +59,7 @@
     (__dst)->length = (__src)->length; \
 })
 
-#define PTR_CONTAINS(__ptr, __start, __end, __elem) \
+#define PTR_SEARCH(__ptr, __start, __end, __elem) \
 ({ \
     elem_t *__elems = (__ptr)->elems; \
     size_t __pos = (__start); \
@@ -69,11 +69,21 @@
     __pos == (__end) ? SIZE_MAX : __pos; \
 })
 
-#define ARRAY_CMP(__ptr_1, __ptr_2, __cmp, __n_elems) \
+#define SEARCH(__ptr, __start, __end, __elem, __match) \
+({ \
+    elem_t *__elems = (__ptr)->elems; \
+    size_t __pos = (__start); \
+    while (__pos < (__end) && !(__match)(__elems[__pos], (__elem))) { \
+        __pos++; \
+    } \
+    __pos == (__end) ? SIZE_MAX : __pos; \
+})
+
+#define ARRAY_CMP(__ptr_1, __ptr_2, __match, __n_elems) \
 ({ \
     int __result_cmp = true; \
     for (size_t i = 0; i < (__n_elems) && __result_cmp; i++) { \
-        __result_cmp &= !(__cmp)((__ptr_1) + i, (__ptr_2) + i); \
+        __result_cmp &= (__match)((__ptr_1)[i], (__ptr_2)[i]); \
     } \
     (char)__result_cmp; \
 })

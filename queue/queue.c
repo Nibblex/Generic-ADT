@@ -231,19 +231,25 @@ elem_t *queue__to_array(const Queue q) {
     return res;
 }
 
-size_t queue__ptr_contains(const Queue q, const elem_t elem) {
+size_t queue__ptr_search(const Queue q, const elem_t elem) {
     if (!q) return SIZE_MAX;
 
-    return PTR_CONTAINS(q, q->front, q->back, elem);
+    return PTR_SEARCH(q, q->front, q->back, elem);
 }
 
-char queue__cmp(const Queue q, const Queue w, const compare_func_t cmp) {
-    if (!q || !w || !cmp) return FAILURE;
+size_t queue__search(const Queue q, const elem_t elem, const compare_func_t match) {
+    if (!q || !match) return SIZE_MAX;
+
+    return SEARCH(q, 0, q->length, elem, match);
+}
+
+char queue__cmp(const Queue q, const Queue w, const compare_func_t match) {
+    if (!q || !w || !match) return FAILURE;
 
     if (q == w) return true;
     if (q->length != w->length) return false;
 
-    return ARRAY_CMP(q->elems + q->front, w->elems + w->front, cmp, q->length);
+    return ARRAY_CMP(q->elems + q->front, w->elems + w->front, match, q->length);
 }
 
 void queue__foreach(const Queue q, const applying_func_t func, void *user_data) {

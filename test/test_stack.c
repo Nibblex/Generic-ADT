@@ -253,8 +253,8 @@ TEST_ON_EMPTY_STACK (
     Stack u = stack__copy(s);
     Stack v = stack__copy(t);
 
-    result = (stack__cmp(u, s, operator_compare)
-           && stack__cmp(v, t, operator_compare)
+    result = (stack__cmp(u, s, operator_match)
+           && stack__cmp(v, t, operator_match)
            && COMPARE(stack__peek_nth, stack__length(s), u, s, true)
            && COMPARE(stack__peek_nth, stack__length(t), v, t, false)) ? TEST_SUCCESS : TEST_FAILURE;
     STACK_FREE(u, v, NULL, NULL);
@@ -265,8 +265,8 @@ TEST_ON_NON_EMPTY_STACK (
     Stack u = stack__copy(s);
     Stack v = stack__copy(t);
 
-    result = (stack__cmp(u, s, operator_compare)
-           && stack__cmp(v, t, operator_compare)
+    result = (stack__cmp(u, s, operator_match)
+           && stack__cmp(v, t, operator_match)
            && COMPARE(stack__peek_nth, stack__length(s), u, s, true)
            && COMPARE(stack__peek_nth, stack__length(t), v, t, false)) ? TEST_SUCCESS : TEST_FAILURE;
     STACK_FREE(u, v, NULL, NULL);
@@ -340,21 +340,39 @@ TEST_ON_NON_EMPTY_STACK (
     }
 )
 
-/* PTR_CONTAINS */
+/* PTR_SEARCH */
 TEST_ON_EMPTY_STACK (
-    test_stack__ptr_contains_on_empty_stack,
-    result &= stack__ptr_contains(s, NULL) == SIZE_MAX;
-    result &= stack__ptr_contains(t, NULL) == SIZE_MAX;
+    test_stack__ptr_search_on_empty_stack,
+    result &= stack__ptr_search(s, NULL) == SIZE_MAX;
+    result &= stack__ptr_search(t, NULL) == SIZE_MAX;
 )
 
 TEST_ON_NON_EMPTY_STACK (
-    test_stack__ptr_contains_on_non_empty_stack, true,
-    result &= stack__ptr_contains(s, NULL) == SIZE_MAX;
-    result &= stack__ptr_contains(t, NULL) == SIZE_MAX;
+    test_stack__ptr_search_on_non_empty_stack, true,
+    result &= stack__ptr_search(s, NULL) == SIZE_MAX;
+    result &= stack__ptr_search(t, NULL) == SIZE_MAX;
 
     for (u32 i = 0; i < N; i++) {
-        result &= stack__ptr_contains(s, elems + i) == SIZE_MAX;
-        result &= stack__ptr_contains(t, elems + i) == i;
+        result &= stack__ptr_search(s, elems + i) == SIZE_MAX;
+        result &= stack__ptr_search(t, elems + i) == i;
+    }
+)
+
+/* SEARCH */
+TEST_ON_EMPTY_STACK (
+    test_stack__contains_on_empty_stack,
+    result &= stack__contains(s, NULL, operator_match) == SIZE_MAX;
+    result &= stack__contains(t, NULL, operator_match) == SIZE_MAX;
+)
+
+TEST_ON_NON_EMPTY_STACK (
+    test_stack__contains_on_non_empty_stack, false,
+    result &= stack__contains(s, NULL, operator_match) == SIZE_MAX;
+    result &= stack__contains(t, NULL, operator_match) == SIZE_MAX;
+
+    for (u32 i = 0; i < N; i++) {
+        result &= stack__contains(s, elems + i, operator_match) == i;
+        result &= stack__contains(t, elems + i, operator_match) == i;
     }
 )
 
@@ -547,8 +565,10 @@ int main(void)
     print_test_result(test_stack__dump_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__to_array_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__to_array_on_non_empty_stack(false), &nb_success, &nb_tests);
-    print_test_result(test_stack__ptr_contains_on_empty_stack(false), &nb_success, &nb_tests);
-    print_test_result(test_stack__ptr_contains_on_non_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__ptr_search_on_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__ptr_search_on_non_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__contains_on_empty_stack(false), &nb_success, &nb_tests);
+    print_test_result(test_stack__contains_on_non_empty_stack(true), &nb_success, &nb_tests);
     print_test_result(test_stack__clean_NULL_on_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__clean_NULL_on_non_empty_stack(false), &nb_success, &nb_tests);
     print_test_result(test_stack__clear_on_empty_stack(false), &nb_success, &nb_tests);

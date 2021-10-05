@@ -189,13 +189,24 @@ elem_t *queue__to_array(const Queue q);
 
 
 /**
- * @brief check if a pointer is on the queue
+ * @brief search the given pointer
  * @note complexity: O(n)
  * @param q the queue
- * @param elem the pointer
+ * @param elem the pointer to search
  * @return the position of the pointer in the queue if it is contained in it, SIZE_MAX if not, SIZE_MAX on failure
  */
-size_t queue__ptr_contains(const Queue q, const elem_t elem);
+size_t queue__ptr_search(const Queue q, const elem_t elem);
+
+
+/**
+ * @brief search the given element
+ * @note complexity: O(n)
+ * @param q the queue
+ * @param elem the element to search
+ * @param match the matching function
+ * @return the position of the element in the queue if it is contained in it, SIZE_MAX if not, SIZE_MAX on failure
+ */
+size_t queue__search(const Queue q, const elem_t elem, const compare_func_t match);
 
 
 /**
@@ -203,10 +214,10 @@ size_t queue__ptr_contains(const Queue q, const elem_t elem);
  * @note complexity: O(n)
  * @param q first queue
  * @param w second queue
- * @param cmp the compare function
+ * @param match the matching function
  * @return 1 if the queues are equal including all their elements, 0 if not, -1 on failure
  */
-char queue__cmp(const Queue q, const Queue w, const compare_func_t cmp);
+char queue__cmp(const Queue q, const Queue w, const compare_func_t match);
 
 
 /**

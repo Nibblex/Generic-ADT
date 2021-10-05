@@ -271,8 +271,8 @@ TEST_ON_EMPTY_QUEUE (
     Queue u = queue__copy(q);
     Queue v = queue__copy(w);
 
-    result = (queue__cmp(u, q, operator_compare)
-           && queue__cmp(v, w, operator_compare)
+    result = (queue__cmp(u, q, operator_match)
+           && queue__cmp(v, w, operator_match)
            && COMPARE(queue__peek_nth, queue__length(q), u, q, true)
            && COMPARE(queue__peek_nth, queue__length(w), v, w, false)) ? TEST_SUCCESS : TEST_FAILURE;
     QUEUE_FREE(u, v, NULL, NULL);
@@ -283,8 +283,8 @@ TEST_ON_NON_EMPTY_QUEUE (
     Queue u = queue__copy(q);
     Queue v = queue__copy(w);
 
-    result = (queue__cmp(u, q, operator_compare)
-           && queue__cmp(v, w, operator_compare)
+    result = (queue__cmp(u, q, operator_match)
+           && queue__cmp(v, w, operator_match)
            && COMPARE(queue__peek_nth, queue__length(q), u, q, true)
            && COMPARE(queue__peek_nth, queue__length(w), v, w, false)) ? TEST_SUCCESS : TEST_FAILURE;
     QUEUE_FREE(u, v, NULL, NULL);
@@ -358,21 +358,39 @@ TEST_ON_NON_EMPTY_QUEUE (
     }
 )
 
-/* PTR_CONTAINS */
+/* PTR_SEARCH */
 TEST_ON_EMPTY_QUEUE (
-    test_queue__ptr_contains_on_empty_queue,
-    result &= queue__ptr_contains(q, NULL) == SIZE_MAX;
-    result &= queue__ptr_contains(w, NULL) == SIZE_MAX;
+    test_queue__ptr_search_on_empty_queue,
+    result &= queue__ptr_search(q, NULL) == SIZE_MAX;
+    result &= queue__ptr_search(w, NULL) == SIZE_MAX;
 )
 
 TEST_ON_NON_EMPTY_QUEUE (
-    test_queue__ptr_contains_on_non_empty_queue, true,
-    result &= queue__ptr_contains(q, NULL) == SIZE_MAX;
-    result &= queue__ptr_contains(w, NULL) == SIZE_MAX;
+    test_queue__ptr_search_on_non_empty_queue, true,
+    result &= queue__ptr_search(q, NULL) == SIZE_MAX;
+    result &= queue__ptr_search(w, NULL) == SIZE_MAX;
 
     for (u32 i = 0; i < N; i++) {
-        result &= queue__ptr_contains(q, elems + i) == SIZE_MAX;
-        result &= queue__ptr_contains(w, elems + i) == i;
+        result &= queue__ptr_search(q, elems + i) == SIZE_MAX;
+        result &= queue__ptr_search(w, elems + i) == i;
+    }
+)
+
+/* SEARCH */
+TEST_ON_EMPTY_QUEUE (
+    test_queue__search_on_empty_queue,
+    result &= queue__search(q, NULL, operator_match) == SIZE_MAX;
+    result &= queue__search(w, NULL, operator_match) == SIZE_MAX;
+)
+
+TEST_ON_NON_EMPTY_QUEUE (
+    test_queue__search_on_non_empty_queue, false,
+    result &= queue__search(q, NULL, operator_match) == SIZE_MAX;
+    result &= queue__search(w, NULL, operator_match) == SIZE_MAX;
+
+    for (u32 i = 0; i < N; i++) {
+        result &= queue__search(q, elems + i, operator_match) == i;
+        result &= queue__search(w, elems + i, operator_match) == i;
     }
 )
 
@@ -567,8 +585,10 @@ int main(void)
     print_test_result(test_queue__dump_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__to_array_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__to_array_on_non_empty_queue(false), &nb_success, &nb_tests);
-    print_test_result(test_queue__ptr_contains_on_empty_queue(false), &nb_success, &nb_tests);
-    print_test_result(test_queue__ptr_contains_on_non_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__ptr_search_on_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__ptr_search_on_non_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__search_on_empty_queue(false), &nb_success, &nb_tests);
+    print_test_result(test_queue__search_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__clean_NULL_on_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__clean_NULL_on_non_empty_queue(false), &nb_success, &nb_tests);
     print_test_result(test_queue__clear_on_empty_queue(false), &nb_success, &nb_tests);

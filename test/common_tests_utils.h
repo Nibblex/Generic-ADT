@@ -140,6 +140,7 @@ void print_test_summary(int nb_success, int nb_tests);
 void *operator_copy(void *p_value);
 void operator_delete(void *p_value);
 int operator_compare(const void *v1, const void *v2);
+int operator_match(const void *v1, const void *v2);
 void operator_debug_i32(const int *p_value);
 void operator_debug_u32(const u32 *p_value);
 void operator_debug_char(const char *p_value);

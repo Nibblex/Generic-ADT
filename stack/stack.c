@@ -206,19 +206,25 @@ elem_t *stack__to_array(const Stack s) {
     return res;
 }
 
-size_t stack__ptr_contains(const Stack s, const elem_t elem) {
+size_t stack__ptr_search(const Stack s, const elem_t elem) {
     if (!s) return SIZE_MAX;
 
-    return PTR_CONTAINS(s, 0, s->length, elem);
+    return PTR_SEARCH(s, 0, s->length, elem);
 }
 
-char stack__cmp(const Stack s, const Stack t, const compare_func_t cmp) {
-    if (!s || !t || !cmp) return FAILURE;
+size_t stack__contains(const Stack s, const elem_t elem, const compare_func_t match) {
+    if (!s || !match) return SIZE_MAX;
+
+    return SEARCH(s, 0, s->length, elem, match);
+}
+
+char stack__cmp(const Stack s, const Stack t, const compare_func_t match) {
+    if (!s || !t || !match) return FAILURE;
 
     if (s == t) return true;
     if (s->length != t->length) return false;
 
-    return ARRAY_CMP(s->elems, t->elems, cmp, s->length);
+    return ARRAY_CMP(s->elems, t->elems, match, s->length);
 }
 
 char stack__all(const Stack s, const filter_func_t pred, void *user_data) {

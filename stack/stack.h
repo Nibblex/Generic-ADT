@@ -178,13 +178,24 @@ elem_t *stack__to_array(const Stack s);
 
 
 /**
- * @brief check if a pointer is on the stack
+ * @brief search the given pointer
  * @note complexity: O(n)
  * @param s the stack
- * @param elem the pointer
+ * @param elem the pointer to search
  * @return the position of the pointer in the stack if it is contained in it, SIZE_MAX if not, SIZE_MAX on failure
  */
-size_t stack__ptr_contains(const Stack s, const elem_t elem);
+size_t stack__ptr_search(const Stack s, const elem_t elem);
+
+
+/**
+ * @brief search the given element
+ * @note complexity: O(n)
+ * @param s the stack
+ * @param elem the element to search
+ * @param match the matching function
+ * @return the position of the element in the stack if it is contained in it, SIZE_MAX if not, SIZE_MAX on failure
+ */
+size_t stack__contains(const Stack s, const elem_t elem, const compare_func_t match);
 
 
 /**
@@ -192,10 +203,10 @@ size_t stack__ptr_contains(const Stack s, const elem_t elem);
  * @note complexity: O(n)
  * @param s first Stack
  * @param t second Stack
- * @param cmp the compare function
+ * @param match the matching function
  * @return 1 if the stacks are equal including all their elements, 0 if not, -1 on failure
  */
-char stack__cmp(const Stack s, const Stack t, const compare_func_t cmp);
+char stack__cmp(const Stack s, const Stack t, const compare_func_t match);
 
 
 /**

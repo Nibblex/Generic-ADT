@@ -195,7 +195,28 @@ size_t stack__ptr_search(const Stack s, const elem_t elem);
  * @param match the matching function
  * @return the position of the element in the stack if it is contained in it, SIZE_MAX if not, SIZE_MAX on failure
  */
-size_t stack__contains(const Stack s, const elem_t elem, const compare_func_t match);
+size_t stack__search(const Stack s, const elem_t elem, const compare_func_t match);
+
+
+/**
+ * @brief checks if a given pointer is on the stack
+ * @note complexity: O(n)
+ * @param s the stack
+ * @param elem the pointer
+ * @return 1 if the pointer is on the stack, 0 if not, -1 on failure
+ */
+char stack__ptr_contains(const Stack s, const elem_t elem);
+
+
+/**
+ * @brief checks if a given element is on the stack
+ * @note complexity: O(n)
+ * @param s the stack
+ * @param elem the element
+ * @param match the matching function
+ * @return 1 if the element is on the stack, 0 if not, -1 on failure
+ */
+char stack__contains(const Stack s, const elem_t elem, const compare_func_t match);
 
 
 /**

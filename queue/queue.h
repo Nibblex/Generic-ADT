@@ -210,6 +210,27 @@ size_t queue__search(const Queue q, const elem_t elem, const compare_func_t matc
 
 
 /**
+ * @brief checks if a given pointer is on the queue
+ * @note complexity: O(n)
+ * @param q the queue
+ * @param elem the pointer
+ * @return 1 if the pointer is on the queue, 0 if not, -1 on failure
+ */
+char queue__ptr_contains(const Queue q, const elem_t elem);
+
+
+/**
+ * @brief checks if a given element is on the queue
+ * @note complexity: O(n)
+ * @param q the queue
+ * @param elem the element
+ * @param match the matching function
+ * @return 1 if the element is on the queue, 0 if not, -1 on failure
+ */
+char queue__contains(const Queue q, const elem_t elem, const compare_func_t match);
+
+
+/**
  * @brief compare two queues including all their elements
  * @note complexity: O(n)
  * @param q first queue

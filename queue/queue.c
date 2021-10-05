@@ -240,7 +240,19 @@ size_t queue__ptr_search(const Queue q, const elem_t elem) {
 size_t queue__search(const Queue q, const elem_t elem, const compare_func_t match) {
     if (!q || !match) return SIZE_MAX;
 
-    return SEARCH(q, 0, q->length, elem, match);
+    return SEARCH(q, q->front, q->back, elem, match);
+}
+
+char queue__ptr_contains(const Queue q, const elem_t elem) {
+    if (!q) return FAILURE;
+
+    return PTR_SEARCH(q, q->front, q->back, elem) != SIZE_MAX;
+}
+
+char queue__contains(const Queue q, const elem_t elem, const compare_func_t match) {
+    if (!q || !match) return FAILURE;
+
+    return SEARCH(q, q->front, q->back, elem, match) != SIZE_MAX;
 }
 
 char queue__cmp(const Queue q, const Queue w, const compare_func_t match) {

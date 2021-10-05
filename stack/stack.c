@@ -212,10 +212,22 @@ size_t stack__ptr_search(const Stack s, const elem_t elem) {
     return PTR_SEARCH(s, 0, s->length, elem);
 }
 
-size_t stack__contains(const Stack s, const elem_t elem, const compare_func_t match) {
+size_t stack__search(const Stack s, const elem_t elem, const compare_func_t match) {
     if (!s || !match) return SIZE_MAX;
 
     return SEARCH(s, 0, s->length, elem, match);
+}
+
+char stack__ptr_contains(const Stack s, const elem_t elem) {
+    if (!s) return FAILURE;
+
+    return PTR_SEARCH(s, 0, s->length, elem) != SIZE_MAX;
+}
+
+char stack__contains(const Stack s, const elem_t elem, const compare_func_t match) {
+    if (!s || !match) return FAILURE;
+
+    return SEARCH(s, 0, s->length, elem, match) != SIZE_MAX;
 }
 
 char stack__cmp(const Stack s, const Stack t, const compare_func_t match) {

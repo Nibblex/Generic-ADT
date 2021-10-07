@@ -376,37 +376,27 @@ TEST_ON_NON_EMPTY_STACK (
     }
 )
 
+/* CLEAN_NULL */
 TEST_ON_EMPTY_STACK (
     test_stack__clean_NULL_on_empty_stack,
     stack__clean_NULL(s);
     stack__clean_NULL(t);
 )
 
-static bool test_stack__clean_NULL_on_non_empty_stack(char debug)
-{
-    printf("%s... ", __func__);
+TEST_ON_NON_EMPTY_STACK (
+    test_stack__clean_NULL_on_non_empty_stack, false,
 
-    bool result;
-    STACK_CREATE(s, t);
-
-    u32 N = 8;
-    for (u32 i = 0; i < N; i++) {
-        stack__push(s, !(i%2) ? &i : NULL);
-        stack__push(t, !(i%2) ? &i : NULL);
+    for (u32 i = 0; i < N; i+= 2) {
+        stack__remove_nth(s, i);
+        stack__remove_nth(t, i);
     }
-
-    STACK_DEBUG_u32(s, t, "\n\tStacks before clean_NULL:");
 
     stack__clean_NULL(s);
     stack__clean_NULL(t);
 
     result = (stack__length(s) == N>>1 && stack__length(t) == N>>1) ? TEST_SUCCESS : TEST_FAILURE;
 
-    STACK_DEBUG_u32(s, t, "\n\tStacks after clean_NULL:");
-
-    STACK_FREE(s, t, NULL, NULL);
-    return result;
-}
+)
 
 /* CLEAR */
 TEST_ON_EMPTY_STACK (

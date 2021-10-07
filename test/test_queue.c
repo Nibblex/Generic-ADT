@@ -394,37 +394,27 @@ TEST_ON_NON_EMPTY_QUEUE (
     }
 )
 
+/* CLEAN_NULL */
 TEST_ON_EMPTY_QUEUE (
     test_queue__clean_NULL_on_empty_queue,
     queue__clean_NULL(q);
     queue__clean_NULL(w);
 )
 
-static bool test_queue__clean_NULL_on_non_empty_queue(char debug)
-{
-    printf("%s... ", __func__);
+TEST_ON_NON_EMPTY_QUEUE (
+    test_queue__clean_NULL_on_non_empty_queue, false,
 
-    bool result;
-    QUEUE_CREATE(q, w);
-
-    u32 N = 8;
-    for (u32 i = 0; i < N; i++) {
-        queue__enqueue(q, !(i%2) ? &i : NULL);
-        queue__enqueue(w, !(i%2) ? &i : NULL);
+    for (u32 i = 0; i < N; i+= 2) {
+        queue__remove_nth(q, i);
+        queue__remove_nth(w, i);
     }
-
-    QUEUE_DEBUG_u32(q, w, "\n\tQueues before clean_NULL:");
 
     queue__clean_NULL(q);
     queue__clean_NULL(w);
 
     result = (queue__length(q) == N>>1 && queue__length(w) == N>>1) ? TEST_SUCCESS : TEST_FAILURE;
 
-    QUEUE_DEBUG_u32(q, w, "\n\tQueues after clean_NULL:");
-
-    QUEUE_FREE(q, w, NULL, NULL);
-    return result;
-}
+)
 
 /* CLEAR */
 TEST_ON_EMPTY_QUEUE (

@@ -118,7 +118,7 @@
         if ((__pred)(__elems[i], (__user_data))) { \
             __elems[k] = __elems[i]; \
             k++; \
-        } else if ((__ptr)->operator_delete) { \
+        } else { \
             (__ptr)->operator_delete(__elems[i]); \
         } \
     } \
